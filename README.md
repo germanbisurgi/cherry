@@ -1,1 +1,0 @@
-[![CircleCI](https://circleci.com/gh/germanbisurgi/Seed.svg?style=svg)](https://circleci.com/gh/germanbisurgi/Seed)
