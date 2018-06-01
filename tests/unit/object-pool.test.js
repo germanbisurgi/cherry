@@ -9,7 +9,7 @@ var objects = [];
 var Point = function Point (x, y) {
   this.x = x;
   this.y = y;
-}
+};
 
 var points = new ObjectPool({
   class: Point,
