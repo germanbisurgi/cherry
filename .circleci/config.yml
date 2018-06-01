@@ -6,15 +6,6 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - run: sudo apt-get install xvfb -y
-      - run: sudo npm install -g eslint jest live-server http-server codeceptjs nightmare co --unsafe-perm=true
+      - run: sudo npm install -g eslint jest --unsafe-perm=true
       - run: eslint .
-      - run:
-          name: Execute Server in background
-          command: http-server ./src
-          background: true
-      - run:
-          shell: /bin/sh
-          command: |
-            wget --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 -t 10 http://127.0.0.1:8080
-      - run: xvfb-run -a codeceptjs run --steps
+      - run: jest
