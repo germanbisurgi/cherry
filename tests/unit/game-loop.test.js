@@ -2,7 +2,7 @@ var GameLoop = require('../../src/game-loop');
 var gameLoop = new GameLoop();
 var taskExecuted = false;
 
-describe('game loop', function () {
+describe('Ensure that the game loop work properly', function () {
   it('it should have fps = 60', function () {
     expect(gameLoop.fps).toBe(60);
   });

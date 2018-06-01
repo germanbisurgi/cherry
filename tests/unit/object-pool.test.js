@@ -19,7 +19,7 @@ var points = new ObjectPool({
   }
 });
 
-describe('Points pool', function () {
+describe('Ensure tha object pools work properly', function () {
   it('should have size = 0 and used = 0', function () {
     expect(points.size()).toBe(0);
     expect(points.used).toBe(0);
