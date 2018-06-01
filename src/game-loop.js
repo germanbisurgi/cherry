@@ -1,12 +1,10 @@
-var ObjectPool = require('./object-pool');
-
-var GameLoop = function (config) {
+comp.gameLoop = function (config) {
   'use strict';
   config = config || {};
   this.delta = 0;
   this.fps = config.fps || 60;
   this.frame = 0;
-  this.tasks = new ObjectPool({
+  this.tasks = new comp.objectPool({
     class: function (delay, task) {
       this.delay = delay;
       this.task = task;
@@ -18,7 +16,7 @@ var GameLoop = function (config) {
   });
 };
 
-GameLoop.prototype.tick = function () {
+comp.gameLoop.prototype.tick = function () {
   this.frame++;
   var self = this;
   this.tasks.each(function (task) {
@@ -31,10 +29,6 @@ GameLoop.prototype.tick = function () {
   });
 };
 
-GameLoop.prototype.queueTask = function (delay, task) {
+comp.gameLoop.prototype.queueTask = function (delay, task) {
   this.tasks.use(delay, task);
 };
-
-if (typeof module !== 'undefined') {
-  module.exports = GameLoop;
-}

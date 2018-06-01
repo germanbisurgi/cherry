@@ -1,9 +1,7 @@
-var ObjectPool = require('../../src/object-pool');
-
+var comp = require('../../dist/comp');
 var pointA;
 var pointB;
 var pointC;
-
 var objects = [];
 
 var Point = function Point (x, y) {
@@ -11,7 +9,7 @@ var Point = function Point (x, y) {
   this.y = y;
 };
 
-var points = new ObjectPool({
+var points = new comp.objectPool({
   class: Point,
   reset: function (object, x, y) {
     object.x = x;

@@ -1,16 +1,16 @@
-var ObjectPool = function ObjectPool (config) {
+comp.objectPool = function (config) {
   'use strict';
   this.config = config || {};
   this.pool = [];
   this.used = 0;
 };
 
-ObjectPool.prototype.clear = function () {
+comp.objectPool.prototype.clear = function () {
   this.pool = [];
   this.used = 0;
 };
 
-ObjectPool.prototype.use = function () {
+comp.objectPool.prototype.use = function () {
 
   // get a free object
   var unusedItem = false;
@@ -37,7 +37,7 @@ ObjectPool.prototype.use = function () {
   return item.object;
 };
 
-ObjectPool.prototype.dismiss = function (obj) {
+comp.objectPool.prototype.dismiss = function (obj) {
   // search o and deactivate it
   this.pool.forEach(function (item) {
     if (item.object === obj) {
@@ -47,11 +47,11 @@ ObjectPool.prototype.dismiss = function (obj) {
   this.used--;
 };
 
-ObjectPool.prototype.size = function () {
+comp.objectPool.prototype.size = function () {
   return this.pool.length;
 };
 
-ObjectPool.prototype.each = function (fn) {
+comp.objectPool.prototype.each = function (fn) {
   var length = this.pool.length;
   var i;
   for (i = 0; i < length; i++) {
@@ -60,7 +60,3 @@ ObjectPool.prototype.each = function (fn) {
     }
   }
 };
-
-if (typeof module !== 'undefined') {
-  module.exports = ObjectPool;
-}
