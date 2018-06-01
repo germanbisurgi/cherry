@@ -7,5 +7,6 @@ jobs:
     steps:
       - checkout
       - run: sudo npm install -g eslint jest --unsafe-perm=true
-      - run: eslint .
+      - run: eslint ./src
+      - run: eslint ./tests
       - run: jest
