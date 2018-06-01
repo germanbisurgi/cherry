@@ -1,5 +1,5 @@
-var GameLoop = require('../../src/game-loop');
-var gameLoop = new GameLoop();
+var comp = require('../../dist/comp');
+var gameLoop = new comp.gameLoop();
 var taskExecuted = false;
 
 describe('Ensure that the game loop work properly', function () {
