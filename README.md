@@ -8,7 +8,6 @@ start server
 
     live-server ./src
     
-    
 run unit tests
 
     jest
