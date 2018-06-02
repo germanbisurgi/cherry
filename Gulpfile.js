@@ -8,6 +8,7 @@ var scripts = [
   './src/signal.js',
   './src/game.js',
   './src/state.js',
+  './src/render.js',
   './src/outro.js'
 ];
 

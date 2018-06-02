@@ -3,10 +3,15 @@ window.addEventListener('load', function () {
   var game = new comp.game();
   var canvas = document.querySelector('canvas');
   var context = canvas.getContext('2d');
-  var entity = {x: 0, y: 0, width: 50, height: 50};
+  var entity = {x: 0, y: 0, width: 50, height: 50, speed: 4};
   game.loop.update = function (delta) {
+
     // update
-    entity.x += 1 * delta * 60 / 1000;
+    if (entity.x > (canvas.width - entity.width) || entity.x < 0) {
+      entity.speed = -entity.speed;
+    }
+    entity.x +=  entity.speed * delta * 60 / 1000;
+
     // draw
     context.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -19,7 +24,6 @@ window.addEventListener('load', function () {
     );
     context.stroke();
     context.closePath();
-
   };
 
   game.loop.setFps(60);
