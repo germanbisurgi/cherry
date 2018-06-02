@@ -202,6 +202,8 @@ comp.game = function (config) {
 
 comp.state = function () {};
 
+comp.render = function () {};
+
 if (typeof module !== 'undefined') {
   module.exports = comp;
 }
