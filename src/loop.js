@@ -7,13 +7,11 @@ comp.loop = function (config) {
   this.frame = 0;
   this.status = 'off';
   this.tasks = new comp.pool({
-    class: function (delay, task) {
-      this.delay = delay;
-      this.task = task;
+    class: function (fn) {
+      this.execute = fn;
     },
-    reset: function (object, delay, task) {
-      this.delay = delay;
-      this.task = task;
+    reset: function (object, fn) {
+      object.execute = fn;
     }
   });
   this.timestep = 1000 / this.fps;
@@ -22,12 +20,8 @@ comp.loop = function (config) {
 comp.loop.prototype.executeQueuedTasks = function () {
   var self = this;
   self.tasks.each(function (task) {
-    if (task.delay === 0) {
-      task.task();
-      self.tasks.dismiss(task);
-    } else {
-      task.delay--;
-    }
+    task.execute();
+    self.tasks.dismiss(task);
   });
 };
 
@@ -55,8 +49,8 @@ comp.loop.prototype.getTimestep = function () {
   return this.timestep;
 };
 
-comp.loop.prototype.queueTask = function (delay, task) {
-  this.tasks.use(delay, task);
+comp.loop.prototype.nextStep = function (task) {
+  this.tasks.use(task);
 };
 
 comp.loop.prototype.reset = function () {
@@ -100,7 +94,7 @@ comp.loop.prototype.run = function (timestamp) {
 comp.loop.prototype.step = function () {
   var self = this;
   self.frame++;
-  self.executeQueuedTasks(self.timestep);
+  self.executeQueuedTasks();
   self.update(self.timestep);
 };
 

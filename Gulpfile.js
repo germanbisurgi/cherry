@@ -5,10 +5,9 @@ var scripts = [
   './src/polyfills.js',
   './src/pool.js',
   './src/loop.js',
-  './src/signal.js',
   './src/game.js',
   './src/state.js',
-  './src/render.js',
+  './src/stateManager.js',
   './src/outro.js'
 ];
 

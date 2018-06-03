@@ -1,9 +1,10 @@
 var comp = require('../../dist/comp');
-var loop = new comp.loop();
+var game = new comp.game();
+var loop = game.loop;
 var taskExecuted = false;
 
 describe('Loop', function () {
-  it('should correct inital  values', function () {
+  it('should have correct inital  values', function () {
     expect(loop.getDelta()).toBe(0);
     expect(loop.getFps()).toBe(60);
     expect(loop.getFrame()).toBe(0);
@@ -31,10 +32,11 @@ describe('Loop', function () {
     expect(loop.getFrame()).toBe(1);
     expect(loop.getFrame()).not.toBe(0);
   });
-  it('should execute a queued task at the right frame', function () {
-    loop.queueTask(0, function () {
+  it('should execute a queued task in the next step', function () {
+    loop.nextStep(function () {
       taskExecuted = true;
     });
+    expect(taskExecuted).toBe(false);
     loop.step();
     expect(taskExecuted).toBe(true);
   });
