@@ -4,8 +4,8 @@ comp.state = function (name) {
   this.created = false;
 };
 
-comp.state.prototype.preload = function () {}
+comp.state.prototype.preload = function () {};
 
-comp.state.prototype.create = function () {}
+comp.state.prototype.create = function () {};
 
-comp.state.prototype.update = function () {}
+comp.state.prototype.update = function () {};
