@@ -1,5 +1,5 @@
-var comp = require('../../dist/comp');
-var game = new comp.game();
+var cherry = require('../../dist/cherry');
+var game = new cherry.game();
 var loop = game.loop;
 var taskExecuted = false;
 

@@ -1,4 +1,4 @@
-comp.loop = function (config) {
+cherry.loop = function (config) {
   'use strict';
   config = config || {};
   this.delta = 0;
@@ -6,7 +6,7 @@ comp.loop = function (config) {
   this.fps = config.fps || 60;
   this.frame = 0;
   this.status = 'off';
-  this.tasks = new comp.pool({
+  this.tasks = new cherry.pool({
     class: function (fn) {
       this.execute = fn;
     },
@@ -17,7 +17,7 @@ comp.loop = function (config) {
   this.timestep = 1000 / this.fps;
 };
 
-comp.loop.prototype.executeQueuedTasks = function () {
+cherry.loop.prototype.executeQueuedTasks = function () {
   var self = this;
   self.tasks.each(function (task) {
     task.execute();
@@ -25,35 +25,35 @@ comp.loop.prototype.executeQueuedTasks = function () {
   });
 };
 
-comp.loop.prototype.getDelta = function () {
+cherry.loop.prototype.getDelta = function () {
   return this.delta;
 };
 
-comp.loop.prototype.getFps = function () {
+cherry.loop.prototype.getFps = function () {
   return this.fps;
 };
 
-comp.loop.prototype.getFrame = function () {
+cherry.loop.prototype.getFrame = function () {
   return this.frame;
 };
 
-comp.loop.prototype.getTasks = function () {
+cherry.loop.prototype.getTasks = function () {
   return this.tasks;
 };
 
-comp.loop.prototype.getStatus = function () {
+cherry.loop.prototype.getStatus = function () {
   return this.status;
 };
 
-comp.loop.prototype.getTimestep = function () {
+cherry.loop.prototype.getTimestep = function () {
   return this.timestep;
 };
 
-comp.loop.prototype.nextStep = function (task) {
+cherry.loop.prototype.nextStep = function (task) {
   this.tasks.use(task);
 };
 
-comp.loop.prototype.reset = function () {
+cherry.loop.prototype.reset = function () {
   this.delta = 0;
   this.lastTime = performance.now();
   this.setFps(60);
@@ -62,22 +62,22 @@ comp.loop.prototype.reset = function () {
   this.getTasks().clear();
 };
 
-comp.loop.prototype.setFps = function (fps) {
+cherry.loop.prototype.setFps = function (fps) {
   this.fps = fps;
   this.timestep = 1000 / fps;
 };
 
-comp.loop.prototype.setStatus = function (status) {
+cherry.loop.prototype.setStatus = function (status) {
   this.status = status;
 };
 
-comp.loop.prototype.start = function () {
+cherry.loop.prototype.start = function () {
   var self = this;
   this.setStatus('on');
   window.requestAnimationFrame(self.run.bind(this));
 };
 
-comp.loop.prototype.run = function (timestamp) {
+cherry.loop.prototype.run = function (timestamp) {
   var self = this;
   self.delta += timestamp - self.lastTime;
   self.lastTime = timestamp;
@@ -91,11 +91,11 @@ comp.loop.prototype.run = function (timestamp) {
   }
 };
 
-comp.loop.prototype.step = function () {
+cherry.loop.prototype.step = function () {
   var self = this;
   self.frame++;
   self.executeQueuedTasks();
   self.update(self.timestep);
 };
 
-comp.loop.prototype.update = function () {};
+cherry.loop.prototype.update = function () {};

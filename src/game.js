@@ -1,7 +1,7 @@
-comp.game = function (config) {
+cherry.game = function (config) {
   var self = this;
-  self.loop = new comp.loop();
-  self.states = new comp.stateManager(self);
+  self.loop = new cherry.loop();
+  self.states = new cherry.stateManager(self);
 
   self.loop.update = function () {
     if (self.states.current !== null) {

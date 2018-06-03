@@ -1,1 +1,1 @@
-var comp = {};
+var cherry = {};

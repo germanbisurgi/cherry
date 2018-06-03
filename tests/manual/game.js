@@ -1,4 +1,4 @@
-var game = new comp.game();
+var game = new cherry.game();
 game.states.add(testState);
 game.states.switch('test');
 game.loop.start();

@@ -1,4 +1,4 @@
-var comp = require('../../dist/comp');
+var cherry = require('../../dist/cherry');
 var pointA;
 var pointB;
 var pointC;
@@ -9,7 +9,7 @@ var Point = function Point (x, y) {
   this.y = y;
 };
 
-var points = new comp.pool({
+var points = new cherry.pool({
   class: Point,
   reset: function (object, x, y) {
     object.x = x;
