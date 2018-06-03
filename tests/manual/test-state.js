@@ -1,13 +1,7 @@
 var testState = new comp.state('test');
 
-testState.preload = function (game) {
-  console.log('preload');
-}
+testState.preload = function (game) {};
 
-testState.create = function (game) {
-  console.log('create');
-}
+testState.create = function (game) {};
 
-testState.update = function (game) {
-  console.log('update');
-}
+testState.update = function (game) {};

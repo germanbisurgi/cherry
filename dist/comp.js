@@ -194,11 +194,11 @@ comp.game = function (config) {
       self.states.current.created = true;
       self.states.current.create(self);
     }
-    
+
     if (self.states.current.created) {
       self.states.current.update(self);
     }
-  }
+  };
 
 };
 
