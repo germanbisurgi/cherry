@@ -1,6 +1,6 @@
-var comp = require('../../dist/comp');
-var game = new comp.game();
-var state = new comp.state('menu');
+var cherry = require('../../dist/cherry');
+var game = new cherry.game();
+var state = new cherry.state('menu');
 var stateManager = game.states;
 
 describe('State', function () {

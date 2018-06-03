@@ -1,5 +1,5 @@
-var comp = require('../../dist/comp');
-var state = new comp.state('menu');
+var cherry = require('../../dist/cherry');
+var state = new cherry.state('menu');
 
 describe('State', function () {
   it('should have correct inital  values', function () {

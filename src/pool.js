@@ -1,16 +1,16 @@
-comp.pool = function (config) {
+cherry.pool = function (config) {
   'use strict';
   this.config = config || {};
   this.pool = [];
   this.used = 0;
 };
 
-comp.pool.prototype.clear = function () {
+cherry.pool.prototype.clear = function () {
   this.pool = [];
   this.used = 0;
 };
 
-comp.pool.prototype.use = function () {
+cherry.pool.prototype.use = function () {
 
   // get a free object
   var unusedItem = false;
@@ -37,7 +37,7 @@ comp.pool.prototype.use = function () {
   return item.object;
 };
 
-comp.pool.prototype.dismiss = function (obj) {
+cherry.pool.prototype.dismiss = function (obj) {
   // search o and deactivate it
   this.pool.forEach(function (item) {
     if (item.object === obj) {
@@ -47,11 +47,11 @@ comp.pool.prototype.dismiss = function (obj) {
   this.used--;
 };
 
-comp.pool.prototype.size = function () {
+cherry.pool.prototype.size = function () {
   return this.pool.length;
 };
 
-comp.pool.prototype.each = function (fn) {
+cherry.pool.prototype.each = function (fn) {
   var length = this.pool.length;
   var i;
   for (i = 0; i < length; i++) {

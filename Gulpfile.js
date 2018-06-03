@@ -13,13 +13,13 @@ var scripts = [
 
 gulp.task('concat-dist', function () {
   gulp.src(scripts)
-    .pipe(concat('comp.js'))
+    .pipe(concat('cherry.js'))
     .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('concat-test', function () {
   gulp.src(scripts)
-    .pipe(concat('comp.js'))
+    .pipe(concat('cherry.js'))
     .pipe(gulp.dest('./tests/manual'));
 });
 
