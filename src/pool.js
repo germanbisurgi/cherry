@@ -1,5 +1,4 @@
 cherry.pool = function (config) {
-  'use strict';
   this.config = config || {};
   this.pool = [];
   this.used = 0;
