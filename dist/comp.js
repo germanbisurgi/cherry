@@ -85,13 +85,11 @@ comp.loop = function (config) {
   this.frame = 0;
   this.status = 'off';
   this.tasks = new comp.pool({
-    class: function (delay, task) {
-      this.delay = delay;
-      this.task = task;
+    class: function (fn) {
+      this.execute = fn;
     },
-    reset: function (object, delay, task) {
-      this.delay = delay;
-      this.task = task;
+    reset: function (object, fn) {
+      object.execute = fn;
     }
   });
   this.timestep = 1000 / this.fps;
@@ -100,12 +98,8 @@ comp.loop = function (config) {
 comp.loop.prototype.executeQueuedTasks = function () {
   var self = this;
   self.tasks.each(function (task) {
-    if (task.delay === 0) {
-      task.task();
-      self.tasks.dismiss(task);
-    } else {
-      task.delay--;
-    }
+    task.execute();
+    self.tasks.dismiss(task);
   });
 };
 
@@ -133,8 +127,8 @@ comp.loop.prototype.getTimestep = function () {
   return this.timestep;
 };
 
-comp.loop.prototype.queueTask = function (delay, task) {
-  this.tasks.use(delay, task);
+comp.loop.prototype.nextStep = function (task) {
+  this.tasks.use(task);
 };
 
 comp.loop.prototype.reset = function () {
@@ -178,32 +172,56 @@ comp.loop.prototype.run = function (timestamp) {
 comp.loop.prototype.step = function () {
   var self = this;
   self.frame++;
-  self.executeQueuedTasks(self.timestep);
+  self.executeQueuedTasks();
   self.update(self.timestep);
 };
 
 comp.loop.prototype.update = function () {};
 
-comp.signal = function () {};
-
 comp.game = function (config) {
   var self = this;
-  this.loop = new comp.loop();
-
-  this.loop.update = function (delta) {
-    // console.log(self.loop.frame);
-    // preload (audio and images)
-    // create (entities and components)
-    // update (update components)
-    // draw (grafics components)
-  };
-  // this.loop.start();
+  self.loop = new comp.loop();
+  self.states = new comp.stateManager(self);
 };
 
-comp.state = function () {};
+comp.state = function (name) {
+  this.name = name;
+  this.preloaded = false;
+  this.created = false;
+};
 
-comp.render = function () {};
+comp.state.prototype.preload = function () {}
 
+comp.state.prototype.create = function () {}
+
+comp.state.prototype.update = function () {}
+
+comp.stateManager = function (game) {
+  this.current = null;
+  this.game = game;
+  this.states = [];
+};
+
+comp.stateManager.prototype.add = function (state) {
+  this.states.push(state);
+}
+
+comp.stateManager.prototype.get = function (stateName) {
+  var output = false;
+    this.states.forEach(function (state) {
+      if (state.name === stateName) {
+        output = state;
+      }
+    });
+    return output;
+}
+
+comp.stateManager.prototype.switch = function (stateName) {
+  var self = this;
+  self.game.loop.nextStep(function () {
+    self.current = self.get(stateName);
+  });
+}
 if (typeof module !== 'undefined') {
   module.exports = comp;
 }
