@@ -124,15 +124,6 @@ cherry.loop = function (config) {
     self.queuedTasks.use(task);
   };
 
-  self.reset = function () {
-    self.delta = 0;
-    self.lastTime = performance.now();
-    self.frame = 0;
-    self.setFps(60);
-    self.setStatus('off');
-    self.queuedTasks.clear();
-  };
-
   self.setFps = function (fps) {
     self.fps = fps;
     self.timestep = 1000 / fps;
