@@ -4,20 +4,20 @@ cherry.game = function (config) {
   self.states = new cherry.stateManager(self);
 
   self.loop.update = function () {
-    if (self.states.current !== null) {
+    if (self.states.getCurrent() !== null) {
 
-      if (!self.states.current.preloaded) {
-        self.states.current.preloaded = true;
-        self.states.current.preload(self);
+      if (!self.states.getCurrent().preloaded) {
+        self.states.getCurrent().preloaded = true;
+        self.states.getCurrent().preload(self);
       }
 
-      if (!self.states.current.created) {
-        self.states.current.created = true;
-        self.states.current.create(self);
+      if (!self.states.getCurrent().created) {
+        self.states.getCurrent().created = true;
+        self.states.getCurrent().create(self);
       }
 
-      if (self.states.current.created) {
-        self.states.current.update(self);
+      if (self.states.getCurrent().created) {
+        self.states.getCurrent().update(self);
       }
 
     }

@@ -9,7 +9,7 @@ describe('Loop', function () {
     expect(loop.getFrame()).toBe(0);
     expect(loop.getStatus()).toBe('off');
     expect(loop.getTimestep()).toBe(1000 / 60);
-    expect(loop.queuedTasks.size()).toBe(0);
+    expect(loop.queuedTasks.getSize()).toBe(0);
   });
   it('should functional public setters and getters', function () {
     loop.setFps(30);

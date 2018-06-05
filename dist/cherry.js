@@ -24,6 +24,10 @@ cherry.pool.prototype.clear = function () {
   this.used = 0;
 };
 
+cherry.pool.prototype.getUsed = function () {
+  return this.used;
+};
+
 cherry.pool.prototype.use = function () {
 
   // get a free object
@@ -61,7 +65,7 @@ cherry.pool.prototype.dismiss = function (obj) {
   this.used--;
 };
 
-cherry.pool.prototype.size = function () {
+cherry.pool.prototype.getSize = function () {
   return this.pool.length;
 };
 
@@ -160,26 +164,27 @@ cherry.loop = function (config) {
   self.update = function () {};
 };
 
+
 cherry.game = function (config) {
   var self = this;
   self.loop = new cherry.loop();
   self.states = new cherry.stateManager(self);
 
   self.loop.update = function () {
-    if (self.states.current !== null) {
+    if (self.states.getCurrent() !== null) {
 
-      if (!self.states.current.preloaded) {
-        self.states.current.preloaded = true;
-        self.states.current.preload(self);
+      if (!self.states.getCurrent().preloaded) {
+        self.states.getCurrent().preloaded = true;
+        self.states.getCurrent().preload(self);
       }
 
-      if (!self.states.current.created) {
-        self.states.current.created = true;
-        self.states.current.create(self);
+      if (!self.states.getCurrent().created) {
+        self.states.getCurrent().created = true;
+        self.states.getCurrent().create(self);
       }
 
-      if (self.states.current.created) {
-        self.states.current.update(self);
+      if (self.states.getCurrent().created) {
+        self.states.getCurrent().update(self);
       }
 
     }
@@ -191,6 +196,10 @@ cherry.state = function (name) {
   this.name = name;
   this.preloaded = false;
   this.created = false;
+};
+
+cherry.state.prototype.getName = function () {
+  return this.name;
 };
 
 cherry.state.prototype.preload = function () {};
@@ -208,7 +217,7 @@ cherry.stateManager = function (game) {
     self.states.push(state);
   };
 
-  cherry.stateManager.prototype.get = function (stateName) {
+  cherry.stateManager.prototype.getByName = function (stateName) {
     var output = false;
     self.states.forEach(function (state) {
       if (state.name === stateName) {
@@ -218,13 +227,17 @@ cherry.stateManager = function (game) {
     return output;
   };
 
-  cherry.stateManager.prototype.getStates = function (stateName) {
+  cherry.stateManager.prototype.getCurrent = function () {
+    return self.current;
+  };
+
+  cherry.stateManager.prototype.getStates = function () {
     return self.states;
   };
 
   cherry.stateManager.prototype.switch = function (stateName) {
     game.loop.nextStep(function () {
-      self.current = self.get(stateName);
+      self.current = self.getByName(stateName);
     });
   };
 };
