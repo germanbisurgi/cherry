@@ -3,9 +3,10 @@ var concat = require('gulp-concat');
 var scripts = [
   './src/intro.js',
   './src/polyfills.js',
-  './src/pool.js',
-  './src/loop.js',
   './src/game.js',
+  './src/loop.js',
+  './src/pool.js',
+  './src/signal.js',
   './src/state.js',
   './src/stateManager.js',
   './src/outro.js'
