@@ -17,7 +17,7 @@ var points = new cherry.pool({
   }
 });
 
-describe('Ensure tha object pools work properly', function () {
+describe('Pool', function () {
   it('should have size = 0 and used = 0', function () {
     expect(points.size()).toBe(0);
     expect(points.used).toBe(0);

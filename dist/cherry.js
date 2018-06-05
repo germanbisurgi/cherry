@@ -202,7 +202,6 @@ cherry.state.prototype.update = function () {};
 cherry.stateManager = function (game) {
   var self = this;
   self.current = null;
-  self.game = game;
   self.states = [];
 
   cherry.stateManager.prototype.add = function (state) {
@@ -219,8 +218,12 @@ cherry.stateManager = function (game) {
     return output;
   };
 
+  cherry.stateManager.prototype.getStates = function (stateName) {
+    return self.states;
+  };
+
   cherry.stateManager.prototype.switch = function (stateName) {
-    self.game.loop.nextStep(function () {
+    game.loop.nextStep(function () {
       self.current = self.get(stateName);
     });
   };

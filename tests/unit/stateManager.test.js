@@ -4,7 +4,7 @@ var state = new cherry.state('menu');
 var stateManager = game.states;
 
 describe('StateManager', function () {
-  it('should have correct inital  values', function () {
+  it('should have correct inital values', function () {
     expect(stateManager.current).toBe(null);
     expect(stateManager.states.length).toBe(0);
   });

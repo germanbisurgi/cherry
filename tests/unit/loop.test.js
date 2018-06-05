@@ -11,12 +11,14 @@ describe('Loop', function () {
     expect(loop.getTimestep()).toBe(1000 / 60);
     expect(loop.queuedTasks.size()).toBe(0);
   });
-  it('should functional public setters', function () {
+  it('should functional public setters and getters', function () {
     loop.setFps(30);
     loop.setStatus('on');
+    expect(loop.getDelta()).toBe(0);
     expect(loop.getFps()).toBe(30);
-    expect(loop.getTimestep()).toBe(1000 / 30);
+    expect(loop.getFrame()).toBe(0);
     expect(loop.getStatus()).toBe('on');
+    expect(loop.getTimestep()).toBe(1000 / 30);
   });
   it('should increment the frame number and update last time on step() ', function () {
     loop.step();
