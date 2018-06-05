@@ -169,7 +169,6 @@ cherry.loop = function (config) {
   self.update = function () {};
 };
 
-
 cherry.game = function (config) {
   var self = this;
   self.loop = new cherry.loop();
