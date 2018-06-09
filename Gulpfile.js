@@ -12,18 +12,12 @@ var scripts = [
   './src/outro.js'
 ];
 
-gulp.task('concat-dist', function () {
+gulp.task('concat', function () {
   gulp.src(scripts)
     .pipe(concat('cherry.js'))
     .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('concat-test', function () {
-  gulp.src(scripts)
-    .pipe(concat('cherry.js'))
-    .pipe(gulp.dest('./tests/manual'));
-});
-
 gulp.task('watch', function () {
-  gulp.watch('./src/*.js', ['concat-dist', 'concat-test']);
+  gulp.watch('./src/*.js', ['concat']);
 });
