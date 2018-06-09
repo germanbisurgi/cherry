@@ -6,9 +6,9 @@ cherry.loop = function (config) {
   self.fps = config.fps || 60;
   self.frame = 0;
   self.status = 'off';
-  self.tasks = new cherry.pool({
+  self.queuedTasks = new cherry.pool({
     class: function (fn) {
-      self.execute = fn;
+      this.execute = fn;
     },
     reset: function (object, fn) {
       object.execute = fn;
@@ -17,9 +17,9 @@ cherry.loop = function (config) {
   self.timestep = 1000 / self.fps;
 
   self.executeQueuedTasks = function () {
-    self.tasks.each(function (task) {
+    self.queuedTasks.each(function (task) {
       task.execute();
-      self.tasks.dismiss(task);
+      self.queuedTasks.dismiss(task);
     });
   };
 
@@ -35,10 +35,6 @@ cherry.loop = function (config) {
     return self.frame;
   };
 
-  self.getTasks = function () {
-    return self.tasks;
-  };
-
   self.getStatus = function () {
     return self.status;
   };
@@ -48,16 +44,7 @@ cherry.loop = function (config) {
   };
 
   self.nextStep = function (task) {
-    self.tasks.use(task);
-  };
-
-  self.reset = function () {
-    self.delta = 0;
-    self.lastTime = performance.now();
-    self.setFps(60);
-    self.frame = 0;
-    self.setStatus('off');
-    self.getTasks().clear();
+    self.queuedTasks.use(task);
   };
 
   self.setFps = function (fps) {

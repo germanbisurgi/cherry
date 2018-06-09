@@ -13,8 +13,119 @@ window.requestAnimFrame = function () {
   );
 }();
 
+cherry.game = function (config) {
+  var self = this;
+  self.loop = new cherry.loop();
+  self.states = new cherry.stateManager(self);
+
+  self.loop.update = function () {
+    if (self.states.getCurrent() !== null) {
+
+      if (!self.states.getCurrent().preloaded) {
+        self.states.getCurrent().preloaded = true;
+        self.states.getCurrent().preload(self);
+      }
+
+      if (!self.states.getCurrent().created) {
+        self.states.getCurrent().created = true;
+        self.states.getCurrent().create(self);
+      }
+
+      if (self.states.getCurrent().created) {
+        self.states.getCurrent().update(self);
+      }
+
+    }
+  };
+
+};
+
+cherry.loop = function (config) {
+  var self = this;
+  config = config || {};
+  self.delta = 0;
+  self.lastTime = performance.now();
+  self.fps = config.fps || 60;
+  self.frame = 0;
+  self.status = 'off';
+  self.queuedTasks = new cherry.pool({
+    class: function (fn) {
+      this.execute = fn;
+    },
+    reset: function (object, fn) {
+      object.execute = fn;
+    }
+  });
+  self.timestep = 1000 / self.fps;
+
+  self.executeQueuedTasks = function () {
+    self.queuedTasks.each(function (task) {
+      task.execute();
+      self.queuedTasks.dismiss(task);
+    });
+  };
+
+  self.getDelta = function () {
+    return self.delta;
+  };
+
+  self.getFps = function () {
+    return self.fps;
+  };
+
+  self.getFrame = function () {
+    return self.frame;
+  };
+
+  self.getStatus = function () {
+    return self.status;
+  };
+
+  self.getTimestep = function () {
+    return self.timestep;
+  };
+
+  self.nextStep = function (task) {
+    self.queuedTasks.use(task);
+  };
+
+  self.setFps = function (fps) {
+    self.fps = fps;
+    self.timestep = 1000 / fps;
+  };
+
+  self.setStatus = function (status) {
+    self.status = status;
+  };
+
+  self.start = function () {
+    self.setStatus('on');
+    window.requestAnimationFrame(self.run);
+  };
+
+  self.run = function (timestamp) {
+    self.delta += timestamp - self.lastTime;
+    self.lastTime = timestamp;
+    while (self.delta >= self.timestep) {
+      self.frame++;
+      self.step();
+      self.delta -= self.timestep;
+    }
+    if (self.getStatus() === 'on') {
+      window.requestAnimationFrame(self.run);
+    }
+  };
+
+  self.step = function () {
+    self.frame++;
+    self.executeQueuedTasks();
+    self.update(self.timestep);
+  };
+
+  self.update = function () {};
+};
+
 cherry.pool = function (config) {
-  'use strict';
   this.config = config || {};
   this.pool = [];
   this.used = 0;
@@ -23,6 +134,10 @@ cherry.pool = function (config) {
 cherry.pool.prototype.clear = function () {
   this.pool = [];
   this.used = 0;
+};
+
+cherry.pool.prototype.getUsed = function () {
+  return this.used;
 };
 
 cherry.pool.prototype.use = function () {
@@ -62,7 +177,7 @@ cherry.pool.prototype.dismiss = function (obj) {
   this.used--;
 };
 
-cherry.pool.prototype.size = function () {
+cherry.pool.prototype.getSize = function () {
   return this.pool.length;
 };
 
@@ -76,139 +191,22 @@ cherry.pool.prototype.each = function (fn) {
   }
 };
 
-cherry.loop = function (config) {
-  'use strict';
-  config = config || {};
-  this.delta = 0;
-  this.lastTime = performance.now();
-  this.fps = config.fps || 60;
-  this.frame = 0;
-  this.status = 'off';
-  this.tasks = new cherry.pool({
-    class: function (fn) {
-      this.execute = fn;
-    },
-    reset: function (object, fn) {
-      object.execute = fn;
-    }
-  });
-  this.timestep = 1000 / this.fps;
+cherry.signal = function () {
+  this.test = null;
 };
 
-cherry.loop.prototype.executeQueuedTasks = function () {
-  var self = this;
-  self.tasks.each(function (task) {
-    task.execute();
-    self.tasks.dismiss(task);
-  });
-};
-
-cherry.loop.prototype.getDelta = function () {
-  return this.delta;
-};
-
-cherry.loop.prototype.getFps = function () {
-  return this.fps;
-};
-
-cherry.loop.prototype.getFrame = function () {
-  return this.frame;
-};
-
-cherry.loop.prototype.getTasks = function () {
-  return this.tasks;
-};
-
-cherry.loop.prototype.getStatus = function () {
-  return this.status;
-};
-
-cherry.loop.prototype.getTimestep = function () {
-  return this.timestep;
-};
-
-cherry.loop.prototype.nextStep = function (task) {
-  this.tasks.use(task);
-};
-
-cherry.loop.prototype.reset = function () {
-  this.delta = 0;
-  this.lastTime = performance.now();
-  this.setFps(60);
-  this.frame = 0;
-  this.setStatus('off');
-  this.getTasks().clear();
-};
-
-cherry.loop.prototype.setFps = function (fps) {
-  this.fps = fps;
-  this.timestep = 1000 / fps;
-};
-
-cherry.loop.prototype.setStatus = function (status) {
-  this.status = status;
-};
-
-cherry.loop.prototype.start = function () {
-  var self = this;
-  this.setStatus('on');
-  window.requestAnimationFrame(self.run.bind(this));
-};
-
-cherry.loop.prototype.run = function (timestamp) {
-  var self = this;
-  self.delta += timestamp - self.lastTime;
-  self.lastTime = timestamp;
-  while (self.delta >= self.timestep) {
-    self.frame++;
-    self.step();
-    self.delta -= self.timestep;
-  }
-  if (self.getStatus() === 'on') {
-    window.requestAnimationFrame(self.run.bind(this));
-  }
-};
-
-cherry.loop.prototype.step = function () {
-  var self = this;
-  self.frame++;
-  self.executeQueuedTasks();
-  self.update(self.timestep);
-};
-
-cherry.loop.prototype.update = function () {};
-
-cherry.game = function (config) {
-  var self = this;
-  self.loop = new cherry.loop();
-  self.states = new cherry.stateManager(self);
-
-  self.loop.update = function () {
-    if (self.states.current !== null) {
-
-      if (!self.states.current.preloaded) {
-        self.states.current.preloaded = true;
-        self.states.current.preload(self);
-      }
-
-      if (!self.states.current.created) {
-        self.states.current.created = true;
-        self.states.current.create(self);
-      }
-
-      if (self.states.current.created) {
-        self.states.current.update(self);
-      }
-
-    }
-  };
-
+cherry.signal.prototype.getTest = function () {
+  return this.test;
 };
 
 cherry.state = function (name) {
   this.name = name;
   this.preloaded = false;
   this.created = false;
+};
+
+cherry.state.prototype.getName = function () {
+  return this.name;
 };
 
 cherry.state.prototype.preload = function () {};
@@ -218,30 +216,37 @@ cherry.state.prototype.create = function () {};
 cherry.state.prototype.update = function () {};
 
 cherry.stateManager = function (game) {
-  this.current = null;
-  this.game = game;
-  this.states = [];
-};
-
-cherry.stateManager.prototype.add = function (state) {
-  this.states.push(state);
-};
-
-cherry.stateManager.prototype.get = function (stateName) {
-  var output = false;
-  this.states.forEach(function (state) {
-    if (state.name === stateName) {
-      output = state;
-    }
-  });
-  return output;
-};
-
-cherry.stateManager.prototype.switch = function (stateName) {
   var self = this;
-  self.game.loop.nextStep(function () {
-    self.current = self.get(stateName);
-  });
+  self.current = null;
+  self.states = [];
+
+  cherry.stateManager.prototype.add = function (state) {
+    self.states.push(state);
+  };
+
+  cherry.stateManager.prototype.getByName = function (stateName) {
+    var output = false;
+    self.states.forEach(function (state) {
+      if (state.name === stateName) {
+        output = state;
+      }
+    });
+    return output;
+  };
+
+  cherry.stateManager.prototype.getCurrent = function () {
+    return self.current;
+  };
+
+  cherry.stateManager.prototype.getStates = function () {
+    return self.states;
+  };
+
+  cherry.stateManager.prototype.switch = function (stateName) {
+    game.loop.nextStep(function () {
+      self.current = self.getByName(stateName);
+    });
+  };
 };
 
 if (typeof module !== 'undefined') {

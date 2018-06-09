@@ -1,14 +1,13 @@
 cherry.stateManager = function (game) {
   var self = this;
   self.current = null;
-  self.game = game;
   self.states = [];
 
   cherry.stateManager.prototype.add = function (state) {
     self.states.push(state);
   };
 
-  cherry.stateManager.prototype.get = function (stateName) {
+  cherry.stateManager.prototype.getByName = function (stateName) {
     var output = false;
     self.states.forEach(function (state) {
       if (state.name === stateName) {
@@ -18,9 +17,17 @@ cherry.stateManager = function (game) {
     return output;
   };
 
+  cherry.stateManager.prototype.getCurrent = function () {
+    return self.current;
+  };
+
+  cherry.stateManager.prototype.getStates = function () {
+    return self.states;
+  };
+
   cherry.stateManager.prototype.switch = function (stateName) {
-    self.game.loop.nextStep(function () {
-      self.current = self.get(stateName);
+    game.loop.nextStep(function () {
+      self.current = self.getByName(stateName);
     });
   };
 };

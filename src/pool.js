@@ -9,6 +9,10 @@ cherry.pool.prototype.clear = function () {
   this.used = 0;
 };
 
+cherry.pool.prototype.getUsed = function () {
+  return this.used;
+};
+
 cherry.pool.prototype.use = function () {
 
   // get a free object
@@ -46,7 +50,7 @@ cherry.pool.prototype.dismiss = function (obj) {
   this.used--;
 };
 
-cherry.pool.prototype.size = function () {
+cherry.pool.prototype.getSize = function () {
   return this.pool.length;
 };
 

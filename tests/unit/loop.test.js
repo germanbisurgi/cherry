@@ -1,31 +1,24 @@
 var cherry = require('../../dist/cherry');
-var game = new cherry.game();
-var loop = game.loop;
+var loop = new cherry.loop();
 var taskExecuted = false;
 
 describe('Loop', function () {
-  it('should have correct inital  values', function () {
+  it('should have correct inital values', function () {
     expect(loop.getDelta()).toBe(0);
     expect(loop.getFps()).toBe(60);
     expect(loop.getFrame()).toBe(0);
     expect(loop.getStatus()).toBe('off');
-    expect(loop.getTasks().size()).toBe(0);
     expect(loop.getTimestep()).toBe(1000 / 60);
+    expect(loop.queuedTasks.getSize()).toBe(0);
   });
-  it('should functional public setters', function () {
+  it('should functional public setters and getters', function () {
     loop.setFps(30);
     loop.setStatus('on');
-    expect(loop.getFps()).toBe(30);
-    expect(loop.getTimestep()).toBe(1000 / 30);
-    expect(loop.getStatus()).toBe('on');
-  });
-  it('should reset to initial values', function () {
-    loop.reset();
     expect(loop.getDelta()).toBe(0);
-    expect(loop.getFps()).toBe(60);
+    expect(loop.getFps()).toBe(30);
     expect(loop.getFrame()).toBe(0);
-    expect(loop.getStatus()).toBe('off');
-    expect(loop.getTasks().size()).toBe(0);
+    expect(loop.getStatus()).toBe('on');
+    expect(loop.getTimestep()).toBe(1000 / 30);
   });
   it('should increment the frame number and update last time on step() ', function () {
     loop.step();

@@ -4,6 +4,10 @@ cherry.state = function (name) {
   this.created = false;
 };
 
+cherry.state.prototype.getName = function () {
+  return this.name;
+};
+
 cherry.state.prototype.preload = function () {};
 
 cherry.state.prototype.create = function () {};
