@@ -98,7 +98,7 @@ cherry.loop.prototype.setStatus = function (status) {
 
 cherry.loop.prototype.start = function () {
   this.setStatus('on');
-  window.requestAnimationFrame(this.run);
+  window.requestAnimationFrame(this.run.bind(this));
 };
 
 cherry.loop.prototype.run = function (timestamp) {
@@ -110,8 +110,8 @@ cherry.loop.prototype.run = function (timestamp) {
     this.delta -= this.timestep;
   }
   if (this.getStatus() === 'on') {
-    window.requestAnimationFrame(this.run);
-  }
+    window.requestAnimationFrame(this.run.bind(this));
+  };
 };
 
 cherry.loop.prototype.step = function () {
