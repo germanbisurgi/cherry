@@ -1,6 +1,8 @@
 cherry.loop = function () {
+  this.accumulator  = 0;
   this.delta = 0;
-  this.lastTime = performance.now();
+  this.lastTime = 0;
+  this.lastStep = 0;
   this.fps = 60;
   this.frame = 0;
   this.status = 'off';
@@ -61,12 +63,14 @@ cherry.loop.prototype.start = function () {
 };
 
 cherry.loop.prototype.run = function (timestamp) {
-  this.delta += timestamp - this.lastTime;
+  this.accumulator += timestamp - this.lastTime;
   this.lastTime = timestamp;
-  while (this.delta >= this.timestep) {
+  while (this.accumulator >= this.timestep) {
     this.frame++;
     this.step();
-    this.delta -= this.timestep;
+    this.delta = timestamp - this.lastStep;
+    this.lastStep = timestamp;
+    this.accumulator -= this.timestep;
   }
   if (this.getStatus() === 'on') {
     window.requestAnimationFrame(this.run.bind(this));
