@@ -15,7 +15,6 @@ window.requestAnimFrame = function () {
 
 cherry.game = function (config) {
   var self = this;
-  console.log(self)
   self.loop = new cherry.loop();
   self.states = new cherry.stateManager(self);
 
@@ -125,7 +124,6 @@ cherry.loop = function (config) {
 
   self.update = function () {};
 };
-
 
 cherry.pool = function (config) {
   this.config = config || {};
