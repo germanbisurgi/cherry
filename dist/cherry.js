@@ -121,6 +121,7 @@ cherry.loop.prototype.step = function () {
 };
 
 cherry.loop.prototype.update = function () {};
+
 cherry.pool = function (config) {
   this.config = config || {};
   this.pool = [];
@@ -244,6 +245,7 @@ cherry.stateManager.prototype.switch = function (stateName) {
     this.current = this.getByName(stateName);
   }.bind(this));
 };
+
 if (typeof module !== 'undefined') {
   module.exports = cherry;
 }
