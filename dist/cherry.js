@@ -13,30 +13,29 @@ window.requestAnimFrame = function () {
   );
 }();
 
-cherry.game = function (config) {
-  var self = this;
-  self.loop = new cherry.loop();
-  self.states = new cherry.stateManager(self);
+cherry.game = function () {
+  this.loop = new cherry.loop();
+  this.states = new cherry.stateManager(this);
 
-  self.loop.update = function () {
-    if (self.states.getCurrent() !== null) {
+  this.loop.update = function () {
+    if (this.states.getCurrent() !== null) {
 
-      if (!self.states.getCurrent().preloaded) {
-        self.states.getCurrent().preloaded = true;
-        self.states.getCurrent().preload(self);
+      if (!this.states.getCurrent().preloaded) {
+        this.states.getCurrent().preloaded = true;
+        this.states.getCurrent().preload(this);
       }
 
-      if (!self.states.getCurrent().created) {
-        self.states.getCurrent().created = true;
-        self.states.getCurrent().create(self);
+      if (!this.states.getCurrent().created) {
+        this.states.getCurrent().created = true;
+        this.states.getCurrent().create(this);
       }
 
-      if (self.states.getCurrent().created) {
-        self.states.getCurrent().update(self);
+      if (this.states.getCurrent().created) {
+        this.states.getCurrent().update(this);
       }
 
     }
-  };
+  }.bind(this);
 
 };
 
