@@ -9,7 +9,7 @@ var Point = function Point (x, y) {
   this.y = y;
 };
 
-var pool = new cherry.pool({
+var pool = new cherry.Pool({
   class: Point,
   reset: function (object, x, y) {
     object.x = x;

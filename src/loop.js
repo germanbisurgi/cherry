@@ -1,4 +1,4 @@
-cherry.loop = function () {
+cherry.Loop = function () {
   this.accumulator  = 0;
   this.delta = 0;
   this.lastTime = 0;
@@ -7,7 +7,7 @@ cherry.loop = function () {
   this.frame = 0;
   this.status = 'off';
   this.timestep = 1000 / this.fps;
-  this.queuedTasks = new cherry.pool({
+  this.queuedTasks = new cherry.Pool({
     class: function (fn) {
       this.execute = fn;
     },
@@ -17,52 +17,52 @@ cherry.loop = function () {
   });
 };
 
-cherry.loop.prototype.executeQueuedTasks = function () {
+cherry.Loop.prototype.executeQueuedTasks = function () {
   this.queuedTasks.each(function (task) {
     task.execute();
     this.queuedTasks.dismiss(task);
   }.bind(this));
 };
 
-cherry.loop.prototype.getDelta = function () {
+cherry.Loop.prototype.getDelta = function () {
   return this.delta;
 };
 
-cherry.loop.prototype.getFps = function () {
+cherry.Loop.prototype.getFps = function () {
   return this.fps;
 };
 
-cherry.loop.prototype.getFrame = function () {
+cherry.Loop.prototype.getFrame = function () {
   return this.frame;
 };
 
-cherry.loop.prototype.getStatus = function () {
+cherry.Loop.prototype.getStatus = function () {
   return this.status;
 };
 
-cherry.loop.prototype.getTimestep = function () {
+cherry.Loop.prototype.getTimestep = function () {
   return this.timestep;
 };
 
-cherry.loop.prototype.nextStep = function (task) {
+cherry.Loop.prototype.nextStep = function (task) {
   this.queuedTasks.use(task);
 };
 
-cherry.loop.prototype.setFps = function (fps) {
+cherry.Loop.prototype.setFps = function (fps) {
   this.fps = fps;
   this.timestep = 1000 / fps;
 };
 
-cherry.loop.prototype.setStatus = function (status) {
+cherry.Loop.prototype.setStatus = function (status) {
   this.status = status;
 };
 
-cherry.loop.prototype.start = function () {
+cherry.Loop.prototype.start = function () {
   this.setStatus('on');
   window.requestAnimationFrame(this.run.bind(this));
 };
 
-cherry.loop.prototype.run = function (timestamp) {
+cherry.Loop.prototype.run = function (timestamp) {
   this.accumulator += timestamp - this.lastTime;
   this.lastTime = timestamp;
   while (this.accumulator >= this.timestep) {
@@ -77,10 +77,10 @@ cherry.loop.prototype.run = function (timestamp) {
   };
 };
 
-cherry.loop.prototype.step = function () {
+cherry.Loop.prototype.step = function () {
   this.frame++;
   this.executeQueuedTasks();
   this.update(this.timestep);
 };
 
-cherry.loop.prototype.update = function () {};
+cherry.Loop.prototype.update = function () {};

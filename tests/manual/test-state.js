@@ -9,7 +9,7 @@ var newLine = function (text) {
   lines++;
 };
 
-var testState = new cherry.state('test');
+var testState = new cherry.State('test');
 
 testState.preload = function (game) {};
 

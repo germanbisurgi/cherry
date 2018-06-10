@@ -1,5 +1,5 @@
 var cherry = require('../../dist/cherry');
-var loop = new cherry.loop();
+var loop = new cherry.Loop();
 var taskExecuted = false;
 
 describe('Loop', function () {
