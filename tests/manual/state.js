@@ -1,5 +1,7 @@
 var canvas = document.querySelector('canvas');
 var ctx = canvas.getContext('2d');
+canvas.height = window.innerHeight;
+canvas.width = window.innerWidth;
 var fontSize = 15;
 var lines = 1;
 ctx.font = fontSize + 'px Arial';
