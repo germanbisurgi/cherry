@@ -1,6 +1,6 @@
 var cherry = require('../../dist/cherry');
-var game = new cherry.game();
-var state = new cherry.state('menu');
+var game = new cherry.Game();
+var state = new cherry.State('menu');
 var stateManager = game.states;
 
 describe('StateManager', function () {

@@ -1,6 +1,6 @@
-cherry.game = function () {
-  this.loop = new cherry.loop();
-  this.states = new cherry.stateManager(this);
+cherry.Game = function () {
+  this.loop = new cherry.Loop();
+  this.states = new cherry.StateManager(this);
 
   this.loop.update = function () {
     if (this.states.getCurrent() !== null) {

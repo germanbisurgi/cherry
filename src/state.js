@@ -1,15 +1,15 @@
-cherry.state = function (name) {
+cherry.State = function (name) {
   this.name = name;
   this.preloaded = false;
   this.created = false;
 };
 
-cherry.state.prototype.getName = function () {
+cherry.State.prototype.getName = function () {
   return this.name;
 };
 
-cherry.state.prototype.preload = function () {};
+cherry.State.prototype.preload = function () {};
 
-cherry.state.prototype.create = function () {};
+cherry.State.prototype.create = function () {};
 
-cherry.state.prototype.update = function () {};
+cherry.State.prototype.update = function () {};

@@ -1,19 +1,19 @@
-cherry.pool = function (config) {
+cherry.Pool = function (config) {
   this.config = config || {};
   this.pool = [];
   this.used = 0;
 };
 
-cherry.pool.prototype.clear = function () {
+cherry.Pool.prototype.clear = function () {
   this.pool = [];
   this.used = 0;
 };
 
-cherry.pool.prototype.getUsed = function () {
+cherry.Pool.prototype.getUsed = function () {
   return this.used;
 };
 
-cherry.pool.prototype.use = function () {
+cherry.Pool.prototype.use = function () {
 
   // get a free object
   var unusedItem = false;
@@ -40,7 +40,7 @@ cherry.pool.prototype.use = function () {
   return item.object;
 };
 
-cherry.pool.prototype.dismiss = function (obj) {
+cherry.Pool.prototype.dismiss = function (obj) {
   // search o and deactivate it
   this.pool.forEach(function (item) {
     if (item.object === obj) {
@@ -50,11 +50,11 @@ cherry.pool.prototype.dismiss = function (obj) {
   this.used--;
 };
 
-cherry.pool.prototype.getSize = function () {
+cherry.Pool.prototype.getSize = function () {
   return this.pool.length;
 };
 
-cherry.pool.prototype.each = function (fn) {
+cherry.Pool.prototype.each = function (fn) {
   var length = this.pool.length;
   var i;
   for (i = 0; i < length; i++) {
