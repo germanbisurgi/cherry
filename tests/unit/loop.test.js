@@ -1,10 +1,10 @@
 var cherry = require('../../dist/cherry');
 var loop = new cherry.Loop();
 var taskExecuted = false;
-// var stepped = false;
-// loop.onStep = function () {
-//   var stepped = true;
-// }
+var stepped = false;
+loop.onStep = function () {
+  stepped = true;
+}
 
 describe('Loop', function () {
   it('should have correct inital values', function () {
@@ -18,7 +18,7 @@ describe('Loop', function () {
   it('should increment the frame number and update last time on step() and execute the onStep() function', function () {
     loop.step();
     expect(loop.frame).toBe(1);
-    // expect(stepped).toBe(true);
+    expect(stepped).toBe(true);
   });
   it('should execute a queued task in the next step', function () {
     loop.nextStep(function () {
