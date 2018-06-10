@@ -2,15 +2,13 @@ cherry.Pool = function (config) {
   this.config = config || {};
   this.pool = [];
   this.used = 0;
+  this.size = 0;
 };
 
 cherry.Pool.prototype.clear = function () {
   this.pool = [];
   this.used = 0;
-};
-
-cherry.Pool.prototype.getUsed = function () {
-  return this.used;
+  this.size = 0;
 };
 
 cherry.Pool.prototype.use = function () {
@@ -37,6 +35,7 @@ cherry.Pool.prototype.use = function () {
   };
   this.pool.push(item);
   this.used++;
+  this.size++;
   return item.object;
 };
 
@@ -48,10 +47,6 @@ cherry.Pool.prototype.dismiss = function (obj) {
     }
   });
   this.used--;
-};
-
-cherry.Pool.prototype.getSize = function () {
-  return this.pool.length;
 };
 
 cherry.Pool.prototype.each = function (fn) {

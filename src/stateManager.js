@@ -18,14 +18,6 @@ cherry.StateManager.prototype.getByName = function (stateName) {
   return output;
 };
 
-cherry.StateManager.prototype.getCurrent = function () {
-  return this.current;
-};
-
-cherry.StateManager.prototype.getStates = function () {
-  return this.states;
-};
-
 cherry.StateManager.prototype.switch = function (stateName) {
   this.game.loop.nextStep(function () {
     this.current = this.getByName(stateName);
