@@ -13,7 +13,7 @@ window.requestAnimFrame = function () {
   );
 }();
 
-cherry.game = function () {
+cherry.Game = function () {
   this.loop = new cherry.Loop();
   this.states = new cherry.StateManager(this);
 

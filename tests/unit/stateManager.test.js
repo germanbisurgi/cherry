@@ -1,5 +1,5 @@
 var cherry = require('../../dist/cherry');
-var game = new cherry.game();
+var game = new cherry.Game();
 var state = new cherry.State('menu');
 var stateManager = game.states;
 

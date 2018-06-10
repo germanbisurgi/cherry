@@ -1,5 +1,5 @@
 window.addEventListener('load', function () {
-  var game = new cherry.game();
+  var game = new cherry.Game();
   game.states.add(testState);
   game.states.switch('test');
   game.loop.start();
