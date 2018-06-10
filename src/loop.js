@@ -24,45 +24,17 @@ cherry.Loop.prototype.executeQueuedTasks = function () {
   }.bind(this));
 };
 
-cherry.Loop.prototype.getDelta = function () {
-  return this.delta;
-};
-
-cherry.Loop.prototype.getFps = function () {
-  return this.fps;
-};
-
-cherry.Loop.prototype.getFrame = function () {
-  return this.frame;
-};
-
-cherry.Loop.prototype.getStatus = function () {
-  return this.status;
-};
-
-cherry.Loop.prototype.getTimestep = function () {
-  return this.timestep;
-};
-
 cherry.Loop.prototype.nextStep = function (task) {
   this.queuedTasks.use(task);
 };
 
-cherry.Loop.prototype.setFps = function (fps) {
-  this.fps = fps;
-  this.timestep = 1000 / fps;
-};
-
-cherry.Loop.prototype.setStatus = function (status) {
-  this.status = status;
-};
-
 cherry.Loop.prototype.start = function () {
-  this.setStatus('on');
+  this.status = 'on';
   window.requestAnimationFrame(this.run.bind(this));
 };
 
 cherry.Loop.prototype.run = function (timestamp) {
+  this.timestep = 1000 / this.fps;
   this.accumulator += timestamp - this.lastTime;
   this.lastTime = timestamp;
   while (this.accumulator >= this.timestep) {
@@ -72,7 +44,7 @@ cherry.Loop.prototype.run = function (timestamp) {
     this.lastStep = timestamp;
     this.accumulator -= this.timestep;
   }
-  if (this.getStatus() === 'on') {
+  if (this.status === 'on') {
     window.requestAnimationFrame(this.run.bind(this));
   };
 };
@@ -80,7 +52,7 @@ cherry.Loop.prototype.run = function (timestamp) {
 cherry.Loop.prototype.step = function () {
   this.frame++;
   this.executeQueuedTasks();
-  this.update(this.timestep);
+  this.onStep();
 };
 
-cherry.Loop.prototype.update = function () {};
+cherry.Loop.prototype.onStep = function () {};

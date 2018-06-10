@@ -33,23 +33,23 @@ cherry.Debug.prototype.print = function (x, y, lines) {
 
 cherry.Game = function () {
   this.loop = new cherry.Loop();
-  this.states = new cherry.StateManager(this);
+  this.state = new cherry.StateManager(this);
 
-  this.loop.update = function () {
-    if (this.states.getCurrent() !== null) {
+  this.loop.onStep = function () {
+    if (this.state.current !== null) {
 
-      if (!this.states.getCurrent().preloaded) {
-        this.states.getCurrent().preloaded = true;
-        this.states.getCurrent().preload(this);
+      if (!this.state.current.preloaded) {
+        this.state.current.preloaded = true;
+        this.state.current.preload(this);
       }
 
-      if (!this.states.getCurrent().created) {
-        this.states.getCurrent().created = true;
-        this.states.getCurrent().create(this);
+      if (!this.state.current.created) {
+        this.state.current.created = true;
+        this.state.current.create(this);
       }
 
-      if (this.states.getCurrent().created) {
-        this.states.getCurrent().update(this);
+      if (this.state.current.created) {
+        this.state.current.update(this);
       }
 
     }
@@ -83,45 +83,17 @@ cherry.Loop.prototype.executeQueuedTasks = function () {
   }.bind(this));
 };
 
-cherry.Loop.prototype.getDelta = function () {
-  return this.delta;
-};
-
-cherry.Loop.prototype.getFps = function () {
-  return this.fps;
-};
-
-cherry.Loop.prototype.getFrame = function () {
-  return this.frame;
-};
-
-cherry.Loop.prototype.getStatus = function () {
-  return this.status;
-};
-
-cherry.Loop.prototype.getTimestep = function () {
-  return this.timestep;
-};
-
 cherry.Loop.prototype.nextStep = function (task) {
   this.queuedTasks.use(task);
 };
 
-cherry.Loop.prototype.setFps = function (fps) {
-  this.fps = fps;
-  this.timestep = 1000 / fps;
-};
-
-cherry.Loop.prototype.setStatus = function (status) {
-  this.status = status;
-};
-
 cherry.Loop.prototype.start = function () {
-  this.setStatus('on');
+  this.status = 'on';
   window.requestAnimationFrame(this.run.bind(this));
 };
 
 cherry.Loop.prototype.run = function (timestamp) {
+  this.timestep = 1000 / this.fps;
   this.accumulator += timestamp - this.lastTime;
   this.lastTime = timestamp;
   while (this.accumulator >= this.timestep) {
@@ -131,7 +103,7 @@ cherry.Loop.prototype.run = function (timestamp) {
     this.lastStep = timestamp;
     this.accumulator -= this.timestep;
   }
-  if (this.getStatus() === 'on') {
+  if (this.status === 'on') {
     window.requestAnimationFrame(this.run.bind(this));
   };
 };
@@ -139,24 +111,22 @@ cherry.Loop.prototype.run = function (timestamp) {
 cherry.Loop.prototype.step = function () {
   this.frame++;
   this.executeQueuedTasks();
-  this.update(this.timestep);
+  this.onStep();
 };
 
-cherry.Loop.prototype.update = function () {};
+cherry.Loop.prototype.onStep = function () {};
 
 cherry.Pool = function (config) {
   this.config = config || {};
   this.pool = [];
   this.used = 0;
+  this.size = 0;
 };
 
 cherry.Pool.prototype.clear = function () {
   this.pool = [];
   this.used = 0;
-};
-
-cherry.Pool.prototype.getUsed = function () {
-  return this.used;
+  this.size = 0;
 };
 
 cherry.Pool.prototype.use = function () {
@@ -183,6 +153,7 @@ cherry.Pool.prototype.use = function () {
   };
   this.pool.push(item);
   this.used++;
+  this.size++;
   return item.object;
 };
 
@@ -194,10 +165,6 @@ cherry.Pool.prototype.dismiss = function (obj) {
     }
   });
   this.used--;
-};
-
-cherry.Pool.prototype.getSize = function () {
-  return this.pool.length;
 };
 
 cherry.Pool.prototype.each = function (fn) {
@@ -214,10 +181,6 @@ cherry.State = function (name) {
   this.name = name;
   this.preloaded = false;
   this.created = false;
-};
-
-cherry.State.prototype.getName = function () {
-  return this.name;
 };
 
 cherry.State.prototype.preload = function () {};
@@ -244,14 +207,6 @@ cherry.StateManager.prototype.getByName = function (stateName) {
     }
   });
   return output;
-};
-
-cherry.StateManager.prototype.getCurrent = function () {
-  return this.current;
-};
-
-cherry.StateManager.prototype.getStates = function () {
-  return this.states;
 };
 
 cherry.StateManager.prototype.switch = function (stateName) {

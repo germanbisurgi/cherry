@@ -11,14 +11,16 @@ window.addEventListener('load', function () {
   state.update = function (game) {
     context.clearRect(0, 0, canvas.width, canvas.height);
     debug.print(10, 10, {
+      state: 'state: ' + game.state.current.name,
       frame: 'frame: ' + game.loop.frame,
       delta: 'delta: ' + game.loop.delta,
+      timestep: 'timestep: ' + game.loop.timestep,
       fps: 'fps: ' + 1 / game.loop.delta * 1000
     });
   };
 
-  game.states.add(state);
-  game.states.switch('test');
+  game.state.add(state);
+  game.state.switch('test');
   game.loop.start();
 
 });
