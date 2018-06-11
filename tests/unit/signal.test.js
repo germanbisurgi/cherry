@@ -17,21 +17,17 @@ var listenerC = function () {
 };
 
 describe('Signal', function () {
-
   it('should have correct inital values', function () {
     expect(signal.listeners.used).toBe(0);
   });
-
   it('should add listener', function () {
     signal.add(listenerA);
     expect(signal.listeners.used).toBe(1);
   });
-
   it('should remove a listener', function () {
     signal.remove(listenerA);
     expect(signal.listeners.used).toBe(0);
   });
-
   it('should dispatch multiple signal with parameters', function () {
     signal.add(listenerA);
     signal.add(listenerB);
@@ -40,12 +36,10 @@ describe('Signal', function () {
     expect(valueA).toBe('aaa');
     expect(valueB).toBe('bbb');
   });
-
   it('should remove all listeners', function () {
     signal.listeners.clear();
     expect(signal.listeners.used).toBe(0);
   });
-
   it('should add one time listener', function () {
     signal.addOnce(listenerC);
     signal.dispatch();
