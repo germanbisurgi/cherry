@@ -66,14 +66,15 @@ cherry.Loop = function () {
   this.frame = 0;
   this.status = 'off';
   this.timestep = 1000 / this.fps;
-  this.queuedTasks = new cherry.Pool({
-    class: function (fn) {
-      this.execute = fn;
-    },
-    reset: function (object, fn) {
-      object.execute = fn;
-    }
+
+  var queuedTask = function (fn) {
+    this.execute = fn;
+  };
+
+  this.queuedTasks = new cherry.Pool(queuedTask, function (object, fn) {
+    object.execute = fn;
   });
+
 };
 
 cherry.Loop.prototype.executeQueuedTasks = function () {
@@ -116,11 +117,12 @@ cherry.Loop.prototype.step = function () {
 
 cherry.Loop.prototype.onStep = function () {};
 
-cherry.Pool = function (config) {
-  this.config = config || {};
+cherry.Pool = function (cls, reset) {
+  this.cls = cls;
   this.pool = [];
-  this.used = 0;
+  this.reset = reset;
   this.size = 0;
+  this.used = 0;
 };
 
 cherry.Pool.prototype.clear = function () {
@@ -141,7 +143,7 @@ cherry.Pool.prototype.use = function () {
 
   // if free object init and reuse it
   if (unusedItem) {
-    this.config.reset.apply(this, [unusedItem.object].concat(Array.prototype.slice.call(arguments)));
+    this.reset.apply(this, [unusedItem.object].concat(Array.prototype.slice.call(arguments)));
     unusedItem.active = true;
     return unusedItem.object;
   }
@@ -149,7 +151,7 @@ cherry.Pool.prototype.use = function () {
   // if no free object creates one
   var item = {
     active: true,
-    object: new (Function.prototype.bind.apply(this.config.class, [null].concat(Array.prototype.slice.call(arguments))))()
+    object: new (Function.prototype.bind.apply(this.cls, [null].concat(Array.prototype.slice.call(arguments))))()
   };
   this.pool.push(item);
   this.used++;
@@ -177,6 +179,32 @@ cherry.Pool.prototype.each = function (fn) {
   }
 };
 
+cherry.Signal = function (context) {
+
+  var Listener = function (fn) {
+    this.execute = fn
+  };
+
+  this.listeners = new cherry.Pool(Listener, function (object, fn) {
+    object.execute = fn;
+  });
+
+};
+
+cherry.Signal.prototype.add = function (fn) {
+  this.listeners.use(fn);
+};
+
+cherry.Signal.prototype.dispatch = function () {
+  var args = Array.prototype.slice.call(arguments);
+  this.listeners.each(function (listener) {
+    listener.execute.apply(listener, args);
+  });
+};
+
+cherry.Signal.prototype.remove = function (listener) {
+  this.listeners.dismiss(listener);
+};
 cherry.State = function (name) {
   this.name = name;
   this.preloaded = false;

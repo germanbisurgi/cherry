@@ -7,14 +7,15 @@ cherry.Loop = function () {
   this.frame = 0;
   this.status = 'off';
   this.timestep = 1000 / this.fps;
-  this.queuedTasks = new cherry.Pool({
-    class: function (fn) {
-      this.execute = fn;
-    },
-    reset: function (object, fn) {
-      object.execute = fn;
-    }
+
+  var queuedTask = function (fn) {
+    this.execute = fn;
+  };
+
+  this.queuedTasks = new cherry.Pool(queuedTask, function (object, fn) {
+    object.execute = fn;
   });
+
 };
 
 cherry.Loop.prototype.executeQueuedTasks = function () {
