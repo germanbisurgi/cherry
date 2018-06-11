@@ -4,7 +4,7 @@ var taskExecuted = false;
 var stepped = false;
 loop.onStep = function () {
   stepped = true;
-}
+};
 
 describe('Loop', function () {
   it('should have correct inital values', function () {

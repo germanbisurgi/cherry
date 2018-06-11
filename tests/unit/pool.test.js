@@ -9,12 +9,9 @@ var Point = function Point (x, y) {
   this.y = y;
 };
 
-var pool = new cherry.Pool({
-  class: Point,
-  reset: function (object, x, y) {
-    object.x = x;
-    object.y = y;
-  }
+var pool = new cherry.Pool(Point, function (object, x, y) {
+  object.x = x;
+  object.y = y;
 });
 
 describe('Pool', function () {
@@ -34,7 +31,7 @@ describe('Pool', function () {
     expect(pool.size).toBe(3);
     expect(pool.used).toBe(2);
   });
-  it('should iterate trhogh active items', function () {
+  it('should iterate through active items', function () {
     pool.each(function (point) {
       objects.push(point);
     });

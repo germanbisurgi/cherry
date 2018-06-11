@@ -1,8 +1,9 @@
-cherry.Pool = function (config) {
-  this.config = config || {};
+cherry.Pool = function (cls, reset) {
+  this.cls = cls;
   this.pool = [];
-  this.used = 0;
+  this.reset = reset;
   this.size = 0;
+  this.used = 0;
 };
 
 cherry.Pool.prototype.clear = function () {
@@ -23,7 +24,7 @@ cherry.Pool.prototype.use = function () {
 
   // if free object init and reuse it
   if (unusedItem) {
-    this.config.reset.apply(this, [unusedItem.object].concat(Array.prototype.slice.call(arguments)));
+    this.reset.apply(this, [unusedItem.object].concat(Array.prototype.slice.call(arguments)));
     unusedItem.active = true;
     return unusedItem.object;
   }
@@ -31,7 +32,7 @@ cherry.Pool.prototype.use = function () {
   // if no free object creates one
   var item = {
     active: true,
-    object: new (Function.prototype.bind.apply(this.config.class, [null].concat(Array.prototype.slice.call(arguments))))()
+    object: new (Function.prototype.bind.apply(this.cls, [null].concat(Array.prototype.slice.call(arguments))))()
   };
   this.pool.push(item);
   this.used++;
