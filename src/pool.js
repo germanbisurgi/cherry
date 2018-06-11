@@ -24,7 +24,8 @@ cherry.Pool.prototype.use = function () {
 
   // if free object init and reuse it
   if (unusedItem) {
-    this.reset.apply(this, [unusedItem.object].concat(Array.prototype.slice.call(arguments)));
+    var args = Array.prototype.slice.call(arguments);
+    this.reset.apply(this.reset, args);
     unusedItem.active = true;
     return unusedItem.object;
   }
