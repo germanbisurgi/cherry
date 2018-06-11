@@ -2,12 +2,18 @@ var cherry = require('../../dist/cherry');
 var signal = new cherry.Signal();
 var valueA = '';
 var valueB = '';
+var valueC = 0;
 
 var listenerA = function (a, b) {
   valueA = a;
 };
+
 var listenerB = function (a, b) {
   valueB = b;
+};
+
+var listenerC = function () {
+  valueC++;
 };
 
 describe('Signal', function () {
@@ -40,31 +46,35 @@ describe('Signal', function () {
     expect(signal.listeners.used).toBe(0);
   });
 
-// it('should add one time listener', function () {
-// expect(signal.getTest()).toBe(null);
-// });
+  it('should add one time listener', function () {
+    signal.addOnce(listenerC);
+    signal.dispatch();
+    expect(valueC).toBe(1);
+    signal.dispatch();
+    expect(valueC).toBe(1);
+  });
 
-// it('should disable', function () {
-// expect(signal.getTest()).toBe(null);
-// });
+  // it('should disable', function () {
+  // expect(signal.getTest()).toBe(null);
+  // });
 
-// it('should enable', function () {
-// expect(signal.getTest()).toBe(null);
-// });
+  // it('should enable', function () {
+  // expect(signal.getTest()).toBe(null);
+  // });
 
-// it('should prevent next listeners on the queue from being executed', function () {
-// expect(signal.getTest()).toBe(null);
-// });
+  // it('should prevent next listeners on the queue from being executed', function () {
+  // expect(signal.getTest()).toBe(null);
+  // });
 
-// it('should execute by priority', function () {
-// expect(signal.getTest()).toBe(null);
-// });
+  // it('should execute by priority', function () {
+  // expect(signal.getTest()).toBe(null);
+  // });
 
-// it('should disable signal binding', function () {
-// expect(signal.getTest()).toBe(null);
-// });
+  // it('should disable signal binding', function () {
+  // expect(signal.getTest()).toBe(null);
+  // });
 
-// it('should enable signal binding', function () {
-// expect(signal.getTest()).toBe(null);
-// });
+  // it('should enable signal binding', function () {
+  // expect(signal.getTest()).toBe(null);
+  // });
 });
