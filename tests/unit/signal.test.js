@@ -10,7 +10,6 @@ var listenerB = function (a, b) {
   valueB = b;
 };
 
-
 describe('Signal', function () {
 
   it('should have correct inital values', function () {

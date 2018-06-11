@@ -182,7 +182,7 @@ cherry.Pool.prototype.each = function (fn) {
 cherry.Signal = function (context) {
 
   var Listener = function (fn) {
-    this.execute = fn
+    this.execute = fn;
   };
 
   this.listeners = new cherry.Pool(Listener, function (object, fn) {
