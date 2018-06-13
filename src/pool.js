@@ -12,6 +12,25 @@ cherry.Pool.prototype.clear = function () {
   this.size = 0;
 };
 
+cherry.Pool.prototype.dismiss = function (obj) {
+  this.pool.forEach(function (item) {
+    if (item.object === obj) {
+      item.active = false;
+    }
+  });
+  this.used--;
+};
+
+cherry.Pool.prototype.each = function (fn) {
+  var length = this.pool.length;
+  var i;
+  for (i = 0; i < length; i++) {
+    if (this.pool[i].active === true) {
+      fn(this.pool[i].object, i);
+    }
+  }
+};
+
 cherry.Pool.prototype.use = function () {
 
   // get a free object
@@ -40,23 +59,4 @@ cherry.Pool.prototype.use = function () {
   this.used++;
   this.size++;
   return item.object;
-};
-
-cherry.Pool.prototype.dismiss = function (obj) {
-  this.pool.forEach(function (item) {
-    if (item.object === obj) {
-      item.active = false;
-    }
-  });
-  this.used--;
-};
-
-cherry.Pool.prototype.each = function (fn) {
-  var length = this.pool.length;
-  var i;
-  for (i = 0; i < length; i++) {
-    if (this.pool[i].active === true) {
-      fn(this.pool[i].object, i);
-    }
-  }
 };
