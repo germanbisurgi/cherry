@@ -27,6 +27,7 @@ cherry.Pool.prototype.use = function () {
     var args = Array.prototype.slice.call(arguments);
     this.reset.apply(this.reset, args);
     unusedItem.active = true;
+    this.used++;
     return unusedItem.object;
   }
 
@@ -42,7 +43,6 @@ cherry.Pool.prototype.use = function () {
 };
 
 cherry.Pool.prototype.dismiss = function (obj) {
-  // search o and deactivate it
   this.pool.forEach(function (item) {
     if (item.object === obj) {
       item.active = false;
