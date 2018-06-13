@@ -131,6 +131,25 @@ cherry.Pool.prototype.clear = function () {
   this.size = 0;
 };
 
+cherry.Pool.prototype.dismiss = function (obj) {
+  this.pool.forEach(function (item) {
+    if (item.object === obj) {
+      item.active = false;
+    }
+  });
+  this.used--;
+};
+
+cherry.Pool.prototype.each = function (fn) {
+  var length = this.pool.length;
+  var i;
+  for (i = 0; i < length; i++) {
+    if (this.pool[i].active === true) {
+      fn(this.pool[i].object, i);
+    }
+  }
+};
+
 cherry.Pool.prototype.use = function () {
 
   // get a free object
@@ -161,67 +180,59 @@ cherry.Pool.prototype.use = function () {
   return item.object;
 };
 
-cherry.Pool.prototype.dismiss = function (obj) {
-  this.pool.forEach(function (item) {
-    if (item.object === obj) {
-      item.active = false;
-    }
-  });
-  this.used--;
-};
-
-cherry.Pool.prototype.each = function (fn) {
-  var length = this.pool.length;
-  var i;
-  for (i = 0; i < length; i++) {
-    if (this.pool[i].active === true) {
-      fn(this.pool[i].object, i);
-    }
-  }
-};
-
 cherry.Signal = function (context) {
 
   this.enabled = true;
 
-  var Listener = function (fn, once) {
-    this.once = once || false;
+  var Listener = function (fn, once, prio) {
     this.execute = fn;
+    this.once = once || false;
+    this.prio = prio || 0;
   };
 
-  this.listeners = new cherry.Pool(Listener, function (object, fn, once) {
-    object.once = once || false;
+  this.listeners = new cherry.Pool(Listener, function (object, fn, once, prio) {
     object.execute = fn;
+    object.once = once || false;
+    object.prio = prio || 0;
   });
 
 };
 
-cherry.Signal.prototype.add = function (fn) {
+cherry.Signal.prototype.add = function (fn, prio) {
   if (this.has(fn)) {
     return false;
   } else {
-    this.listeners.use(fn, false);
+    this.listeners.use(fn, false, prio);
+    this.listeners.pool.sort(function (a, b) {
+      return (b.object.prio - a.object.prio);
+    });
   }
 };
 
-cherry.Signal.prototype.addOnce = function (fn) {
+cherry.Signal.prototype.addOnce = function (fn, prio) {
   if (this.has(fn)) {
     return false;
   } else {
-    this.listeners.use(fn, true);
+    this.listeners.use(fn, true, prio);
+    this.listeners.pool.sort(function (a, b) {
+      return (b.object.prio - a.object.prio);
+    });
   }
 };
 
 cherry.Signal.prototype.dispatch = function () {
-  if (this.enabled === true) {
-    var args = Array.prototype.slice.call(arguments);
-    this.listeners.each(function (listener) {
-      listener.execute.apply(listener, args);
-      if (listener.once === true) {
-        this.listeners.dismiss(listener);
-      }
-    }.bind(this));
+  if (this.enabled === false) {
+    return;
   }
+
+  var args = Array.prototype.slice.call(arguments);
+
+  this.listeners.each(function (listener) {
+    listener.execute.apply(listener, args);
+    if (listener.once === true) {
+      this.listeners.dismiss(listener);
+    }
+  }.bind(this));
 };
 
 cherry.Signal.prototype.has = function (listener) {

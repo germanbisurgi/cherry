@@ -4,6 +4,7 @@ var valueA = '';
 var valueB = '';
 var valueC = 0;
 var valueD = false;
+var valueE = '';
 
 var listenerA = function (a, b) {
   valueA = a;
@@ -19,6 +20,19 @@ var listenerC = function () {
 
 var listenerD = function () {
   valueD = true;
+};
+
+var listener0 = function () {
+  valueE += '0';
+};
+var listener1 = function () {
+  valueE += '1';
+};
+var listener2 = function () {
+  valueE += '2';
+};
+var listener3 = function () {
+  valueE += '3';
 };
 
 describe('Signal', function () {
@@ -76,12 +90,22 @@ describe('Signal', function () {
     expect(signal.listeners.used).toBe(1);
   });
 
-  // it('should prevent next listeners on the queue from being executed', function () {
-  // expect(signal.getTest()).toBe(null);
-  // });
-
-  // it('should execute by priority', function () {
-  // expect(signal.getTest()).toBe(null);
-  // });
+  it('should execute by priority', function () {
+    signal.removeAll();
+    signal.add(listener3, 3);
+    signal.add(listener1, 1);
+    signal.add(listener2, 2);
+    signal.add(listener0);
+    signal.dispatch();
+    expect(valueE).toBe('3210');
+    valueE = '';
+    signal.removeAll();
+    signal.addOnce(listener3, 3);
+    signal.addOnce(listener1, 1);
+    signal.addOnce(listener2, 2);
+    signal.addOnce(listener0);
+    signal.dispatch();
+    expect(valueE).toBe('3210');
+  });
 
 });
