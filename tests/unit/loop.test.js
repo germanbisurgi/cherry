@@ -1,5 +1,5 @@
-var cherry = require('../../dist/cherry');
-var loop = new cherry.Loop();
+var naive = require('../../dist/naive');
+var loop = new naive.Loop();
 var taskExecuted = false;
 var stepped = false;
 loop.onStep = function () {

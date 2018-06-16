@@ -1,6 +1,6 @@
-var cherry = require('../../dist/cherry');
+var naive = require('../../dist/naive');
 var context = {}; // mocks a canvas context object
-var debug = new cherry.Debug(context);
+var debug = new naive.Debug(context);
 
 describe('Debug', function () {
   it('should have correct inital values', function () {

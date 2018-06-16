@@ -1,5 +1,5 @@
-var cherry = require('../../dist/cherry');
-var signal = new cherry.Signal();
+var naive = require('../../dist/naive');
+var signal = new naive.Signal();
 var valueA = '';
 var valueB = '';
 var valueC = 0;

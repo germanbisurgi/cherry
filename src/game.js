@@ -1,6 +1,6 @@
-cherry.Game = function () {
-  this.loop = new cherry.Loop();
-  this.state = new cherry.StateManager(this);
+var Game = function () {
+  this.loop = new naive.Loop();
+  this.state = new naive.StateManager(this);
 
   this.loop.onStep = function () {
     if (this.state.current !== null) {

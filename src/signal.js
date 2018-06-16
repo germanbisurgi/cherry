@@ -1,4 +1,4 @@
-cherry.Signal = function (context) {
+var Signal = function (context) {
 
   this.enabled = true;
 
@@ -8,7 +8,7 @@ cherry.Signal = function (context) {
     this.prio = prio || 0;
   };
 
-  this.listeners = new cherry.Pool(Listener, function (object, fn, once, prio) {
+  this.listeners = new naive.Pool(Listener, function (object, fn, once, prio) {
     object.execute = fn;
     object.once = once || false;
     object.prio = prio || 0;
@@ -16,7 +16,7 @@ cherry.Signal = function (context) {
 
 };
 
-cherry.Signal.prototype.add = function (fn, prio) {
+Signal.prototype.add = function (fn, prio) {
   if (this.has(fn)) {
     return false;
   } else {
@@ -27,7 +27,7 @@ cherry.Signal.prototype.add = function (fn, prio) {
   }
 };
 
-cherry.Signal.prototype.addOnce = function (fn, prio) {
+Signal.prototype.addOnce = function (fn, prio) {
   if (this.has(fn)) {
     return false;
   } else {
@@ -38,7 +38,7 @@ cherry.Signal.prototype.addOnce = function (fn, prio) {
   }
 };
 
-cherry.Signal.prototype.dispatch = function () {
+Signal.prototype.dispatch = function () {
   if (this.enabled === false) {
     return;
   }
@@ -53,7 +53,7 @@ cherry.Signal.prototype.dispatch = function () {
   }.bind(this));
 };
 
-cherry.Signal.prototype.has = function (listener) {
+Signal.prototype.has = function (listener) {
   var output = false;
   this.listeners.each(function (activeListener) {
     if (activeListener.execute === listener) {
@@ -63,7 +63,7 @@ cherry.Signal.prototype.has = function (listener) {
   return output;
 };
 
-cherry.Signal.prototype.remove = function (listener) {
+Signal.prototype.remove = function (listener) {
   this.listeners.each(function (activeListener) {
     if (activeListener.execute === listener) {
       this.listeners.dismiss(activeListener);
@@ -71,6 +71,6 @@ cherry.Signal.prototype.remove = function (listener) {
   }.bind(this));
 };
 
-cherry.Signal.prototype.removeAll = function () {
+Signal.prototype.removeAll = function () {
   this.listeners.clear();
 };

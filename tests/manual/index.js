@@ -2,9 +2,9 @@ window.addEventListener('load', function () {
 
   var canvas = document.querySelector('canvas');
   var context = canvas.getContext('2d');
-  var game = new cherry.Game();
-  var state = new cherry.State('test');
-  var debug = new cherry.Debug(context);
+  var game = new naive.Game();
+  var state = new naive.State('test');
+  var debug = new naive.Debug(context);
 
   state.preload = function (game) {};
   state.create = function (game) {};
