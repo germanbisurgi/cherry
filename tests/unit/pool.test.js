@@ -1,4 +1,4 @@
-var cherry = require('../../dist/cherry');
+var naive = require('../../dist/naive');
 var pointA;
 var pointB;
 var pointC;
@@ -9,7 +9,7 @@ var Point = function Point (x, y) {
   this.y = y;
 };
 
-var pool = new cherry.Pool(Point, function (object, x, y) {
+var pool = new naive.Pool(Point, function (object, x, y) {
   object.x = x;
   object.y = y;
 });

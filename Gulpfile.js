@@ -1,7 +1,6 @@
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 var scripts = [
-  './src/intro.js',
   './src/polyfills.js',
   './src/debug.js',
   './src/game.js',
@@ -15,7 +14,7 @@ var scripts = [
 
 gulp.task('concat', function () {
   gulp.src(scripts)
-    .pipe(concat('cherry.js'))
+    .pipe(concat('naive.js'))
     .pipe(gulp.dest('./dist'));
 });
 

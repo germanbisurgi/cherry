@@ -1,4 +1,4 @@
-cherry.Pool = function (cls, reset) {
+var Pool = function (cls, reset) {
   this.cls = cls;
   this.pool = [];
   this.reset = reset;
@@ -6,13 +6,13 @@ cherry.Pool = function (cls, reset) {
   this.used = 0;
 };
 
-cherry.Pool.prototype.clear = function () {
+Pool.prototype.clear = function () {
   this.pool = [];
   this.used = 0;
   this.size = 0;
 };
 
-cherry.Pool.prototype.dismiss = function (obj) {
+Pool.prototype.dismiss = function (obj) {
   this.pool.forEach(function (item) {
     if (item.object === obj) {
       item.active = false;
@@ -21,7 +21,7 @@ cherry.Pool.prototype.dismiss = function (obj) {
   this.used--;
 };
 
-cherry.Pool.prototype.each = function (fn) {
+Pool.prototype.each = function (fn) {
   var length = this.pool.length;
   var i;
   for (i = 0; i < length; i++) {
@@ -31,7 +31,7 @@ cherry.Pool.prototype.each = function (fn) {
   }
 };
 
-cherry.Pool.prototype.use = function () {
+Pool.prototype.use = function () {
 
   // get a free object
   var unusedItem = false;

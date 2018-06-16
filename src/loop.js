@@ -1,4 +1,4 @@
-cherry.Loop = function () {
+var Loop = function () {
   this.accumulator  = 0;
   this.delta = 0;
   this.lastTime = 0;
@@ -12,29 +12,29 @@ cherry.Loop = function () {
     this.execute = fn;
   };
 
-  this.queuedTasks = new cherry.Pool(queuedTask, function (object, fn) {
+  this.queuedTasks = new naive.Pool(queuedTask, function (object, fn) {
     object.execute = fn;
   });
 
 };
 
-cherry.Loop.prototype.executeQueuedTasks = function () {
+Loop.prototype.executeQueuedTasks = function () {
   this.queuedTasks.each(function (task) {
     task.execute();
     this.queuedTasks.dismiss(task);
   }.bind(this));
 };
 
-cherry.Loop.prototype.nextStep = function (task) {
+Loop.prototype.nextStep = function (task) {
   this.queuedTasks.use(task);
 };
 
-cherry.Loop.prototype.start = function () {
+Loop.prototype.start = function () {
   this.status = 'on';
   window.requestAnimationFrame(this.run.bind(this));
 };
 
-cherry.Loop.prototype.run = function (timestamp) {
+Loop.prototype.run = function (timestamp) {
   this.timestep = 1000 / this.fps;
   this.accumulator += timestamp - this.lastTime;
   this.lastTime = timestamp;
@@ -50,10 +50,10 @@ cherry.Loop.prototype.run = function (timestamp) {
   };
 };
 
-cherry.Loop.prototype.step = function () {
+Loop.prototype.step = function () {
   this.frame++;
   this.executeQueuedTasks();
   this.onStep();
 };
 
-cherry.Loop.prototype.onStep = function () {};
+Loop.prototype.onStep = function () {};

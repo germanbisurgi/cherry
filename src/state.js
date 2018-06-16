@@ -1,11 +1,11 @@
-cherry.State = function (name) {
+var State = function (name) {
   this.name = name;
   this.preloaded = false;
   this.created = false;
 };
 
-cherry.State.prototype.preload = function () {};
+State.prototype.preload = function () {};
 
-cherry.State.prototype.create = function () {};
+State.prototype.create = function () {};
 
-cherry.State.prototype.update = function () {};
+State.prototype.update = function () {};

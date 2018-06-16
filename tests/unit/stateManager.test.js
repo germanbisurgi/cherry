@@ -1,6 +1,6 @@
-var cherry = require('../../dist/cherry');
-var game = new cherry.Game();
-var state = new cherry.State('menu');
+var naive = require('../../dist/naive');
+var game = new naive.Game();
+var state = new naive.State('menu');
 var stateManager = game.state;
 
 describe('StateManager', function () {

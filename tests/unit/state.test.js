@@ -1,5 +1,5 @@
-var cherry = require('../../dist/cherry');
-var state = new cherry.State('menu');
+var naive = require('../../dist/naive');
+var state = new naive.State('menu');
 
 describe('State', function () {
   it('should have correct inital values', function () {

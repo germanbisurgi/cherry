@@ -1,5 +1,3 @@
-var cherry = {};
-
 window.requestAnimFrame = function () {
   return (
     window.requestAnimationFrame       ||
@@ -13,13 +11,13 @@ window.requestAnimFrame = function () {
   );
 }();
 
-cherry.Debug = function (context) {
+var Debug = function (context) {
   this.context = context;
   this.fontSize = 15;
   this.line = 1;
 };
 
-cherry.Debug.prototype.print = function (x, y, lines) {
+Debug.prototype.print = function (x, y, lines) {
   this.context.save();
   this.context.font = this.fontSize + 'px monospace';
   this.context.textAlign = 'start';
@@ -31,9 +29,9 @@ cherry.Debug.prototype.print = function (x, y, lines) {
   this.line = 1;
 };
 
-cherry.Game = function () {
-  this.loop = new cherry.Loop();
-  this.state = new cherry.StateManager(this);
+var Game = function () {
+  this.loop = new naive.Loop();
+  this.state = new naive.StateManager(this);
 
   this.loop.onStep = function () {
     if (this.state.current !== null) {
@@ -57,7 +55,7 @@ cherry.Game = function () {
 
 };
 
-cherry.Loop = function () {
+var Loop = function () {
   this.accumulator  = 0;
   this.delta = 0;
   this.lastTime = 0;
@@ -71,29 +69,29 @@ cherry.Loop = function () {
     this.execute = fn;
   };
 
-  this.queuedTasks = new cherry.Pool(queuedTask, function (object, fn) {
+  this.queuedTasks = new naive.Pool(queuedTask, function (object, fn) {
     object.execute = fn;
   });
 
 };
 
-cherry.Loop.prototype.executeQueuedTasks = function () {
+Loop.prototype.executeQueuedTasks = function () {
   this.queuedTasks.each(function (task) {
     task.execute();
     this.queuedTasks.dismiss(task);
   }.bind(this));
 };
 
-cherry.Loop.prototype.nextStep = function (task) {
+Loop.prototype.nextStep = function (task) {
   this.queuedTasks.use(task);
 };
 
-cherry.Loop.prototype.start = function () {
+Loop.prototype.start = function () {
   this.status = 'on';
   window.requestAnimationFrame(this.run.bind(this));
 };
 
-cherry.Loop.prototype.run = function (timestamp) {
+Loop.prototype.run = function (timestamp) {
   this.timestep = 1000 / this.fps;
   this.accumulator += timestamp - this.lastTime;
   this.lastTime = timestamp;
@@ -109,15 +107,15 @@ cherry.Loop.prototype.run = function (timestamp) {
   };
 };
 
-cherry.Loop.prototype.step = function () {
+Loop.prototype.step = function () {
   this.frame++;
   this.executeQueuedTasks();
   this.onStep();
 };
 
-cherry.Loop.prototype.onStep = function () {};
+Loop.prototype.onStep = function () {};
 
-cherry.Pool = function (cls, reset) {
+var Pool = function (cls, reset) {
   this.cls = cls;
   this.pool = [];
   this.reset = reset;
@@ -125,13 +123,13 @@ cherry.Pool = function (cls, reset) {
   this.used = 0;
 };
 
-cherry.Pool.prototype.clear = function () {
+Pool.prototype.clear = function () {
   this.pool = [];
   this.used = 0;
   this.size = 0;
 };
 
-cherry.Pool.prototype.dismiss = function (obj) {
+Pool.prototype.dismiss = function (obj) {
   this.pool.forEach(function (item) {
     if (item.object === obj) {
       item.active = false;
@@ -140,7 +138,7 @@ cherry.Pool.prototype.dismiss = function (obj) {
   this.used--;
 };
 
-cherry.Pool.prototype.each = function (fn) {
+Pool.prototype.each = function (fn) {
   var length = this.pool.length;
   var i;
   for (i = 0; i < length; i++) {
@@ -150,7 +148,7 @@ cherry.Pool.prototype.each = function (fn) {
   }
 };
 
-cherry.Pool.prototype.use = function () {
+Pool.prototype.use = function () {
 
   // get a free object
   var unusedItem = false;
@@ -180,7 +178,7 @@ cherry.Pool.prototype.use = function () {
   return item.object;
 };
 
-cherry.Signal = function (context) {
+var Signal = function (context) {
 
   this.enabled = true;
 
@@ -190,7 +188,7 @@ cherry.Signal = function (context) {
     this.prio = prio || 0;
   };
 
-  this.listeners = new cherry.Pool(Listener, function (object, fn, once, prio) {
+  this.listeners = new naive.Pool(Listener, function (object, fn, once, prio) {
     object.execute = fn;
     object.once = once || false;
     object.prio = prio || 0;
@@ -198,7 +196,7 @@ cherry.Signal = function (context) {
 
 };
 
-cherry.Signal.prototype.add = function (fn, prio) {
+Signal.prototype.add = function (fn, prio) {
   if (this.has(fn)) {
     return false;
   } else {
@@ -209,7 +207,7 @@ cherry.Signal.prototype.add = function (fn, prio) {
   }
 };
 
-cherry.Signal.prototype.addOnce = function (fn, prio) {
+Signal.prototype.addOnce = function (fn, prio) {
   if (this.has(fn)) {
     return false;
   } else {
@@ -220,7 +218,7 @@ cherry.Signal.prototype.addOnce = function (fn, prio) {
   }
 };
 
-cherry.Signal.prototype.dispatch = function () {
+Signal.prototype.dispatch = function () {
   if (this.enabled === false) {
     return;
   }
@@ -235,7 +233,7 @@ cherry.Signal.prototype.dispatch = function () {
   }.bind(this));
 };
 
-cherry.Signal.prototype.has = function (listener) {
+Signal.prototype.has = function (listener) {
   var output = false;
   this.listeners.each(function (activeListener) {
     if (activeListener.execute === listener) {
@@ -245,7 +243,7 @@ cherry.Signal.prototype.has = function (listener) {
   return output;
 };
 
-cherry.Signal.prototype.remove = function (listener) {
+Signal.prototype.remove = function (listener) {
   this.listeners.each(function (activeListener) {
     if (activeListener.execute === listener) {
       this.listeners.dismiss(activeListener);
@@ -253,33 +251,33 @@ cherry.Signal.prototype.remove = function (listener) {
   }.bind(this));
 };
 
-cherry.Signal.prototype.removeAll = function () {
+Signal.prototype.removeAll = function () {
   this.listeners.clear();
 };
 
-cherry.State = function (name) {
+var State = function (name) {
   this.name = name;
   this.preloaded = false;
   this.created = false;
 };
 
-cherry.State.prototype.preload = function () {};
+State.prototype.preload = function () {};
 
-cherry.State.prototype.create = function () {};
+State.prototype.create = function () {};
 
-cherry.State.prototype.update = function () {};
+State.prototype.update = function () {};
 
-cherry.StateManager = function (game) {
+var StateManager = function (game) {
   this.current = null;
   this.game = game;
   this.states = [];
 };
 
-cherry.StateManager.prototype.add = function (state) {
+StateManager.prototype.add = function (state) {
   this.states.push(state);
 };
 
-cherry.StateManager.prototype.getByName = function (stateName) {
+StateManager.prototype.getByName = function (stateName) {
   var output = false;
   this.states.forEach(function (state) {
     if (state.name === stateName) {
@@ -289,12 +287,22 @@ cherry.StateManager.prototype.getByName = function (stateName) {
   return output;
 };
 
-cherry.StateManager.prototype.switch = function (stateName) {
+StateManager.prototype.switch = function (stateName) {
   this.game.loop.nextStep(function () {
     this.current = this.getByName(stateName);
   }.bind(this));
 };
 
+var naive = {
+  Debug: Debug,
+  Game: Game,
+  Loop: Loop,
+  Pool: Pool,
+  Signal: Signal,
+  State: State,
+  StateManager: StateManager
+}
+
 if (typeof module !== 'undefined') {
-  module.exports = cherry;
+  module.exports = naive;
 }
