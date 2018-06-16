@@ -301,7 +301,7 @@ var naive = {
   Signal: Signal,
   State: State,
   StateManager: StateManager
-}
+};
 
 if (typeof module !== 'undefined') {
   module.exports = naive;
