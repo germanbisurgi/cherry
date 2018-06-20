@@ -4,6 +4,7 @@ var scripts = [
   './src/polyfills.js',
   './src/debug.js',
   './src/game.js',
+  './src/loader.js',
   './src/loop.js',
   './src/pool.js',
   './src/signal.js',

@@ -1,13 +1,13 @@
 {
-  "name": "comp",
-  "version": "1.0.0",
+  "name": "naive",
+  "version": "0.1.0",
   "description": "",
-  "main": "jest.config.js",
-  "directories": {
-    "test": "tests"
-  },
+  "main": "dist/naive.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "watch": "gulp watch",
+    "server": "live-server .",
+    "lint": "eslint . --fix",
+    "jest": "jest"
   },
   "repository": {
     "type": "git",
@@ -21,7 +21,11 @@
   },
   "homepage": "https://github.com/germanbisurgi/comp#readme",
   "devDependencies": {
+    "eslint": "^4.19.1",
     "gulp": "^3.9.1",
-    "gulp-concat": "^2.6.1"
+    "gulp-concat": "^2.6.1",
+    "jest": "^23.1.0",
+    "live-server": "^1.2.0",
+    "w3c-xmlhttprequest": "^2.1.2"
   }
 }

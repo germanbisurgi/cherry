@@ -1,4 +1,5 @@
 var Game = function () {
+  this.loader = new naive.Loader();
   this.loop = new naive.Loop();
   this.state = new naive.StateManager(this);
 
