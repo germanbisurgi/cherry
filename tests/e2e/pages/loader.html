@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DUMMY</title>
+  <script src="../../../dist/naive.js"></script>
+</head>
+<body>
+
+<button class="load-json">load JSON</button>
+<button class="load-image">load Image</button>
+<button class="load-audio">load Audio</button>
+<div class="value"></div>
+
+<script>
+  window.addEventListener('load', function () {
+    var ready = document.createElement('p');
+    ready.setAttribute('class', 'ready');
+    ready.innerText = 'READY';
+    document.body.appendChild(ready);
+  });
+
+  var value = document.querySelector('.value');
+  var loadJSON = document.querySelector('.load-json');
+  var loadImage = document.querySelector('.load-image');
+  var loadAudio = document.querySelector('.load-audio');
+  var loader = new naive.Loader();
+  var promise = null;
+
+  loadJSON.addEventListener('click', function () {
+    promise = loader.loadJSON('../assets/json/test.json');
+    promise.then(function (json) {
+      value.innerText = JSON.stringify(json);
+    });
+  });
+
+  loadImage.addEventListener('click', function () {
+    promise = loader.loadImage('../assets/images/brick.png');
+    promise.then(function (img) {
+      img.setAttribute('class', 'brick');
+      document.body.appendChild(img);
+    });
+  });
+
+  loadAudio.addEventListener('click', function () {
+    promise = loader.loadAudio('../assets/audio/tic.mp3');
+    promise.then(function (audio) {
+      audio.setAttribute('class', 'tic');
+      audio.setAttribute('controls', 'true');
+      document.body.appendChild(audio);
+    });
+  });
+</script>
+
+</body>
+</html>
