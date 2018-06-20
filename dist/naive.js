@@ -78,7 +78,7 @@ Loader.prototype.loadAudio = function (url) {
 };
 
 Loader.prototype.loadAudioBuffer = function (url) {
-  var AudioContext = new (window.AudioContext || window.webkitAudioContext);
+  var AudioContext = new (window.AudioContext || window.webkitAudioContext)();
   return new Promise(function (resolve, reject) {
     this.xhr.open('GET', url, true);
     this.xhr.responseType = 'arraybuffer';

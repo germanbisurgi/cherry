@@ -24,8 +24,7 @@ window.addEventListener('load', function () {
   game.state.switch('test');
   // game.loop.start();
 
-
-  /*var json = game.loader.loadJSON('./../assets/json/test.json');
+  /* var json = game.loader.loadJSON('./../assets/json/test.json');
   json.then(function (response) {
     console.log(response.name);
   });
@@ -43,7 +42,6 @@ window.addEventListener('load', function () {
   var audioBuffer = game.loader.loadAudioBuffer('./../assets/audio/tic.mp3');
   audioBuffer.then(function (response) {
     console.log(response);
-  });*/
-
+  }); */
 
 });
