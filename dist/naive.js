@@ -62,13 +62,41 @@ var Loader = function () {
   this.queue = [];
   this.cache = [];
   this.xhr = new window.XMLHttpRequest();
+  this.onAssetLoaded = new naive.Signal();
+};
+
+Loader.prototype.addAudio = function (name, url) {
+  this.queue.push({
+    name: name,
+    url: url,
+    type: 'audio'
+  });
+};
+
+Loader.prototype.addImage = function (name, url) {
+  this.queue.push({
+    name: name,
+    url: url,
+    type: 'image'
+  });
+};
+
+Loader.prototype.addJSON = function (name, url) {
+  this.queue.push({
+    name: name,
+    url: url,
+    type: 'json'
+  });
 };
 
 Loader.prototype.loadAudio = function (url) {
+  var self = this;
   return new Promise(function (resolve, reject) {
     var audio = new Audio();
     audio.oncanplaythrough = function () {
       resolve(audio);
+      self.cache.push(audio); // ACHTUNG
+      self.onAssetLoaded.dispatch();
     };
     audio.onerror = function () {
       reject('error');
@@ -97,10 +125,13 @@ Loader.prototype.loadAudioBuffer = function (url) {
 };
 
 Loader.prototype.loadImage = function (url) {
+  var self = this;
   return new Promise(function (resolve, reject) {
     var image = new Image();
     image.onload = function () {
       resolve(image);
+      self.cache.push(image); // ACHTUNG
+      self.onAssetLoaded.dispatch();
     };
     image.onerror = function () {
       reject('error');
@@ -110,11 +141,15 @@ Loader.prototype.loadImage = function (url) {
 };
 
 Loader.prototype.loadJSON = function (url) {
+  var self = this;
   return new Promise(function (resolve, reject) {
     this.xhr.open('GET', url, true);
     this.xhr.onload = function () {
       if (this.status === 200) {
-        resolve(JSON.parse(this.response));
+        var parsedJSON = JSON.parse(this.response);
+        resolve(parsedJSON);
+        self.cache.push(parsedJSON); // ACHTUNG
+        self.onAssetLoaded.dispatch();
       } else {
         reject(this.statusText);
       }
