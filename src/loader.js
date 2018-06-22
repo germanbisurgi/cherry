@@ -64,7 +64,6 @@ Loader.prototype.loadAudio = function (asset) {
     audio.onerror = function () {
       reject('The asset with name ' + asset.name + ' and url ' + asset.url + ' could not be loaded');
       self.errors++;
-      self.onLoad.dispatch();
       self.hasCompleted();
     };
     audio.src = asset.url;
@@ -93,14 +92,12 @@ Loader.prototype.loadAudioBuffer = function (asset) {
       }, function () {
         reject('The asset with name ' + asset.name + ' and url ' + asset.url + ' could not be loaded');
         self.errors++;
-        self.onLoad.dispatch();
         self.hasCompleted();
       });
     };
     xhr.onerror = function () {
       reject('The asset with name ' + asset.name + ' and url ' + asset.url + ' could not be loaded');
       self.errors++;
-      self.onLoad.dispatch();
       self.hasCompleted();
     };
     xhr.send();
@@ -126,7 +123,6 @@ Loader.prototype.loadImage = function (asset) {
     image.onerror = function () {
       reject('The asset with name ' + asset.name + ' and url ' + asset.url + ' could not be loaded');
       self.errors++;
-      self.onLoad.dispatch();
       self.hasCompleted();
     };
     image.src = asset.url;
@@ -153,14 +149,12 @@ Loader.prototype.loadJSON = function (asset) {
       } else {
         reject('The asset with name ' + asset.name + ' and url ' + asset.url + ' could not be loaded');
         self.errors++;
-        self.onLoad.dispatch();
         self.hasCompleted();
       }
     };
     xhr.onerror = function () {
       reject('The asset with name ' + asset.name + ' and url ' + asset.url + ' could not be loaded');
       self.errors++;
-      self.onLoad.dispatch();
       self.hasCompleted();
     };
     xhr.send();

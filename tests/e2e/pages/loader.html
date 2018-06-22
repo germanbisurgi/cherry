@@ -149,19 +149,19 @@
 
   loader.onLoad.add(function (asset) {
     refresh();
-    if (asset.type === 'audio') {
-      asset.content.setAttribute('controls', 'true');
-      audioContainer.appendChild(asset.content);
-    }
-    if (asset.type === 'audio-buffer') {
-      audioContainer.innerHTML += '<p>AudioBuffer</p>';
-    }
-    if (asset.type === 'image') {
-      imagesContainer.appendChild(asset.content);
-    }
-    if (asset.type === 'json') {
-      JSONContainer.innerText += JSON.stringify(asset.content);
-    }
+      if (asset.type === 'audio') {
+        asset.content.setAttribute('controls', 'true');
+        audioContainer.appendChild(asset.content);
+      }
+      if (asset.type === 'audio-buffer') {
+        audioContainer.innerHTML += '<p>AudioBuffer</p>';
+      }
+      if (asset.type === 'image') {
+        imagesContainer.appendChild(asset.content);
+      }
+      if (asset.type === 'json') {
+        JSONContainer.innerText += JSON.stringify(asset.content);
+      }
   });
 
   loader.onComplete.add(function () {
