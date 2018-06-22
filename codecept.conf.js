@@ -7,7 +7,7 @@ exports.config = {
   helpers: {
     Nightmare: {
       url: 'http://127.0.0.1:9191/tests/e2e/pages/',
-      show: true,
+      show: false,
       restart: true
     }
   }
