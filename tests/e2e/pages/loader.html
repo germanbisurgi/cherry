@@ -53,6 +53,7 @@
 
     <div class="flex-sm-4">
       <div class="audio-container"></div>
+      <div class="audio-buffer-container"></div>
       <div class="images-container"></div>
       <div class="json-container"></div>
     </div>
@@ -88,6 +89,7 @@
   // debug
   var queueItems = document.querySelector('.queue-items');
   var audioContainer = document.querySelector('.audio-container');
+  var audioBufferContainer = document.querySelector('.audio-buffer-container');
   var imagesContainer = document.querySelector('.images-container');
   var JSONContainer = document.querySelector('.json-container');
   var consoleLog = document.querySelector('.console-log');
@@ -147,7 +149,19 @@
 
   loader.onLoad.add(function (asset) {
     refresh();
-    // console.log(asset);
+    if (asset.type === 'audio') {
+      asset.content.setAttribute('controls', 'true');
+      audioContainer.appendChild(asset.content);
+    }
+    if (asset.type === 'audio-buffer') {
+      audioContainer.innerHTML += '<p>AudioBuffer</p>';
+    }
+    if (asset.type === 'image') {
+      imagesContainer.appendChild(asset.content);
+    }
+    if (asset.type === 'json') {
+      JSONContainer.innerText += JSON.stringify(asset.content);
+    }
   });
 
   loader.onComplete.add(function () {
