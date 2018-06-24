@@ -107,119 +107,101 @@ Loader.prototype.addJSON = function (name, url) {
 
 Loader.prototype.loadAudio = function (asset) {
   var self = this;
-  return new Promise(function (resolve, reject) {
-    var audio = new Audio();
-    audio.oncanplaythrough = function () {
-      var cacheAsset = {
-        name: asset.name,
-        content: audio,
-        type: 'audio'
-      };
-      resolve(cacheAsset);
-      self.cache.push(cacheAsset);
-      self.success++;
-      self.onLoad.dispatch(cacheAsset);
-      self.hasCompleted();
-      audio.oncanplaythrough = null;
+  var audio = new Audio();
+  audio.oncanplaythrough = function () {
+    var cacheAsset = {
+      name: asset.name,
+      content: audio,
+      type: 'audio'
     };
-    audio.onerror = function () {
-      reject('The asset with name ' + asset.name + ' and url ' + asset.url + ' could not be loaded');
-      self.errors++;
-      self.hasCompleted();
-    };
-    audio.src = asset.url;
-  });
+    self.cache.push(cacheAsset);
+    self.success++;
+    self.onLoad.dispatch(cacheAsset);
+    self.hasCompleted();
+    audio.oncanplaythrough = null;
+  };
+  audio.onerror = function () {
+    self.errors++;
+    self.hasCompleted();
+  };
+  audio.src = asset.url;
 };
 
 Loader.prototype.loadAudioBuffer = function (asset) {
   var self = this;
   var xhr = new window.XMLHttpRequest();
   var AudioContext = new (window.AudioContext || window.webkitAudioContext)();
-  return new Promise(function (resolve, reject) {
-    xhr.open('GET', asset.url, true);
-    xhr.responseType = 'arraybuffer';
-    xhr.onload = function () {
-      AudioContext.decodeAudioData(this.response, function (buffer) {
-        var cacheAsset = {
-          name: asset.name,
-          content: buffer,
-          type: 'audio-buffer'
-        };
-        resolve(cacheAsset);
-        self.cache.push(cacheAsset);
-        self.success++;
-        self.onLoad.dispatch(cacheAsset);
-        self.hasCompleted();
-      }, function () {
-        reject('The asset with name ' + asset.name + ' and url ' + asset.url + ' could not be loaded');
-        self.errors++;
-        self.hasCompleted();
-      });
-    };
-    xhr.onerror = function () {
-      reject('The asset with name ' + asset.name + ' and url ' + asset.url + ' could not be loaded');
-      self.errors++;
-      self.hasCompleted();
-    };
-    xhr.send();
-  }.bind(this));
-};
-
-Loader.prototype.loadImage = function (asset) {
-  var self = this;
-  return new Promise(function (resolve, reject) {
-    var image = new Image();
-    image.onload = function () {
+  xhr.open('GET', asset.url, true);
+  xhr.responseType = 'arraybuffer';
+  xhr.onload = function () {
+    AudioContext.decodeAudioData(this.response, function (buffer) {
       var cacheAsset = {
         name: asset.name,
-        content: image,
-        type: 'image'
+        content: buffer,
+        type: 'audio-buffer'
       };
-      resolve(cacheAsset);
       self.cache.push(cacheAsset);
       self.success++;
       self.onLoad.dispatch(cacheAsset);
       self.hasCompleted();
-    };
-    image.onerror = function () {
-      reject('The asset with name ' + asset.name + ' and url ' + asset.url + ' could not be loaded');
+    }, function () {
       self.errors++;
       self.hasCompleted();
+    });
+  };
+  xhr.onerror = function () {
+    self.errors++;
+    self.hasCompleted();
+  };
+  xhr.send();
+};
+
+Loader.prototype.loadImage = function (asset) {
+  var self = this;
+  var image = new Image();
+  image.onload = function () {
+    var cacheAsset = {
+      name: asset.name,
+      content: image,
+      type: 'image'
     };
-    image.src = asset.url;
-  });
+    self.cache.push(cacheAsset);
+    self.success++;
+    self.onLoad.dispatch(cacheAsset);
+    self.hasCompleted();
+  };
+  image.onerror = function () {
+    self.errors++;
+    self.hasCompleted();
+  };
+  image.src = asset.url;
 };
 
 Loader.prototype.loadJSON = function (asset) {
   var xhr = new window.XMLHttpRequest();
   var self = this;
-  return new Promise(function (resolve, reject) {
-    xhr.open('GET', asset.url, true);
-    xhr.onload = function () {
-      if (this.status === 200) {
-        var cacheAsset = {
-          name: asset.name,
-          content: JSON.parse(this.response),
-          type: 'json'
-        };
-        resolve(cacheAsset);
-        self.cache.push(cacheAsset);
-        self.success++;
-        self.onLoad.dispatch(cacheAsset);
-        self.hasCompleted();
-      } else {
-        reject('The asset with name ' + asset.name + ' and url ' + asset.url + ' could not be loaded');
-        self.errors++;
-        self.hasCompleted();
-      }
-    };
-    xhr.onerror = function () {
-      reject('The asset with name ' + asset.name + ' and url ' + asset.url + ' could not be loaded');
+  xhr.open('GET', asset.url, true);
+  xhr.onload = function () {
+    if (this.status === 200) {
+      var cacheAsset = {
+        name: asset.name,
+        content: JSON.parse(this.response),
+        type: 'json'
+      };
+      self.cache.push(cacheAsset);
+      self.success++;
+      self.onLoad.dispatch(cacheAsset);
+      self.hasCompleted();
+    } else {
       self.errors++;
       self.hasCompleted();
-    };
-    xhr.send();
-  }.bind(this));
+    }
+  };
+  xhr.onerror = function () {
+    self.errors++;
+    self.hasCompleted();
+  };
+  xhr.send();
 };
 
 Loader.prototype.get = function (type, name) {
