@@ -9,8 +9,10 @@ Debug.prototype.print = function (x, y, lines) {
   this.context.font = this.fontSize + 'px monospace';
   this.context.textAlign = 'start';
   for (var prop in lines) {
-    this.context.fillText(lines[prop], x, y + (this.line * this.fontSize));
-    this.line++;
+    if (lines.hasOwnProperty(prop)) {
+      this.context.fillText(lines[prop], x, y + (this.line * this.fontSize));
+      this.line++;
+    }
   }
   this.context.restore();
   this.line = 1;

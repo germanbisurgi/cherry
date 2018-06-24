@@ -47,7 +47,7 @@ Loop.prototype.run = function (timestamp) {
   }
   if (this.status === 'on') {
     window.requestAnimationFrame(this.run.bind(this));
-  };
+  }
 };
 
 Loop.prototype.step = function () {

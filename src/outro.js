@@ -1,6 +1,7 @@
 var naive = {
   Debug: Debug,
   Game: Game,
+  Loader: Loader,
   Loop: Loop,
   Pool: Pool,
   Signal: Signal,

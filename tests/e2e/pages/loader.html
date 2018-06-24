@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Loader</title>
+  <script src="../../../dist/naive.js"></script>
+  <link rel="stylesheet" href="../assets/styles/index.css">
+</head>
+<body>
+
+  <div class="dom-ready"></div>
+
+  <div class="flex-row">
+    <div class="flex-sm-1">
+      <span>Success: </span>
+      <span class="success">0</span>
+    </div>
+    <div class="flex-sm-1">
+      <span>Errors: </span>
+      <span class="errors">0</span>
+    </div>
+    <div class="flex-sm-2">
+      <span>Complete: </span>
+      <span class="complete">no</span>
+    </div>
+    <div class="flex-sm-4">
+      <span>Queue: </span>
+      <span class="queue">0</span>
+    </div>
+    <div class="flex-sm-4">
+      <span>Cache: </span>
+      <span class="cache">0</span>
+    </div>
+  </div>
+
+  <div class="flex-row">
+    <div class="flex-sm-4">
+      <button class="add-audio">Add Audio</button>
+      <button class="add-audio-buffer">Add Audio Buffer</button>
+      <button class="add-image">Add Image</button>
+      <button class="add-json">Add JSON</button>
+      <button class="add-incorrect-audio">Add incorrect Audio</button>
+      <button class="add-incorrect-audio-buffer">Add incorrect Audio Buffer</button>
+      <button class="add-incorrect-image">Add incorrect Image</button>
+      <button class="add-incorrect-json">Add incorrect JSON</button>
+      <button class="start">Start</button>
+    <button class="console-log">console.log(loader)</button>
+    </div>
+
+    <div class="flex-sm-4">
+      <div class="queue-items"></div>
+    </div>
+
+    <div class="flex-sm-4">
+      <div class="audio-container"></div>
+      <div class="audio-buffer-container"></div>
+      <div class="images-container"></div>
+      <div class="json-container"></div>
+    </div>
+  </div>
+
+<script>
+
+  window.addEventListener('load', function () {
+    var ready = document.querySelector('.dom-ready');
+    ready.innerText = 'DOM READY';
+  });
+
+  var loader = new naive.Loader();
+  var promise = null;
+
+  // properties
+  var cache = document.querySelector('.cache');
+  var queue = document.querySelector('.queue');
+  var success = document.querySelector('.success');
+  var errors = document.querySelector('.errors');
+  // methods
+  var addAudio = document.querySelector('.add-audio');
+  var addAudioBuffer = document.querySelector('.add-audio-buffer');
+  var addImage = document.querySelector('.add-image');
+  var addJSON = document.querySelector('.add-json');
+  var addIncorrectAudio = document.querySelector('.add-incorrect-audio');
+  var addIncorrectAudioBuffer = document.querySelector('.add-incorrect-audio-buffer');
+  var addIncorrectImage = document.querySelector('.add-incorrect-image');
+  var addIncorrectJSON = document.querySelector('.add-incorrect-json');
+  var start = document.querySelector('.start');
+  // signals
+  var complete = document.querySelector('.complete');
+  // debug
+  var queueItems = document.querySelector('.queue-items');
+  var audioContainer = document.querySelector('.audio-container');
+  var audioBufferContainer = document.querySelector('.audio-buffer-container');
+  var imagesContainer = document.querySelector('.images-container');
+  var JSONContainer = document.querySelector('.json-container');
+  var consoleLog = document.querySelector('.console-log');
+
+  var refresh = function () {
+    queue.innerText = JSON.stringify(loader.queue.length);
+    cache.innerText = JSON.stringify(loader.cache.length);
+    success.innerText = JSON.stringify(loader.success);
+    errors.innerText = JSON.stringify(loader.errors);
+    queueItems.innerText = JSON.stringify(loader.queue);
+  };
+
+  addAudio.addEventListener('click', function () {
+    loader.addAudio('tic', '../assets/audio/tic.mp3');
+  });
+
+  addAudioBuffer.addEventListener('click', function () {
+    loader.addAudioBuffer('tic', '../assets/audio/tic.mp3');
+  });
+
+  addImage.addEventListener('click', function () {
+    loader.addImage('brick', '../assets/images/brick.png');
+  });
+
+  addJSON.addEventListener('click', function () {
+    loader.addJSON('test', '../assets/json/test.json');
+  });
+
+  addIncorrectAudio.addEventListener('click', function () {
+    loader.addAudio('tic', '../incorrect/path/to/tic.mp3');
+  });
+
+  addIncorrectAudioBuffer.addEventListener('click', function () {
+    loader.addAudioBuffer('tic', '../incorrect/path/to/tic.mp3');
+  });
+
+  addIncorrectImage.addEventListener('click', function () {
+    loader.addImage('brick', '../incorrect/path/to/brick.png');
+  });
+
+  addIncorrectJSON.addEventListener('click', function () {
+    loader.addJSON('test', '../incorrect/path/to/test.json');
+  });
+
+  start.addEventListener('click', function () {
+    loader.start();
+  });
+
+  loader.onQueued.add(function () {
+    refresh();
+  });
+
+  loader.onStart.add(function () {
+    refresh();
+    console.log('started');
+  });
+
+  loader.onLoad.add(function (asset) {
+    refresh();
+      if (asset.type === 'audio') {
+        asset.content.setAttribute('controls', 'true');
+        audioContainer.appendChild(asset.content);
+      }
+      if (asset.type === 'audio-buffer') {
+        audioContainer.innerHTML += '<p>AudioBuffer</p>';
+      }
+      if (asset.type === 'image') {
+        imagesContainer.appendChild(asset.content);
+      }
+      if (asset.type === 'json') {
+        JSONContainer.innerText += JSON.stringify(asset.content);
+      }
+  });
+
+  loader.onComplete.add(function () {
+    refresh();
+    complete.innerText = 'yes';
+  });
+
+  consoleLog.addEventListener('click', function () {
+    console.log(loader);
+  });
+
+</script>
+
+</body>
+</html>

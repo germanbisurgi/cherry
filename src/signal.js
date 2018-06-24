@@ -1,4 +1,4 @@
-var Signal = function (context) {
+var Signal = function () {
 
   this.enabled = true;
 
