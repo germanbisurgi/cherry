@@ -60,6 +60,7 @@ Loader.prototype.loadAudio = function (asset) {
       self.success++;
       self.onLoad.dispatch(cacheAsset);
       self.hasCompleted();
+      audio.oncanplaythrough = null;
     };
     audio.onerror = function () {
       reject('The asset with name ' + asset.name + ' and url ' + asset.url + ' could not be loaded');
