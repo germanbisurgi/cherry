@@ -27,9 +27,13 @@
       <span>Queue: </span>
       <span class="queue">0</span>
     </div>
-    <div class="flex-sm-4">
+    <div class="flex-sm-2">
       <span>Cache: </span>
       <span class="cache">0</span>
+    </div>
+    <div class="flex-sm-2">
+      <span>Got: </span>
+      <span class="got"></span>
     </div>
   </div>
 
@@ -44,6 +48,7 @@
       <button class="add-incorrect-image">Add incorrect Image</button>
       <button class="add-incorrect-json">Add incorrect JSON</button>
       <button class="start">Start</button>
+      <button class="get">Get</button>
     <button class="console-log">console.log(loader)</button>
     </div>
 
@@ -70,6 +75,7 @@
   var promise = null;
 
   // properties
+  var got = document.querySelector('.got');
   var cache = document.querySelector('.cache');
   var queue = document.querySelector('.queue');
   var success = document.querySelector('.success');
@@ -84,6 +90,7 @@
   var addIncorrectImage = document.querySelector('.add-incorrect-image');
   var addIncorrectJSON = document.querySelector('.add-incorrect-json');
   var start = document.querySelector('.start');
+  var get = document.querySelector('.get');
   // signals
   var complete = document.querySelector('.complete');
   // debug
@@ -136,6 +143,10 @@
 
   start.addEventListener('click', function () {
     loader.start();
+  });
+
+  get.addEventListener('click', function () {
+    got.innerText = loader.get('audio', 'tic').name;
   });
 
   loader.onQueued.add(function () {

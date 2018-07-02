@@ -1,5 +1,6 @@
 var assert = require('assert');
 var cache = 0;
+var got = '';
 var queue = 0;
 var success = 0;
 var errors = 0;
@@ -264,4 +265,7 @@ Scenario('Should add and load audio, images and JSON both wrongly and successful
   assert.equal(success, 4);
   errors = await I.grabTextFrom('.errors');
   assert.equal(errors, 4);
+  I.click('.get');
+  got = await I.grabTextFrom('.got');
+  assert.equal(got, 'tic');
 });
