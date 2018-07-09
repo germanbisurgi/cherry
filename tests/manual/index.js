@@ -1,29 +1,24 @@
-var game = null;
-
 window.addEventListener('load', function () {
-
   game = new naive.Game();
-  var canvas = document.querySelector('canvas');
-  var context = canvas.getContext('2d');
-  var debug = new naive.Debug(context);
-  var state = new naive.State('test');
+  game.state.add(testState);
+  game.state.switch('test-state');
 
-  state.preload = function (game) {};
-  state.create = function (game) {};
-  state.update = function (game) {
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    debug.print(10, 10, {
-      state: 'state: ' + game.state.current.name,
-      frame: 'frame: ' + game.loop.frame,
-      delta: 'delta: ' + game.loop.delta,
-      timestep: 'timestep: ' + game.loop.timestep,
-      fps: 'fps: ' + 1 / game.loop.delta * 1000,
-      cache: 'cache: ' + game.loader.cache.length
-    });
-  };
+  game.loader.onStart.add(function () {
+    // console.log('loader started');
+  });
 
-  game.state.add(state);
-  game.state.switch('test');
+  game.loader.onQueued.add(function (asset) {
+    // console.log('loader queued', asset);
+  });
+
+  game.loader.onLoad.add(function (asset) {
+    // console.log('loader loaded', asset);
+  });
+
+  game.loader.onComplete.add(function () {
+    // console.log('loader completed');
+  });
+
   game.loop.start();
 
 });

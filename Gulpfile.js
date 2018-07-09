@@ -2,7 +2,7 @@ var gulp = require('gulp');
 var concat = require('gulp-concat');
 var scripts = [
   './src/polyfills.js',
-  './src/debug.js',
+  './src/canvas.js',
   './src/game.js',
   './src/loader.js',
   './src/loop.js',
