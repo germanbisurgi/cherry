@@ -23,7 +23,7 @@ Scenario('Should add and load Audio successfully', async function (I) {
   queue = await I.grabTextFrom('.queue');
   assert.equal(queue, 1);
   queueContainer = await I.grabTextFrom('.queue-items');
-  assert.equal(queueContainer, '[{"name":"tic","url":"../assets/audio/tic.mp3","type":"audio"}]');
+  assert.equal(queueContainer, '[{"name":"tic","type":"audio","url":"../../assets/audio/tic.mp3"}]');
   I.click('.start');
   I.waitForText('yes', 3, '.complete');
   cache = await I.grabTextFrom('.cache');
@@ -51,7 +51,7 @@ Scenario('Should add and load Audio wrongly', async function (I) {
   queue = await I.grabTextFrom('.queue');
   assert.equal(queue, 1);
   queueContainer = await I.grabTextFrom('.queue-items');
-  assert.equal(queueContainer, '[{"name":"tic","url":"../incorrect/path/to/tic.mp3","type":"audio"}]');
+  assert.equal(queueContainer, '[{"name":"tic","type":"audio","url":"../incorrect/path/to/tic.mp3"}]');
   I.click('.start');
   I.waitForText('yes', 3, '.complete');
   cache = await I.grabTextFrom('.cache');
@@ -79,7 +79,7 @@ Scenario('Should add and load AudioBuffer successfully', async function (I) {
   queue = await I.grabTextFrom('.queue');
   assert.equal(queue, 1);
   queueContainer = await I.grabTextFrom('.queue-items');
-  assert.equal(queueContainer, '[{"name":"tic","url":"../assets/audio/tic.mp3","type":"audio-buffer"}]');
+  assert.equal(queueContainer, '[{"name":"tic","type":"audio-buffer","url":"../../assets/audio/tic.mp3"}]');
   I.click('.start');
   I.waitForText('yes', 3, '.complete');
   cache = await I.grabTextFrom('.cache');
@@ -107,7 +107,7 @@ Scenario('Should add and load AudioBuffer wrongly', async function (I) {
   queue = await I.grabTextFrom('.queue');
   assert.equal(queue, 1);
   queueContainer = await I.grabTextFrom('.queue-items');
-  assert.equal(queueContainer, '[{"name":"tic","url":"../incorrect/path/to/tic.mp3","type":"audio-buffer"}]');
+  assert.equal(queueContainer, '[{"name":"tic","type":"audio-buffer","url":"../incorrect/path/to/tic.mp3"}]');
   I.click('.start');
   I.waitForText('yes', 3, '.complete');
   cache = await I.grabTextFrom('.cache');
@@ -135,7 +135,7 @@ Scenario('Should add and load an Image successfully', async function (I) {
   queue = await I.grabTextFrom('.queue');
   assert.equal(queue, 1);
   queueContainer = await I.grabTextFrom('.queue-items');
-  assert.equal(queueContainer, '[{"name":"brick","url":"../assets/images/brick.png","type":"image"}]');
+  assert.equal(queueContainer, '[{"name":"brick","type":"image","url":"../../assets/images/brick.png"}]');
   I.click('.start');
   I.waitForText('yes', 3, '.complete');
   cache = await I.grabTextFrom('.cache');
@@ -163,7 +163,7 @@ Scenario('Should add and load an Image wrongly', async function (I) {
   queue = await I.grabTextFrom('.queue');
   assert.equal(queue, 1);
   queueContainer = await I.grabTextFrom('.queue-items');
-  assert.equal(queueContainer, '[{"name":"brick","url":"../incorrect/path/to/brick.png","type":"image"}]');
+  assert.equal(queueContainer, '[{"name":"brick","type":"image","url":"../incorrect/path/to/brick.png"}]');
   I.click('.start');
   I.waitForText('yes', 3, '.complete');
   cache = await I.grabTextFrom('.cache');
@@ -191,7 +191,7 @@ Scenario('Should add and load JSON successfully', async function (I) {
   queue = await I.grabTextFrom('.queue');
   assert.equal(queue, 1);
   queueContainer = await I.grabTextFrom('.queue-items');
-  assert.equal(queueContainer, '[{"name":"test","url":"../assets/json/test.json","type":"json"}]');
+  assert.equal(queueContainer, '[{"name":"test","type":"json","url":"../../assets/json/test.json"}]');
   I.click('.start');
   I.waitForText('yes', 3, '.complete');
   cache = await I.grabTextFrom('.cache');
@@ -219,7 +219,7 @@ Scenario('Should add and load JSON wrongly', async function (I) {
   queue = await I.grabTextFrom('.queue');
   assert.equal(queue, 1);
   queueContainer = await I.grabTextFrom('.queue-items');
-  assert.equal(queueContainer, '[{"name":"test","url":"../incorrect/path/to/test.json","type":"json"}]');
+  assert.equal(queueContainer, '[{"name":"test","type":"json","url":"../incorrect/path/to/test.json"}]');
   I.click('.start');
   I.waitForText('yes', 3, '.complete');
   cache = await I.grabTextFrom('.cache');
@@ -254,7 +254,7 @@ Scenario('Should add and load audio, images and JSON both wrongly and successful
   queue = await I.grabTextFrom('.queue');
   assert.equal(queue, 8);
   queueContainer = await I.grabTextFrom('.queue-items');
-  assert.equal(queueContainer, '[{"name":"tic","url":"../assets/audio/tic.mp3","type":"audio"},{"name":"tic","url":"../assets/audio/tic.mp3","type":"audio-buffer"},{"name":"brick","url":"../assets/images/brick.png","type":"image"},{"name":"test","url":"../assets/json/test.json","type":"json"},{"name":"tic","url":"../incorrect/path/to/tic.mp3","type":"audio"},{"name":"tic","url":"../incorrect/path/to/tic.mp3","type":"audio-buffer"},{"name":"brick","url":"../incorrect/path/to/brick.png","type":"image"},{"name":"test","url":"../incorrect/path/to/test.json","type":"json"}]');
+  assert.equal(queueContainer, '[{"name":"tic","type":"audio","url":"../../assets/audio/tic.mp3"},{"name":"tic","type":"audio-buffer","url":"../../assets/audio/tic.mp3"},{"name":"brick","type":"image","url":"../../assets/images/brick.png"},{"name":"test","type":"json","url":"../../assets/json/test.json"},{"name":"tic","type":"audio","url":"../incorrect/path/to/tic.mp3"},{"name":"tic","type":"audio-buffer","url":"../incorrect/path/to/tic.mp3"},{"name":"brick","type":"image","url":"../incorrect/path/to/brick.png"},{"name":"test","type":"json","url":"../incorrect/path/to/test.json"}]');
   I.click('.start');
   I.waitForText('yes', 3, '.complete');
   cache = await I.grabTextFrom('.cache');

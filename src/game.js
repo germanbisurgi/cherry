@@ -9,9 +9,10 @@ var Game = function () {
       if (!this.state.current.preloaded) {
         this.state.current.preloaded = true;
         this.state.current.preload(this);
+        this.loader.start();
       }
 
-      if (!this.state.current.created) {
+      if (!this.state.current.created && !this.loader.loading) {
         this.state.current.created = true;
         this.state.current.create(this);
       }

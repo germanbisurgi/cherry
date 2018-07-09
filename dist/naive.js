@@ -11,26 +11,6 @@ window.requestAnimFrame = function () {
   );
 }();
 
-var Debug = function (context) {
-  this.context = context;
-  this.fontSize = 15;
-  this.line = 1;
-};
-
-Debug.prototype.print = function (x, y, lines) {
-  this.context.save();
-  this.context.font = this.fontSize + 'px monospace';
-  this.context.textAlign = 'start';
-  for (var prop in lines) {
-    if (lines.hasOwnProperty(prop)) {
-      this.context.fillText(lines[prop], x, y + (this.line * this.fontSize));
-      this.line++;
-    }
-  }
-  this.context.restore();
-  this.line = 1;
-};
-
 var Game = function () {
   this.loader = new naive.Loader();
   this.loop = new naive.Loop();
@@ -42,9 +22,10 @@ var Game = function () {
       if (!this.state.current.preloaded) {
         this.state.current.preloaded = true;
         this.state.current.preload(this);
+        this.loader.start();
       }
 
-      if (!this.state.current.created) {
+      if (!this.state.current.created && !this.loader.loading) {
         this.state.current.created = true;
         this.state.current.create(this);
       }
@@ -59,6 +40,7 @@ var Game = function () {
 };
 
 var Loader = function () {
+  this.loaded = false;
   this.errors = 0;
   this.success = 0;
   this.queue = [];
@@ -70,39 +52,43 @@ var Loader = function () {
 };
 
 Loader.prototype.addAudio = function (name, url) {
-  this.queue.push({
+  var asset = {
     name: name,
-    url: url,
-    type: 'audio'
-  });
-  this.onQueued.dispatch();
+    type: 'audio',
+    url: url
+  };
+  this.queue.push(asset);
+  this.onQueued.dispatch(asset);
 };
 
 Loader.prototype.addAudioBuffer = function (name, url) {
-  this.queue.push({
+  var asset = {
     name: name,
-    url: url,
-    type: 'audio-buffer'
-  });
-  this.onQueued.dispatch();
+    type: 'audio-buffer',
+    url: url
+  };
+  this.queue.push(asset);
+  this.onQueued.dispatch(asset);
 };
 
 Loader.prototype.addImage = function (name, url) {
-  this.queue.push({
+  var asset = {
     name: name,
-    url: url,
-    type: 'image'
-  });
-  this.onQueued.dispatch();
+    type: 'image',
+    url: url
+  };
+  this.queue.push(asset);
+  this.onQueued.dispatch(asset);
 };
 
 Loader.prototype.addJSON = function (name, url) {
-  this.queue.push({
+  var asset = {
     name: name,
-    url: url,
-    type: 'json'
-  });
-  this.onQueued.dispatch();
+    type: 'json',
+    url: url
+  };
+  this.queue.push(asset);
+  this.onQueued.dispatch(asset);
 };
 
 Loader.prototype.loadAudio = function (asset) {
@@ -111,8 +97,8 @@ Loader.prototype.loadAudio = function (asset) {
   audio.oncanplaythrough = function () {
     var cacheAsset = {
       name: asset.name,
-      content: audio,
-      type: 'audio'
+      type: 'audio',
+      content: audio
     };
     self.cache.push(cacheAsset);
     self.success++;
@@ -137,8 +123,8 @@ Loader.prototype.loadAudioBuffer = function (asset) {
     AudioContext.decodeAudioData(this.response, function (buffer) {
       var cacheAsset = {
         name: asset.name,
-        content: buffer,
-        type: 'audio-buffer'
+        type: 'audio-buffer',
+        content: buffer
       };
       self.cache.push(cacheAsset);
       self.success++;
@@ -162,8 +148,8 @@ Loader.prototype.loadImage = function (asset) {
   image.onload = function () {
     var cacheAsset = {
       name: asset.name,
-      content: image,
-      type: 'image'
+      type: 'image',
+      content: image
     };
     self.cache.push(cacheAsset);
     self.success++;
@@ -185,8 +171,8 @@ Loader.prototype.loadJSON = function (asset) {
     if (this.status === 200) {
       var cacheAsset = {
         name: asset.name,
-        content: JSON.parse(this.response),
-        type: 'json'
+        type: 'json',
+        content: JSON.parse(this.response)
       };
       self.cache.push(cacheAsset);
       self.success++;
@@ -213,9 +199,26 @@ Loader.prototype.get = function (type, name) {
   return false;
 };
 
+Loader.prototype.getAudioBuffer = function (name) {
+  return this.get('audio', name).content;
+};
+
+Loader.prototype.getAudio = function (name) {
+  return this.get('audio-buffer', name).content;
+};
+
+Loader.prototype.getImage = function (name) {
+  return this.get('image', name).content;
+};
+
+Loader.prototype.getJSON = function (name) {
+  return this.get('json', name).content;
+};
+
 Loader.prototype.hasCompleted = function () {
   if (this.queue.length === this.success + this.errors) {
     this.queue = [];
+    this.loading = false;
     this.onComplete.dispatch();
     return true;
   } else {
@@ -224,6 +227,7 @@ Loader.prototype.hasCompleted = function () {
 };
 
 Loader.prototype.start = function () {
+  this.loading = true;
   this.onStart.dispatch();
   for (var i = 0, len = this.queue.length; i < len; i++) {
     if (this.queue[i].type === 'audio') {
@@ -364,6 +368,28 @@ Pool.prototype.use = function () {
   return item.object;
 };
 
+var Canvas = function (container) {
+  this.canvas = document.createElement('canvas');
+  this.context = this.canvas.getContext('2d');
+  if (typeof container !== 'undefined') {
+    this.container = document.querySelector(container);
+    this.container.appendChild(this.canvas);
+  }
+};
+
+Canvas.prototype.clear = function () {
+  this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+};
+
+Canvas.prototype.image = function (image, x, y) {
+  this.context.drawImage(image, x, y);
+};
+
+Canvas.prototype.text = function (x, y, text) {
+  this.context.font = '16px monospace';
+  this.context.fillText(text, x, y);
+};
+
 var Signal = function () {
 
   this.enabled = true;
@@ -480,7 +506,7 @@ StateManager.prototype.switch = function (stateName) {
 };
 
 var naive = {
-  Debug: Debug,
+  Canvas: Canvas,
   Game: Game,
   Loader: Loader,
   Loop: Loop,
