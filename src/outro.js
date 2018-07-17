@@ -1,4 +1,5 @@
 var naive = {
+  Calc: Calc,
   Canvas: Canvas,
   Game: Game,
   Loader: Loader,

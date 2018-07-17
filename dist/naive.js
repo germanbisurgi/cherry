@@ -11,6 +11,66 @@ window.requestAnimFrame = function () {
   );
 }();
 
+var Calc = function () {};
+
+Calc.prototype.clamp = function (value, min, max) {
+  return Math.min(Math.max(value, min), max);
+};
+
+Calc.prototype.degreesToRadians = function (degrees) {
+  return degrees / 180 * Math.PI;
+};
+
+Calc.prototype.distance = function (a, b) {
+  return Math.sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y));
+};
+
+Calc.prototype.lerp = function (norm, min, max) {
+  return (max - min) * norm + min;
+};
+
+Calc.prototype.map = function (value, sourceMin, sourceMax, destMin, destMax) {
+  return this.lerp(this.norm(value, sourceMin, sourceMax), destMin, destMax);
+};
+
+Calc.prototype.norm = function (value, min, max) {
+  return (value - min) / (max - min);
+};
+
+Calc.prototype.radiansToDegrees = function (radians) {
+  return radians * 180 / Math.PI;
+};
+
+Calc.prototype.randomRange = function (min, max) {
+  return min + Math.random() * (max - min);
+};
+
+Calc.prototype.randomInt = function (min, max) {
+  return Math.floor(min + Math.random() * (max - min + 1));
+};
+
+var Canvas = function (container) {
+  this.canvas = document.createElement('canvas');
+  this.context = this.canvas.getContext('2d');
+  if (typeof container !== 'undefined') {
+    this.container = document.querySelector(container);
+    this.container.appendChild(this.canvas);
+  }
+};
+
+Canvas.prototype.clear = function () {
+  this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+};
+
+Canvas.prototype.image = function (image, x, y) {
+  this.context.drawImage(image, x, y);
+};
+
+Canvas.prototype.text = function (x, y, text) {
+  this.context.font = '16px monospace';
+  this.context.fillText(text, x, y);
+};
+
 var Game = function () {
   this.loader = new naive.Loader();
   this.loop = new naive.Loop();
@@ -368,28 +428,6 @@ Pool.prototype.use = function () {
   return item.object;
 };
 
-var Canvas = function (container) {
-  this.canvas = document.createElement('canvas');
-  this.context = this.canvas.getContext('2d');
-  if (typeof container !== 'undefined') {
-    this.container = document.querySelector(container);
-    this.container.appendChild(this.canvas);
-  }
-};
-
-Canvas.prototype.clear = function () {
-  this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-};
-
-Canvas.prototype.image = function (image, x, y) {
-  this.context.drawImage(image, x, y);
-};
-
-Canvas.prototype.text = function (x, y, text) {
-  this.context.font = '16px monospace';
-  this.context.fillText(text, x, y);
-};
-
 var Signal = function () {
 
   this.enabled = true;
@@ -506,6 +544,7 @@ StateManager.prototype.switch = function (stateName) {
 };
 
 var naive = {
+  Calc: Calc,
   Canvas: Canvas,
   Game: Game,
   Loader: Loader,
