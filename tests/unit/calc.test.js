@@ -68,4 +68,27 @@ describe('Calc', function () {
     expect(calc.radiansToDegrees(4.71238898038469)).toBe(270);
     expect(calc.radiansToDegrees(6.283185307179586)).toBe(360);
   });
+  it('should calculate the angle between two points', function () {
+    var a;
+    var b;
+    a = {x: 0, y: 0};
+
+    b = {x: 1, y: 0};
+    expect(calc.angleBetweenPoints(a, b)).toBe(0);
+    b = {x: 0, y: 1};
+    expect(calc.angleBetweenPoints(a, b)).toBe(1.5707963267948966);
+    b = {x: -1, y: 0};
+    expect(calc.angleBetweenPoints(a, b)).toBe(3.141592653589793);
+    b = {x: 0, y: -1};
+    expect(calc.angleBetweenPoints(a, b)).toBe(4.71238898038469);
+  });
+
+  it('should calculate a point given another point an angle and a radius', function () {
+    var point = {x: 0, y: 0};
+    expect(calc.angleToPoint(point, 0, 1)).toEqual({x: 1, y: 0});
+    expect(calc.angleToPoint(point, 1.5707963267948966, 1)).toEqual({x: 6.123233995736766e-17, y: 1});
+    expect(calc.angleToPoint(point, 3.141592653589793, 1)).toEqual({x: -1, y: 1.2246467991473532e-16});
+    expect(calc.angleToPoint(point, 4.71238898038469, 1)).toEqual({x: -1.8369701987210297e-16, y: -1});
+    expect(calc.angleToPoint(point, 6.283185307179586, 1)).toEqual({x: 1, y: -2.4492935982947064e-16});
+  });
 });

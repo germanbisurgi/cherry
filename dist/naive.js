@@ -13,6 +13,13 @@ window.requestAnimFrame = function () {
 
 var Calc = function () {};
 
+Calc.prototype.angleToPoint = function (point, angle, radius) {
+  return {
+    x: Math.cos(angle) * radius + point.x,
+    y: Math.sin(angle) * radius + point.y
+  };
+};
+
 Calc.prototype.clamp = function (value, min, max) {
   return Math.min(Math.max(value, min), max);
 };
@@ -35,6 +42,14 @@ Calc.prototype.map = function (value, sourceMin, sourceMax, destMin, destMax) {
 
 Calc.prototype.norm = function (value, min, max) {
   return (value - min) / (max - min);
+};
+
+Calc.prototype.angleBetweenPoints = function (p1, p2) {
+  var theta = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+  if (theta < 0) {
+    theta += 6.283185307179586;
+  }
+  return theta;
 };
 
 Calc.prototype.radiansToDegrees = function (radians) {
