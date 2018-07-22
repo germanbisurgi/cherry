@@ -37,7 +37,7 @@ testState.render = function (game) {
   // Q.foreground.text(10, 30, 'fps: ' + 1 / game.loop.delta * 1000);
   var i;
   var counter = 1;
-  for (var i in game.pointers.tracked) {
+  for (i in game.pointers.tracked) {
     Q.foreground.text(
       10,
       30 * counter, game.pointers.tracked[i].id

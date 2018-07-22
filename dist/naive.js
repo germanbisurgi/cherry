@@ -462,7 +462,7 @@ Pointers.prototype.handleCancel = function (event) {
 Pointers.prototype.handleMove = function (event) {
   if (typeof this.tracked[event.pointerId] !== 'undefined') {
     this.tracked[event.pointerId].x = event.clientX,
-    this.tracked[event.pointerId].y = event.clientY  
+    this.tracked[event.pointerId].y = event.clientY;
   } else {
     this.tracked[event.pointerId] = {
       id: event.pointerId,
