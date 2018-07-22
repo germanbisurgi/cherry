@@ -71,8 +71,9 @@ var Canvas = function (container) {
     this.container = document.querySelector(container);
     this.container.appendChild(this.canvas);
   }
-  this.canvas.width = window.innerWidth;
-  this.canvas.height = window.innerHeight;
+  this.canvas.width = window.innerWidth * 0.9;
+  this.canvas.height = window.innerHeight * 0.9;
+  this.canvas.style = 'border: 1px solid pink;';
 };
 
 Canvas.prototype.clear = function () {
@@ -444,6 +445,7 @@ var Pointers = function (game) {
 };
 
 Pointers.prototype.handleStart = function (event) {
+  event.preventDefault();
   this.tracked[event.pointerId] = {
     id: event.pointerId,
     x: event.clientX,
@@ -452,14 +454,17 @@ Pointers.prototype.handleStart = function (event) {
 };
 
 Pointers.prototype.handleEnd = function (event) {
+  event.preventDefault();
   delete this.tracked[event.pointerId];
 };
 
 Pointers.prototype.handleCancel = function (event) {
+  event.preventDefault();
   delete this.tracked[event.pointerId];
 };
 
 Pointers.prototype.handleMove = function (event) {
+  event.preventDefault();
   if (typeof this.tracked[event.pointerId] !== 'undefined') {
     this.tracked[event.pointerId].x = event.clientX,
     this.tracked[event.pointerId].y = event.clientY;

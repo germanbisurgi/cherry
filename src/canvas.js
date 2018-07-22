@@ -5,8 +5,9 @@ var Canvas = function (container) {
     this.container = document.querySelector(container);
     this.container.appendChild(this.canvas);
   }
-  this.canvas.width = window.innerWidth;
-  this.canvas.height = window.innerHeight;
+  this.canvas.width = window.innerWidth * 0.9;
+  this.canvas.height = window.innerHeight * 0.9;
+  this.canvas.style = 'border: 1px solid pink;';
 };
 
 Canvas.prototype.clear = function () {
