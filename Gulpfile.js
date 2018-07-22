@@ -5,6 +5,7 @@ var scripts = [
   './src/calc.js',
   './src/canvas.js',
   './src/game.js',
+  './src/key.js',
   './src/loader.js',
   './src/loop.js',
   './src/pool.js',

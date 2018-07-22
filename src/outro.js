@@ -2,6 +2,7 @@ var naive = {
   Calc: Calc,
   Canvas: Canvas,
   Game: Game,
+  Keys: Keys,
   Loader: Loader,
   Loop: Loop,
   Pool: Pool,
