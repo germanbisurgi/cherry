@@ -5,9 +5,10 @@ var scripts = [
   './src/calc.js',
   './src/canvas.js',
   './src/game.js',
-  './src/key.js',
+  './src/keys.js',
   './src/loader.js',
   './src/loop.js',
+  './src/pointers.js',
   './src/pool.js',
   './src/signal.js',
   './src/state.js',
@@ -15,12 +16,18 @@ var scripts = [
   './src/outro.js'
 ];
 
-gulp.task('concat', function () {
+gulp.task('concat-dist', function () {
   gulp.src(scripts)
     .pipe(concat('naive.js'))
     .pipe(gulp.dest('./dist'));
 });
 
+gulp.task('concat-docs', function () {
+  gulp.src(scripts)
+    .pipe(concat('naive.js'))
+    .pipe(gulp.dest('./docs/scripts'));
+});
+
 gulp.task('watch', function () {
-  gulp.watch('./src/*.js', ['concat']);
+  gulp.watch('./src/*.js', ['concat-dist', 'concat-docs']);
 });

@@ -2,7 +2,7 @@ var testState = new naive.State('test-state');
 var Q = {};
 
 testState.preload = function (game) {
-  game.loader.addImage('circle', '../assets/images/circle.png');
+  game.loader.addImage('circle', './assets/images/circle.png');
 };
 
 testState.create = function (game) {

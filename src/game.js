@@ -3,6 +3,7 @@ var Game = function () {
   this.loop = new naive.Loop();
   this.state = new naive.StateManager(this);
   this.keys = new naive.Keys(this);
+  this.pointers = new naive.Pointers(this);
   this.shared = {};
 
   this.loop.onStep = function () {
@@ -22,6 +23,7 @@ var Game = function () {
       if (this.state.current.created) {
         this.keys.update();
         this.state.current.update(this);
+        this.state.current.render(this);
       }
 
     }

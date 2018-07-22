@@ -5,6 +5,7 @@ var naive = {
   Keys: Keys,
   Loader: Loader,
   Loop: Loop,
+  Pointers: Pointers,
   Pool: Pool,
   Signal: Signal,
   State: State,

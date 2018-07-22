@@ -9,3 +9,5 @@ State.prototype.preload = function () {};
 State.prototype.create = function () {};
 
 State.prototype.update = function () {};
+
+State.prototype.update = function () {};
