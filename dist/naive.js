@@ -80,8 +80,8 @@ Canvas.prototype.clear = function () {
   this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 };
 
-Canvas.prototype.image = function (image, x, y) {
-  this.context.drawImage(image, x, y);
+Canvas.prototype.image = function (image, x, y, w, h) {
+  this.context.drawImage(image, 0, 0, image.width, image.height, x, y, w, h);
 };
 
 Canvas.prototype.text = function (x, y, text) {

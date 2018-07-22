@@ -45,7 +45,9 @@ testState.render = function (game) {
     Q.foreground.image(
       Q.image,
       game.pointers.tracked[i].x,
-      game.pointers.tracked[i].y
+      game.pointers.tracked[i].y,
+      50,
+      50
     );
     counter++;
   }
