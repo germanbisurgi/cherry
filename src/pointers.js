@@ -1,5 +1,5 @@
 var Pointers = function (game) {
-  this.ongoingTouches = [];
+  this.tracked = {};
   window.addEventListener('pointerdown', this.handleStart.bind(this), false);
   window.addEventListener('pointerup', this.handleEnd.bind(this), false);
   window.addEventListener('pointercancel', this.handleCancel.bind(this), false);
@@ -24,12 +24,9 @@ Pointers.prototype.handleMove = function (event) {
 
 Pointers.prototype.processEvent = function (event) {
   event.preventDefault();
-  var pointer = {
+  this.tracked[event.pointerId] = {
     id: event.pointerId,
     x: event.clientX,
-    y: event.clientY,
-    type: event.pointerType,
-    event: event.type
+    y: event.clientY
   };
-  // console.log(event.type, pointer);
 };

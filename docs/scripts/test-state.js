@@ -35,5 +35,6 @@ testState.update = function (game) {
 testState.render = function (game) {
   Q.foreground.clear();
   Q.foreground.text(10, 30, 'fps: ' + 1 / game.loop.delta * 1000);
+  Q.foreground.text(10, 60, 'pointer: ' + JSON.stringify(game.pointers.tracked));
   Q.foreground.image(Q.image, Q.imageX, Q.imageY);
 };
