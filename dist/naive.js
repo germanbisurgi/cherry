@@ -444,29 +444,32 @@ var Pointers = function (game) {
 };
 
 Pointers.prototype.handleStart = function (event) {
-  this.processEvent(event);
-};
-
-Pointers.prototype.handleEnd = function (event) {
-  this.processEvent(event);
-};
-
-Pointers.prototype.handleCancel = function (event) {
-  this.processEvent(event);
-};
-
-Pointers.prototype.handleMove = function (event) {
-  this.processEvent(event);
-};
-
-Pointers.prototype.processEvent = function (event) {
-  event.preventDefault();
-  // console.log(event.type);
   this.tracked[event.pointerId] = {
     id: event.pointerId,
     x: event.clientX,
     y: event.clientY
   };
+};
+
+Pointers.prototype.handleEnd = function (event) {
+  delete this.tracked[event.pointerId];
+};
+
+Pointers.prototype.handleCancel = function (event) {
+  delete this.tracked[event.pointerId];
+};
+
+Pointers.prototype.handleMove = function (event) {
+  if (typeof this.tracked[event.pointerId] !== 'undefined') {
+    this.tracked[event.pointerId].x = event.clientX,
+    this.tracked[event.pointerId].y = event.clientY  
+  } else {
+    this.tracked[event.pointerId] = {
+      id: event.pointerId,
+      x: event.clientX,
+      y: event.clientY
+    };
+  }
 };
 
 var Pool = function (cls, reset) {
