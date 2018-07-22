@@ -34,7 +34,19 @@ testState.update = function (game) {
 
 testState.render = function (game) {
   Q.foreground.clear();
-  Q.foreground.text(10, 30, 'fps: ' + 1 / game.loop.delta * 1000);
-  Q.foreground.text(10, 60, 'pointer: ' + JSON.stringify(game.pointers.tracked));
-  Q.foreground.image(Q.image, Q.imageX, Q.imageY);
+  // Q.foreground.text(10, 30, 'fps: ' + 1 / game.loop.delta * 1000);
+  var i;
+  var counter = 1;
+  for (var i in game.pointers.tracked) {
+    Q.foreground.text(
+      10,
+      30 * counter, game.pointers.tracked[i].id
+    );
+    Q.foreground.image(
+      Q.image,
+      game.pointers.tracked[i].x,
+      game.pointers.tracked[i].y
+    );
+    counter++;
+  }
 };

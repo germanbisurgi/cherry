@@ -461,6 +461,7 @@ Pointers.prototype.handleMove = function (event) {
 
 Pointers.prototype.processEvent = function (event) {
   event.preventDefault();
+  // console.log(event.type);
   this.tracked[event.pointerId] = {
     id: event.pointerId,
     x: event.clientX,
