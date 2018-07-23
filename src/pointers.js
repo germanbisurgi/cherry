@@ -15,10 +15,10 @@ var Pointers = function (game) {
 
 Pointers.prototype.enable = function (element) {
   element.style.touchAction = 'none';
-  element.addEventListener('pointerdown', this.handleStart.bind(this), false);
-  element.addEventListener('pointerup', this.handleEnd.bind(this), false);
-  element.addEventListener('pointercancel', this.handleCancel.bind(this), false);
-  element.addEventListener('pointermove', this.handleMove.bind(this), false);
+  element.addEventListener('pointerdown', this.track.bind(this), false);
+  element.addEventListener('pointermove', this.track.bind(this), false);
+  element.addEventListener('pointerup', this.untrack.bind(this), false);
+  element.addEventListener('pointercancel', this.untrack.bind(this), false);
 };
 
 Pointers.prototype.getByID = function (id) {
@@ -31,7 +31,7 @@ Pointers.prototype.getByID = function (id) {
   return output;
 };
 
-Pointers.prototype.handleStart = function (event) {
+Pointers.prototype.track = function (event) {
   event.preventDefault();
   var pointer = this.getByID(event.pointerId);
   if (pointer) {
@@ -42,25 +42,8 @@ Pointers.prototype.handleStart = function (event) {
   }
 };
 
-Pointers.prototype.handleEnd = function (event) {
+Pointers.prototype.untrack = function (event) {
   event.preventDefault();
   var pointer = this.getByID(event.pointerId);
   this.tracked.dismiss(pointer);
-};
-
-Pointers.prototype.handleCancel = function (event) {
-  event.preventDefault();
-  var pointer = this.getByID(event.pointerId);
-  this.tracked.dismiss(pointer);
-};
-
-Pointers.prototype.handleMove = function (event) {
-  event.preventDefault();
-  var pointer = this.getByID(event.pointerId);
-  if (pointer) {
-    pointer.x = event.clientX - event.target.offsetLeft;
-    pointer.y = event.clientY - event.target.offsetTop;
-  } else {
-    this.tracked.use(event);
-  }
 };
