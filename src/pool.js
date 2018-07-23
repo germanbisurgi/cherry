@@ -32,6 +32,7 @@ Pool.prototype.each = function (fn) {
 };
 
 Pool.prototype.use = function () {
+  var args = Array.prototype.slice.call(arguments);
 
   // get a free object
   var unusedItem = false;
@@ -43,8 +44,7 @@ Pool.prototype.use = function () {
 
   // if free object init and reuse it
   if (unusedItem) {
-    var args = Array.prototype.slice.call(arguments);
-    this.reset.apply(this.reset, args);
+    this.reset(unusedItem.object, ...args);
     unusedItem.active = true;
     this.used++;
     return unusedItem.object;
@@ -53,7 +53,7 @@ Pool.prototype.use = function () {
   // if no free object creates one
   var item = {
     active: true,
-    object: new (Function.prototype.bind.apply(this.cls, [null].concat(Array.prototype.slice.call(arguments))))()
+    object: new this.cls(...args)
   };
   this.pool.push(item);
   this.used++;

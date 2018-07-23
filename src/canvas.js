@@ -7,7 +7,7 @@ var Canvas = function (container) {
   }
   this.canvas.width = window.innerWidth * 0.9;
   this.canvas.height = window.innerHeight * 0.9;
-  this.canvas.style = 'border: 1px solid pink;';
+  this.canvas.style = 'border: 1px solid pink; margin: 30px;';
 };
 
 Canvas.prototype.clear = function () {
@@ -15,7 +15,7 @@ Canvas.prototype.clear = function () {
 };
 
 Canvas.prototype.image = function (image, x, y, w, h) {
-  this.context.drawImage(image, 0, 0, image.width, image.height, x, y, w, h);
+  this.context.drawImage(image, 0, 0, image.width, image.height, x - w / 2, y - h / 2, w, h);
 };
 
 Canvas.prototype.text = function (x, y, text) {

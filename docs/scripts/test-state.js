@@ -6,6 +6,7 @@ testState.preload = function (game) {
 };
 
 testState.create = function (game) {
+  game.loop.fps = 10;
   Q.image = game.loader.getImage('circle');
   Q.imageVel = 5;
   Q.imageX = 200;
@@ -21,7 +22,6 @@ testState.create = function (game) {
 };
 
 testState.update = function (game) {
-
   if (Q.ArrowUp.pressing) {
     Q.imageY -= Q.imageVel;
   };
@@ -38,21 +38,10 @@ testState.update = function (game) {
 
 testState.render = function (game) {
   Q.foreground.clear();
-  // Q.foreground.text(10, 30, 'fps: ' + 1 / game.loop.delta * 1000);
-  var i;
-  var counter = 1;
-  for (i in game.pointers.tracked) {
-    Q.foreground.text(
-      10,
-      30 * counter, game.pointers.tracked[i].id
-    );
-    Q.foreground.image(
-      Q.image,
-      game.pointers.tracked[i].x,
-      game.pointers.tracked[i].y,
-      50,
-      50
-    );
-    counter++;
-  }
+  Q.foreground.text(10, 30, 'fps: ' + 1 / game.loop.delta * 1000);
+  Q.foreground.text(10, 60, JSON.stringify(game.pointers.tracked.pool));
+  game.pointers.tracked.each(function (pointer, i) {
+    Q.foreground.image(Q.image, pointer.x, pointer.y, 80, 80);
+    i++;
+  });
 };

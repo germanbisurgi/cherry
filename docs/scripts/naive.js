@@ -73,7 +73,7 @@ var Canvas = function (container) {
   }
   this.canvas.width = window.innerWidth * 0.9;
   this.canvas.height = window.innerHeight * 0.9;
-  this.canvas.style = 'border: 1px solid pink;';
+  this.canvas.style = 'border: 1px solid pink; margin: 30px;';
 };
 
 Canvas.prototype.clear = function () {
@@ -81,7 +81,7 @@ Canvas.prototype.clear = function () {
 };
 
 Canvas.prototype.image = function (image, x, y, w, h) {
-  this.context.drawImage(image, 0, 0, image.width, image.height, x, y, w, h);
+  this.context.drawImage(image, 0, 0, image.width, image.height, x - w / 2, y - h / 2, w, h);
 };
 
 Canvas.prototype.text = function (x, y, text) {
@@ -437,7 +437,18 @@ Loop.prototype.step = function () {
 Loop.prototype.onStep = function () {};
 
 var Pointers = function (game) {
-  this.tracked = {};
+
+  var Pointer = function (event) {
+    this.id = event.pointerId;
+    this.x = event.clientX - event.target.offsetLeft;
+    this.y = event.clientY - event.target.offsetTop;
+  };
+
+  this.tracked = new naive.Pool(Pointer, function (object, event) {
+    object.id = event.pointerId;
+    object.x = event.clientX - event.target.offsetLeft;
+    object.y = event.clientY - event.target.offsetTop;
+  });
 };
 
 Pointers.prototype.enable = function (element) {
@@ -448,36 +459,47 @@ Pointers.prototype.enable = function (element) {
   element.addEventListener('pointermove', this.handleMove.bind(this), false);
 };
 
+Pointers.prototype.getByID = function (id) {
+  var output = false;
+  this.tracked.each(function (pointer) {
+    if (pointer.id === id) {
+      output = pointer;
+    }
+  });
+  return output;
+};
+
 Pointers.prototype.handleStart = function (event) {
   event.preventDefault();
-  this.tracked[event.pointerId] = {
-    id: event.pointerId,
-    x: event.clientX,
-    y: event.clientY
-  };
+  var pointer = this.getByID(event.pointerId);
+  if (pointer) {
+    pointer.x = event.clientX - event.target.offsetLeft;
+    pointer.y = event.clientY - event.target.offsetTop;
+  } else {
+    this.tracked.use(event);
+  }
 };
 
 Pointers.prototype.handleEnd = function (event) {
   event.preventDefault();
-  delete this.tracked[event.pointerId];
+  var pointer = this.getByID(event.pointerId);
+  this.tracked.dismiss(pointer);
 };
 
 Pointers.prototype.handleCancel = function (event) {
   event.preventDefault();
-  delete this.tracked[event.pointerId];
+  var pointer = this.getByID(event.pointerId);
+  this.tracked.dismiss(pointer);
 };
 
 Pointers.prototype.handleMove = function (event) {
   event.preventDefault();
-  if (typeof this.tracked[event.pointerId] !== 'undefined') {
-    this.tracked[event.pointerId].x = event.clientX,
-    this.tracked[event.pointerId].y = event.clientY;
+  var pointer = this.getByID(event.pointerId);
+  if (pointer) {
+    pointer.x = event.clientX - event.target.offsetLeft;
+    pointer.y = event.clientY - event.target.offsetTop;
   } else {
-    this.tracked[event.pointerId] = {
-      id: event.pointerId,
-      x: event.clientX,
-      y: event.clientY
-    };
+    this.tracked.use(event);
   }
 };
 
@@ -515,6 +537,7 @@ Pool.prototype.each = function (fn) {
 };
 
 Pool.prototype.use = function () {
+  var args = Array.prototype.slice.call(arguments);
 
   // get a free object
   var unusedItem = false;
@@ -526,8 +549,7 @@ Pool.prototype.use = function () {
 
   // if free object init and reuse it
   if (unusedItem) {
-    var args = Array.prototype.slice.call(arguments);
-    this.reset.apply(this.reset, args);
+    this.reset(unusedItem.object, ...args);
     unusedItem.active = true;
     this.used++;
     return unusedItem.object;
@@ -536,7 +558,7 @@ Pool.prototype.use = function () {
   // if no free object creates one
   var item = {
     active: true,
-    object: new (Function.prototype.bind.apply(this.cls, [null].concat(Array.prototype.slice.call(arguments))))()
+    object: new this.cls(...args)
   };
   this.pool.push(item);
   this.used++;

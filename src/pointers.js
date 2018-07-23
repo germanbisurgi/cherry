@@ -1,5 +1,16 @@
 var Pointers = function (game) {
-  this.tracked = {};
+
+  var Pointer = function (event) {
+    this.id = event.pointerId;
+    this.x = event.clientX - event.target.offsetLeft;
+    this.y = event.clientY - event.target.offsetTop;
+  };
+
+  this.tracked = new naive.Pool(Pointer, function (object, event) {
+    object.id = event.pointerId;
+    object.x = event.clientX - event.target.offsetLeft;
+    object.y = event.clientY - event.target.offsetTop;
+  });
 };
 
 Pointers.prototype.enable = function (element) {
@@ -10,35 +21,46 @@ Pointers.prototype.enable = function (element) {
   element.addEventListener('pointermove', this.handleMove.bind(this), false);
 };
 
+Pointers.prototype.getByID = function (id) {
+  var output = false;
+  this.tracked.each(function (pointer) {
+    if (pointer.id === id) {
+      output = pointer;
+    }
+  });
+  return output;
+};
+
 Pointers.prototype.handleStart = function (event) {
   event.preventDefault();
-  this.tracked[event.pointerId] = {
-    id: event.pointerId,
-    x: event.clientX,
-    y: event.clientY
-  };
+  var pointer = this.getByID(event.pointerId);
+  if (pointer) {
+    pointer.x = event.clientX - event.target.offsetLeft;
+    pointer.y = event.clientY - event.target.offsetTop;
+  } else {
+    this.tracked.use(event);
+  }
 };
 
 Pointers.prototype.handleEnd = function (event) {
   event.preventDefault();
-  delete this.tracked[event.pointerId];
+  var pointer = this.getByID(event.pointerId);
+  this.tracked.dismiss(pointer);
 };
 
 Pointers.prototype.handleCancel = function (event) {
   event.preventDefault();
-  delete this.tracked[event.pointerId];
+  var pointer = this.getByID(event.pointerId);
+  this.tracked.dismiss(pointer);
 };
 
 Pointers.prototype.handleMove = function (event) {
   event.preventDefault();
-  if (typeof this.tracked[event.pointerId] !== 'undefined') {
-    this.tracked[event.pointerId].x = event.clientX,
-    this.tracked[event.pointerId].y = event.clientY;
+  var pointer = this.getByID(event.pointerId);
+  if (pointer) {
+    pointer.x = event.clientX - event.target.offsetLeft;
+    pointer.y = event.clientY - event.target.offsetTop;
   } else {
-    this.tracked[event.pointerId] = {
-      id: event.pointerId,
-      x: event.clientX,
-      y: event.clientY
-    };
+    this.tracked.use(event);
   }
 };
