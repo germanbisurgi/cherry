@@ -6,12 +6,14 @@ testState.preload = function (game) {
 };
 
 testState.create = function (game) {
-  game.pointers.enable(Q.foreground.canvas);
   Q.image = game.loader.getImage('circle');
   Q.imageVel = 5;
   Q.imageX = 200;
   Q.imageY = 100;
+
   Q.foreground = new naive.Canvas('.container');
+  game.pointers.enable(Q.foreground.canvas);
+
   Q.ArrowUp = game.keys.add('ArrowUp');
   Q.ArrowRight = game.keys.add('ArrowRight');
   Q.ArrowDown = game.keys.add('ArrowDown');
