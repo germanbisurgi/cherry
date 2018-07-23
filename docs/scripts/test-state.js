@@ -6,6 +6,7 @@ testState.preload = function (game) {
 };
 
 testState.create = function (game) {
+  game.pointers.enable(Q.foreground.canvas);
   Q.image = game.loader.getImage('circle');
   Q.imageVel = 5;
   Q.imageX = 200;
@@ -18,8 +19,6 @@ testState.create = function (game) {
 };
 
 testState.update = function (game) {
-
-  game.pointers.enable(Q.foreground.canvas);
 
   if (Q.ArrowUp.pressing) {
     Q.imageY -= Q.imageVel;
