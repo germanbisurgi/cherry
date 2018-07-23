@@ -18,6 +18,9 @@ testState.create = function (game) {
 };
 
 testState.update = function (game) {
+
+  game.pointers.enable(Q.foreground.canvas);
+
   if (Q.ArrowUp.pressing) {
     Q.imageY -= Q.imageVel;
   };

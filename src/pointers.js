@@ -1,9 +1,13 @@
 var Pointers = function (game) {
   this.tracked = {};
-  window.addEventListener('pointerdown', this.handleStart.bind(this), false);
-  window.addEventListener('pointerup', this.handleEnd.bind(this), false);
-  window.addEventListener('pointercancel', this.handleCancel.bind(this), false);
-  window.addEventListener('pointermove', this.handleMove.bind(this), false);
+};
+
+Pointers.prototype.enable = function (element) {
+  element.style.touchAction = 'none';
+  element.addEventListener('pointerdown', this.handleStart.bind(this), false);
+  element.addEventListener('pointerup', this.handleEnd.bind(this), false);
+  element.addEventListener('pointercancel', this.handleCancel.bind(this), false);
+  element.addEventListener('pointermove', this.handleMove.bind(this), false);
 };
 
 Pointers.prototype.handleStart = function (event) {
