@@ -6,7 +6,6 @@ testState.preload = function (game) {
 };
 
 testState.create = function (game) {
-  game.loop.fps = 10;
   Q.image = game.loader.getImage('circle');
   Q.imageVel = 5;
   Q.imageX = 200;
