@@ -438,13 +438,17 @@ Loop.prototype.onStep = function () {};
 
 var Pointers = function (game) {
 
+  var self = this;
+
   var Pointer = function (event) {
+    this.number = self.tracked.used;
     this.id = event.pointerId;
     this.x = event.clientX - event.target.offsetLeft;
     this.y = event.clientY - event.target.offsetTop;
   };
 
   this.tracked = new naive.Pool(Pointer, function (object, event) {
+    object.number = self.tracked.used;
     object.id = event.pointerId;
     object.x = event.clientX - event.target.offsetLeft;
     object.y = event.clientY - event.target.offsetTop;

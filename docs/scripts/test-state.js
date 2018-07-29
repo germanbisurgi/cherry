@@ -6,18 +6,23 @@ testState.preload = function (game) {
 };
 
 testState.create = function (game) {
+
+  game.loop.fps = 10;
+
   Q.image = game.loader.getImage('circle');
   Q.imageVel = 5;
   Q.imageX = 200;
   Q.imageY = 100;
 
   Q.foreground = new naive.Canvas('.container');
-  game.pointers.enable(Q.foreground.canvas);
 
   Q.ArrowUp = game.keys.add('ArrowUp');
   Q.ArrowRight = game.keys.add('ArrowRight');
   Q.ArrowDown = game.keys.add('ArrowDown');
   Q.ArrowLeft = game.keys.add('ArrowLeft');
+
+  game.pointers.enable(Q.foreground.canvas);
+
 };
 
 testState.update = function (game) {
@@ -40,7 +45,7 @@ testState.render = function (game) {
   Q.foreground.text(10, 30, 'fps: ' + 1 / game.loop.delta * 1000);
   Q.foreground.text(10, 60, JSON.stringify(game.pointers.tracked.used));
   game.pointers.tracked.each(function (pointer, i) {
-    Q.foreground.text(pointer.x - 5, pointer.y - 50, pointer.id);
+    Q.foreground.text(pointer.x - 5, pointer.y - 50, pointer.number);
     Q.foreground.image(Q.image, pointer.x, pointer.y, 80, 80);
     i++;
   });
