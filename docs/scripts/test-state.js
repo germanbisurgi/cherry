@@ -22,19 +22,15 @@ testState.create = function (game) {
 
 testState.update = function (game) {
   game.keys.onPress(['a', 's'], function () {
-    console.log('onPress a + s');
   });
 
   game.keys.onHold(['s'], function (holdTime) {
-    console.log('onHold s', holdTime);
   });
 
   game.keys.onHold(['a', 's'], function (holdTime) {
-    console.log('onHold a + s', holdTime);
   });
 
   game.keys.onRelease(['a', 's'], function () {
-    console.log('onRelease a + s');
   });
 };
 

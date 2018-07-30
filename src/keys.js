@@ -66,7 +66,7 @@ Keys.prototype.onPress = function (keys, fn) {
     }
   }.bind(this));
   if (output) {
-    fn()
+    fn();
   }
 };
 
@@ -85,7 +85,7 @@ Keys.prototype.onHold = function (keys, fn) {
     }
   }.bind(this));
   if (output) {
-    fn(holdTime)
+    fn(holdTime);
   }
 };
 
@@ -102,6 +102,6 @@ Keys.prototype.onRelease = function (keys, fn) {
     }
   }.bind(this));
   if (output) {
-    fn()
+    fn();
   }
 };
