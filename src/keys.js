@@ -1,7 +1,7 @@
 var Keys = function (game) {
   this.tracked = {};
-  document.addEventListener('keydown', this.keydownHandler.bind(this), false);
-  document.addEventListener('keyup', this.keyupHandler.bind(this), false);
+  document.addEventListener('keydown', this.trackKey.bind(this), false);
+  document.addEventListener('keyup', this.untrackKey.bind(this), false);
 };
 
 Keys.prototype.add = function (key) {
@@ -10,38 +10,98 @@ Keys.prototype.add = function (key) {
     pressed: false,
     pressing: false,
     released: false,
-    holdTime: 0,
     pressFrame: 0,
-    releaseFrame: 0
+    releaseFrame: 0,
+    holdTime: 0
   };
   return this.tracked[key];
 };
 
-Keys.prototype.keydownHandler = function (event) {
-  if (typeof this.tracked[event.key] === 'undefined') {
-    return;
-  };
+Keys.prototype.trackKey = function (event) {
   event.preventDefault();
-  this.tracked[event.key].pressing = true;
-  if (this.tracked[event.key].pressFrame === 0) {
-    this.tracked[event.key].pressFrame = game.loop.frame;
+  if (typeof this.tracked[event.key] === 'undefined') {
+    this.add(event.key);
   }
+  this.tracked[event.key].pressing = true;
 };
 
-Keys.prototype.keyupHandler = function (event) {
-  if (typeof this.tracked[event.key] === 'undefined') {
-    return;
-  };
+Keys.prototype.untrackKey = function (event) {
   event.preventDefault();
   this.tracked[event.key].pressing = false;
-  this.tracked[event.key].released = true;
-  this.tracked[event.key].releaseFrame = game.loop.frame;
 };
 
 Keys.prototype.update = function () {
-  for (var key in this.tracked) {
-    this.tracked[key].holdTime = this.tracked[key].pressing ? this.tracked[key].holdTime = this.tracked[key].holdTime + game.loop.delta : 0;
-    this.tracked[key].released = this.tracked[key].releaseFrame === game.loop.frame - 2;
-    this.tracked[key].pressed = this.tracked[key].pressFrame === game.loop.frame - 2;
+  for (var i in this.tracked) {
+    if (!this.tracked.hasOwnProperty(i)) {
+      continue;
+    }
+    if (this.tracked[i].pressing) {
+      this.tracked[i].holdTime += game.loop.delta;
+      this.tracked[i].releaseFrame = 0;
+      if (this.tracked[i].pressFrame === 0) {
+        this.tracked[i].pressFrame = game.loop.frame;
+      }
+    } else {
+      this.tracked[i].holdTime = 0;
+      this.tracked[i].pressFrame = 0;
+      if (this.tracked[i].releaseFrame === 0) {
+        this.tracked[i].releaseFrame = game.loop.frame;
+      }
+    }
+    this.tracked[i].pressed = (this.tracked[i].pressFrame === game.loop.frame);
+    this.tracked[i].released = (this.tracked[i].releaseFrame === game.loop.frame);
+  }
+};
+
+Keys.prototype.onPress = function (keys, fn) {
+  var output = true;
+  keys.forEach(function (key) {
+    if (this.tracked.hasOwnProperty(key)) {
+      if (this.tracked[key].pressed) {
+      } else {
+        output = false;
+      }
+    } else {
+      output = false;
+    }
+  }.bind(this));
+  if (output) {
+    fn()
+  }
+};
+
+Keys.prototype.onHold = function (keys, fn) {
+  var output = true;
+  var holdTime = true;
+  keys.forEach(function (key) {
+    if (this.tracked.hasOwnProperty(key)) {
+      if (this.tracked[key].pressing) {
+        holdTime = this.tracked[key].holdTime;
+      } else {
+        output = false;
+      }
+    } else {
+      output = false;
+    }
+  }.bind(this));
+  if (output) {
+    fn(holdTime)
+  }
+};
+
+Keys.prototype.onRelease = function (keys, fn) {
+  var output = true;
+  keys.forEach(function (key) {
+    if (this.tracked.hasOwnProperty(key)) {
+      if (this.tracked[key].released) {
+      } else {
+        output = false;
+      }
+    } else {
+      output = false;
+    }
+  }.bind(this));
+  if (output) {
+    fn()
   }
 };

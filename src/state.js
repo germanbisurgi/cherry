@@ -10,4 +10,4 @@ State.prototype.create = function () {};
 
 State.prototype.update = function () {};
 
-State.prototype.update = function () {};
+State.prototype.render = function () {};

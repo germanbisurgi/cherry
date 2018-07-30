@@ -39,7 +39,6 @@ Loop.prototype.run = function (timestamp) {
   this.accumulator += timestamp - this.lastTime;
   this.lastTime = timestamp;
   while (this.accumulator >= this.timestep) {
-    this.frame++;
     this.step();
     this.delta = timestamp - this.lastStep;
     this.lastStep = timestamp;

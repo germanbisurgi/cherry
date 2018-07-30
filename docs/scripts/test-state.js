@@ -16,37 +16,34 @@ testState.create = function (game) {
 
   Q.foreground = new naive.Canvas('.container');
 
-  Q.ArrowUp = game.keys.add('ArrowUp');
-  Q.ArrowRight = game.keys.add('ArrowRight');
-  Q.ArrowDown = game.keys.add('ArrowDown');
-  Q.ArrowLeft = game.keys.add('ArrowLeft');
-
   game.pointers.enable(Q.foreground.canvas);
 
 };
 
 testState.update = function (game) {
-  if (Q.ArrowUp.pressing) {
-    Q.imageY -= Q.imageVel;
-  };
-  if (Q.ArrowRight.pressing) {
-    Q.imageX += Q.imageVel;
-  };
-  if (Q.ArrowDown.pressing) {
-    Q.imageY += Q.imageVel;
-  };
-  if (Q.ArrowLeft.pressing) {
-    Q.imageX -= Q.imageVel;
-  };
+  game.keys.onPress(['a', 's'], function () {
+    console.log('onPress a + s');
+  });
+
+  game.keys.onHold(['s'], function (holdTime) {
+    console.log('onHold s', holdTime);
+  });
+
+  game.keys.onHold(['a', 's'], function (holdTime) {
+    console.log('onHold a + s', holdTime);
+  });
+
+  game.keys.onRelease(['a', 's'], function () {
+    console.log('onRelease a + s');
+  });
 };
 
 testState.render = function (game) {
   Q.foreground.clear();
   Q.foreground.text(10, 30, 'fps: ' + 1 / game.loop.delta * 1000);
   Q.foreground.text(10, 60, JSON.stringify(game.pointers.tracked.used));
-  game.pointers.tracked.each(function (pointer, i) {
+  game.pointers.tracked.each(function (pointer) {
     Q.foreground.text(pointer.x - 5, pointer.y - 50, pointer.number);
     Q.foreground.image(Q.image, pointer.x, pointer.y, 80, 80);
-    i++;
   });
 };
