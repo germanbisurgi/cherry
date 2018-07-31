@@ -14,7 +14,7 @@ testState.create = function (game) {
   Q.imageX = 200;
   Q.imageY = 100;
 
-  game.loop.fps = 10;
+  // game.loop.fps = 10;
   game.pointers.enable(Q.foreground.canvas);
 
 };
@@ -38,8 +38,10 @@ testState.render = function (game) {
   Q.foreground.text(10, 30, 'fps: ' + 1 / game.loop.delta * 1000);
 
   game.pointers.tracked.forEach(function (pointer) {
-    // console.log(pointer);
-    Q.foreground.text(pointer.x - 5, pointer.y - 50, pointer.number);
-    Q.foreground.image(Q.image, pointer.x, pointer.y, 80, 80);
+    if (pointer.active) {
+      Q.foreground.text(pointer.x - 70, pointer.y - 50, 'n: ' + pointer.number + ' time: ' + Math.floor(pointer.holdTime));
+      Q.foreground.image(Q.image, pointer.x, pointer.y, 80, 80);
+    }
+
   });
 };

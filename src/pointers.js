@@ -3,15 +3,27 @@ var Pointers = function (game) {
   this.tracked = [];
 
   for (var i = 10 - 1; i >= 0; i--) {
-    this.tracked.push({active: false, number: i, id: 0, x: 100, y: 100});
+    this.tracked.push({
+      active: false,
+      isHolded: false,
+      isDown: false,
+      isUp: false,
+      holdTime: 0,
+      pressFrame: 0,
+      releaseFrame: 0,
+      number: i,
+      id: 0,
+      x: 100,
+      y: 100
+    });
   }
 
 };
 
 Pointers.prototype.enable = function (element) {
   element.style.touchAction = 'none';
-  element.addEventListener('pointerdown', this.track.bind(this), false);
-  element.addEventListener('pointermove', this.track.bind(this), false);
+  element.addEventListener('pointerdown', this.pointerdownHandler.bind(this), false);
+  element.addEventListener('pointermove', this.pointermoveHandler.bind(this), false);
   element.addEventListener('pointerup', this.untrack.bind(this), false);
   element.addEventListener('pointercancel', this.untrack.bind(this), false);
 };
@@ -36,7 +48,17 @@ Pointers.prototype.getInactivePointer = function () {
   return output;
 };
 
-Pointers.prototype.track = function (event) {
+Pointers.prototype.pointerdownHandler = function (event) {
+  event.preventDefault();
+  var pointer = this.getByID(event.pointerId) || this.getInactivePointer();
+  pointer.active = true;
+  pointer.id = event.pointerId;
+  pointer.isHolded = true;
+  pointer.x = event.clientX - event.target.offsetLeft;
+  pointer.y = event.clientY - event.target.offsetTop;
+};
+
+Pointers.prototype.pointermoveHandler = function (event) {
   event.preventDefault();
   var pointer = this.getByID(event.pointerId) || this.getInactivePointer();
   pointer.active = true;
@@ -49,4 +71,28 @@ Pointers.prototype.untrack = function (event) {
   event.preventDefault();
   var pointer = this.getByID(event.pointerId);
   pointer.active = false;
+  pointer.isHolded = false;
+};
+
+Pointers.prototype.update = function (event) {
+  this.tracked.forEach(function (pointer) {
+
+    if (pointer.isHolded) {
+      pointer.holdTime += game.loop.delta;
+      pointer.releaseFrame = 0;
+      if (pointer.pressFrame === 0) {
+        pointer.pressFrame = game.loop.frame;
+      }
+    } else {
+      pointer.holdTime = 0;
+      pointer.pressFrame = 0;
+      if (pointer.releaseFrame === 0) {
+        pointer.releaseFrame = game.loop.frame;
+      }
+    }
+    pointer.isDown = (pointer.pressFrame === game.loop.frame);
+    pointer.isUp = (pointer.releaseFrame === game.loop.frame);
+
+  }.bind(this));
+
 };

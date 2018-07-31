@@ -22,6 +22,7 @@ var Game = function () {
 
       if (this.state.current.created) {
         this.keys.update();
+        this.pointers.update();
         this.state.current.update(this);
         this.state.current.render(this);
       }
