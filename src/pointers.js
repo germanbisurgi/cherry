@@ -1,20 +1,11 @@
 var Pointers = function (game) {
 
-  var self = this;
+  this.tracked = [];
 
-  var Pointer = function (event) {
-    this.number = self.tracked.used;
-    this.id = event.pointerId;
-    this.x = event.clientX - event.target.offsetLeft;
-    this.y = event.clientY - event.target.offsetTop;
-  };
+  for (var i = 10 - 1; i >= 0; i--) {
+    this.tracked.push({active: false, number: i, id: 0, x: 100, y: 100});
+  }
 
-  this.tracked = new naive.Pool(Pointer, function (object, event) {
-    object.number = self.tracked.used;
-    object.id = event.pointerId;
-    object.x = event.clientX - event.target.offsetLeft;
-    object.y = event.clientY - event.target.offsetTop;
-  });
 };
 
 Pointers.prototype.enable = function (element) {
@@ -27,8 +18,18 @@ Pointers.prototype.enable = function (element) {
 
 Pointers.prototype.getByID = function (id) {
   var output = false;
-  this.tracked.each(function (pointer) {
+  this.tracked.forEach(function (pointer) {
     if (pointer.id === id) {
+      output = pointer;
+    }
+  });
+  return output;
+};
+
+Pointers.prototype.getInactivePointer = function () {
+  var output = false;
+  this.tracked.forEach(function (pointer) {
+    if (pointer.active === false) {
       output = pointer;
     }
   });
@@ -37,17 +38,15 @@ Pointers.prototype.getByID = function (id) {
 
 Pointers.prototype.track = function (event) {
   event.preventDefault();
-  var pointer = this.getByID(event.pointerId);
-  if (pointer) {
-    pointer.x = event.clientX - event.target.offsetLeft;
-    pointer.y = event.clientY - event.target.offsetTop;
-  } else {
-    this.tracked.use(event);
-  }
+  var pointer = this.getByID(event.pointerId) || this.getInactivePointer();
+  pointer.active = true;
+  pointer.id = event.pointerId;
+  pointer.x = event.clientX - event.target.offsetLeft;
+  pointer.y = event.clientY - event.target.offsetTop;
 };
 
 Pointers.prototype.untrack = function (event) {
   event.preventDefault();
   var pointer = this.getByID(event.pointerId);
-  this.tracked.dismiss(pointer);
+  pointer.active = false;
 };

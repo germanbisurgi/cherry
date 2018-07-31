@@ -7,12 +7,12 @@ var Keys = function (game) {
 Keys.prototype.add = function (key) {
   this.tracked[key] = {
     key: key,
-    pressed: false,
-    pressing: false,
-    released: false,
+    isDown: false,
+    isUp: false,
+    isHolded: false,
+    holdTime: 0,
     pressFrame: 0,
-    releaseFrame: 0,
-    holdTime: 0
+    releaseFrame: 0
   };
   return this.tracked[key];
 };
@@ -22,12 +22,12 @@ Keys.prototype.trackKey = function (event) {
   if (typeof this.tracked[event.key] === 'undefined') {
     this.add(event.key);
   }
-  this.tracked[event.key].pressing = true;
+  this.tracked[event.key].isHolded = true;
 };
 
 Keys.prototype.untrackKey = function (event) {
   event.preventDefault();
-  this.tracked[event.key].pressing = false;
+  this.tracked[event.key].isHolded = false;
 };
 
 Keys.prototype.update = function () {
@@ -35,7 +35,7 @@ Keys.prototype.update = function () {
     if (!this.tracked.hasOwnProperty(i)) {
       continue;
     }
-    if (this.tracked[i].pressing) {
+    if (this.tracked[i].isHolded) {
       this.tracked[i].holdTime += game.loop.delta;
       this.tracked[i].releaseFrame = 0;
       if (this.tracked[i].pressFrame === 0) {
@@ -48,16 +48,16 @@ Keys.prototype.update = function () {
         this.tracked[i].releaseFrame = game.loop.frame;
       }
     }
-    this.tracked[i].pressed = (this.tracked[i].pressFrame === game.loop.frame);
-    this.tracked[i].released = (this.tracked[i].releaseFrame === game.loop.frame);
+    this.tracked[i].isDown = (this.tracked[i].pressFrame === game.loop.frame);
+    this.tracked[i].isUp = (this.tracked[i].releaseFrame === game.loop.frame);
   }
 };
 
-Keys.prototype.onPress = function (keys, fn) {
+Keys.prototype.onDown = function (keys, fn) {
   var output = true;
   keys.forEach(function (key) {
     if (this.tracked.hasOwnProperty(key)) {
-      if (this.tracked[key].pressed) {
+      if (this.tracked[key].isDown) {
       } else {
         output = false;
       }
@@ -75,7 +75,7 @@ Keys.prototype.onHold = function (keys, fn) {
   var holdTime = true;
   keys.forEach(function (key) {
     if (this.tracked.hasOwnProperty(key)) {
-      if (this.tracked[key].pressing) {
+      if (this.tracked[key].isHolded) {
         holdTime = this.tracked[key].holdTime;
       } else {
         output = false;
@@ -89,11 +89,11 @@ Keys.prototype.onHold = function (keys, fn) {
   }
 };
 
-Keys.prototype.onRelease = function (keys, fn) {
+Keys.prototype.onUp = function (keys, fn) {
   var output = true;
   keys.forEach(function (key) {
     if (this.tracked.hasOwnProperty(key)) {
-      if (this.tracked[key].released) {
+      if (this.tracked[key].isUp) {
       } else {
         output = false;
       }
