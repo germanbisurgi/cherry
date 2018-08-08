@@ -1,23 +1,23 @@
 var Pointers = function (game) {
-
   this.tracked = [];
+};
 
-  for (var i = 10 - 1; i >= 0; i--) {
-    this.tracked.push({
-      active: false,
-      isHolded: false,
-      isDown: false,
-      isUp: false,
-      holdTime: 0,
-      pressFrame: 0,
-      releaseFrame: 0,
-      number: i,
-      id: 0,
-      x: 100,
-      y: 100
-    });
-  }
-
+Pointers.prototype.add = function () {
+  var pointer = {
+    number: this.tracked.length + 1,
+    active: false,
+    isHolded: false,
+    isDown: false,
+    isUp: false,
+    holdTime: 0,
+    pressFrame: 0,
+    releaseFrame: 0,
+    id: 0,
+    x: 100,
+    y: 100
+  };
+  this.tracked.unshift(pointer);
+  return pointer;
 };
 
 Pointers.prototype.enable = function (element) {

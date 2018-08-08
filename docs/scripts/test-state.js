@@ -1,5 +1,5 @@
 var testState = new naive.State('test-state');
-var Q = {};
+var _ = {};
 
 testState.preload = function (game) {
   game.loader.addImage('circle', './assets/images/circle.png');
@@ -7,40 +7,31 @@ testState.preload = function (game) {
 
 testState.create = function (game) {
 
-  Q.foreground = new naive.Canvas('.container');
+  _.foreground = new naive.Canvas('.container');
+  _.image = game.loader.getImage('circle');
+  _.imageVel = 5;
+  _.imageX = 200;
+  _.imageY = 100;
 
-  Q.image = game.loader.getImage('circle');
-  Q.imageVel = 5;
-  Q.imageX = 200;
-  Q.imageY = 100;
+  game.loop.fps = 10;
+  game.pointers.enable(_.foreground.canvas);
 
-  // game.loop.fps = 10;
-  game.pointers.enable(Q.foreground.canvas);
-
+  _.arrowUp = game.keys.add('ArrowUp');
+  _.pointer1 = game.pointers.add();
+  _.pointer2 = game.pointers.add();
 };
 
 testState.update = function (game) {
-  game.keys.onDown(['a', 's'], function () {
-  });
-
-  game.keys.onHold(['s'], function (holdTime) {
-  });
-
-  game.keys.onHold(['a', 's'], function (holdTime) {
-  });
-
-  game.keys.onUp(['a', 's'], function () {
-  });
 };
 
 testState.render = function (game) {
-  Q.foreground.clear();
-  Q.foreground.text(10, 30, 'fps: ' + 1 / game.loop.delta * 1000);
+  _.foreground.clear();
+  _.foreground.text(10, 30, 'fps: ' + 1 / game.loop.delta * 1000);
 
   game.pointers.tracked.forEach(function (pointer) {
     if (pointer.active) {
-      Q.foreground.text(pointer.x - 70, pointer.y - 50, 'n: ' + pointer.number + ' time: ' + Math.floor(pointer.holdTime));
-      Q.foreground.image(Q.image, pointer.x, pointer.y, 80, 80);
+      _.foreground.text(pointer.x - 70, pointer.y - 50, 'n: ' + pointer.number + ' time: ' + Math.floor(pointer.holdTime));
+      _.foreground.image(_.image, pointer.x, pointer.y, 80, 80);
     }
 
   });

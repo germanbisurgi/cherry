@@ -144,15 +144,16 @@ Keys.prototype.add = function (key) {
 
 Keys.prototype.trackKey = function (event) {
   event.preventDefault();
-  if (typeof this.tracked[event.key] === 'undefined') {
-    this.add(event.key);
+  if (typeof this.tracked[event.key] !== 'undefined') {
+    this.tracked[event.key].isHolded = true;
   }
-  this.tracked[event.key].isHolded = true;
 };
 
 Keys.prototype.untrackKey = function (event) {
   event.preventDefault();
-  this.tracked[event.key].isHolded = false;
+  if (typeof this.tracked[event.key] !== 'undefined') {
+    this.tracked[event.key].isHolded = false;
+  }
 };
 
 Keys.prototype.update = function () {
@@ -175,59 +176,6 @@ Keys.prototype.update = function () {
     }
     this.tracked[i].isDown = (this.tracked[i].pressFrame === game.loop.frame);
     this.tracked[i].isUp = (this.tracked[i].releaseFrame === game.loop.frame);
-  }
-};
-
-Keys.prototype.onDown = function (keys, fn) {
-  var output = true;
-  keys.forEach(function (key) {
-    if (this.tracked.hasOwnProperty(key)) {
-      if (this.tracked[key].isDown) {
-      } else {
-        output = false;
-      }
-    } else {
-      output = false;
-    }
-  }.bind(this));
-  if (output) {
-    fn();
-  }
-};
-
-Keys.prototype.onHold = function (keys, fn) {
-  var output = true;
-  var holdTime = true;
-  keys.forEach(function (key) {
-    if (this.tracked.hasOwnProperty(key)) {
-      if (this.tracked[key].isHolded) {
-        holdTime = this.tracked[key].holdTime;
-      } else {
-        output = false;
-      }
-    } else {
-      output = false;
-    }
-  }.bind(this));
-  if (output) {
-    fn(holdTime);
-  }
-};
-
-Keys.prototype.onUp = function (keys, fn) {
-  var output = true;
-  keys.forEach(function (key) {
-    if (this.tracked.hasOwnProperty(key)) {
-      if (this.tracked[key].isUp) {
-      } else {
-        output = false;
-      }
-    } else {
-      output = false;
-    }
-  }.bind(this));
-  if (output) {
-    fn();
   }
 };
 
@@ -497,25 +445,25 @@ Loop.prototype.step = function () {
 Loop.prototype.onStep = function () {};
 
 var Pointers = function (game) {
-
   this.tracked = [];
+};
 
-  for (var i = 10 - 1; i >= 0; i--) {
-    this.tracked.push({
-      active: false,
-      isHolded: false,
-      isDown: false,
-      isUp: false,
-      holdTime: 0,
-      pressFrame: 0,
-      releaseFrame: 0,
-      number: i,
-      id: 0,
-      x: 100,
-      y: 100
-    });
-  }
-
+Pointers.prototype.add = function () {
+  var pointer = {
+    number: this.tracked.length + 1,
+    active: false,
+    isHolded: false,
+    isDown: false,
+    isUp: false,
+    holdTime: 0,
+    pressFrame: 0,
+    releaseFrame: 0,
+    id: 0,
+    x: 100,
+    y: 100
+  };
+  this.tracked.unshift(pointer);
+  return pointer;
 };
 
 Pointers.prototype.enable = function (element) {
