@@ -13,7 +13,7 @@ testState.create = function (game) {
   _.imageX = 200;
   _.imageY = 100;
 
-  game.loop.fps = 10;
+  // game.loop.fps = 10;
   game.pointers.enable(_.foreground.canvas);
 
   _.arrowUp = game.keys.add('ArrowUp');

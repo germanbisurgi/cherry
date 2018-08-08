@@ -22,8 +22,8 @@ Pointers.prototype.add = function () {
 
 Pointers.prototype.enable = function (element) {
   element.style.touchAction = 'none';
-  element.addEventListener('pointerdown', this.pointerdownHandler.bind(this), false);
-  element.addEventListener('pointermove', this.pointermoveHandler.bind(this), false);
+  element.addEventListener('pointerdown', this.trackPointerDown.bind(this), false);
+  element.addEventListener('pointermove', this.trackPointerMove.bind(this), false);
   element.addEventListener('pointerup', this.untrack.bind(this), false);
   element.addEventListener('pointercancel', this.untrack.bind(this), false);
 };
@@ -48,7 +48,7 @@ Pointers.prototype.getInactivePointer = function () {
   return output;
 };
 
-Pointers.prototype.pointerdownHandler = function (event) {
+Pointers.prototype.trackPointerDown = function (event) {
   event.preventDefault();
   var pointer = this.getByID(event.pointerId) || this.getInactivePointer();
   pointer.active = true;
@@ -58,7 +58,7 @@ Pointers.prototype.pointerdownHandler = function (event) {
   pointer.y = event.clientY - event.target.offsetTop;
 };
 
-Pointers.prototype.pointermoveHandler = function (event) {
+Pointers.prototype.trackPointerMove = function (event) {
   event.preventDefault();
   var pointer = this.getByID(event.pointerId) || this.getInactivePointer();
   pointer.active = true;
