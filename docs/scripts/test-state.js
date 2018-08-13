@@ -1,5 +1,5 @@
 var testState = new naive.State('test-state');
-var _ = {};
+var $ = {};
 
 testState.preload = function (game) {
   game.loader.addImage('circle', './assets/images/circle.png');
@@ -7,32 +7,35 @@ testState.preload = function (game) {
 
 testState.create = function (game) {
 
-  _.foreground = new naive.Canvas('.container');
-  _.image = game.loader.getImage('circle');
-  _.imageVel = 5;
-  _.imageX = 200;
-  _.imageY = 100;
+  $.foreground = new naive.Canvas('.container');
+  $.image = game.loader.getImage('circle');
+  $.imageVel = 5;
+  $.imageX = 200;
+  $.imageY = 100;
 
   // game.loop.fps = 10;
-  game.pointers.enable(_.foreground.canvas);
+  game.inputs.enablePointers($.foreground.canvas);
 
-  _.arrowUp = game.keys.add('ArrowUp');
-  _.pointer1 = game.pointers.add();
-  _.pointer2 = game.pointers.add();
+  $.arrowUp = game.inputs.addKey('ArrowUp');
+  $.pointer1 = game.inputs.addPointer();
+  $.pointer2 = game.inputs.addPointer();
 };
 
 testState.update = function (game) {
+  if ($.arrowUp.isHolded) {
+    // console.log('arrowUp is holded');
+  }
 };
 
 testState.render = function (game) {
-  _.foreground.clear();
-  _.foreground.text(10, 30, 'fps: ' + 1 / game.loop.delta * 1000);
+  $.foreground.clear();
+  
+  $.foreground.text(10, 30, 'fps: ' + 1 / game.loop.delta * 1000);
 
-  game.pointers.tracked.forEach(function (pointer) {
+  game.inputs.pointers.forEach(function (pointer) {
     if (pointer.active) {
-      _.foreground.text(pointer.x - 70, pointer.y - 50, 'n: ' + pointer.number + ' time: ' + Math.floor(pointer.holdTime));
-      _.foreground.image(_.image, pointer.x, pointer.y, 80, 80);
+      $.foreground.text(pointer.x - 70, pointer.y - 50, 'n: ' + pointer.number + ' time: ' + Math.floor(pointer.holdTime));
+      $.foreground.image($.image, pointer.x, pointer.y, 80, 80);
     }
-
   });
 };

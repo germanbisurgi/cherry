@@ -93,44 +93,40 @@ var Game = function () {
   this.loader = new naive.Loader();
   this.loop = new naive.Loop();
   this.state = new naive.StateManager(this);
-  this.keys = new naive.Keys(this);
-  this.pointers = new naive.Pointers(this);
-  this.shared = {};
+  this.inputs = new naive.Inputs(this);
 
   this.loop.onStep = function () {
     if (this.state.current !== null) {
-
       if (!this.state.current.preloaded) {
         this.state.current.preloaded = true;
         this.state.current.preload(this);
         this.loader.start();
       }
-
       if (!this.state.current.created && !this.loader.loading) {
         this.state.current.created = true;
         this.state.current.create(this);
       }
-
       if (this.state.current.created) {
-        this.keys.update();
-        this.pointers.update();
+        this.inputs.updateKeys();
+        this.inputs.updatePointers();
         this.state.current.update(this);
         this.state.current.render(this);
       }
-
     }
   }.bind(this);
-
 };
 
-var Keys = function (game) {
-  this.tracked = {};
-  document.addEventListener('keydown', this.trackKey.bind(this), false);
-  document.addEventListener('keyup', this.untrackKey.bind(this), false);
+var Inputs = function () {
+  this.keys = {};
+  this.pointers = [];
+  document.addEventListener('keydown', this.handleKeyDown.bind(this), false);
+  document.addEventListener('keyup', this.handleKeyUp.bind(this), false);
 };
 
-Keys.prototype.add = function (key) {
-  this.tracked[key] = {
+// Keys.
+
+Inputs.prototype.addKey = function (key) {
+  this.keys[key] = {
     key: key,
     isDown: false,
     isUp: false,
@@ -139,44 +135,139 @@ Keys.prototype.add = function (key) {
     pressFrame: 0,
     releaseFrame: 0
   };
-  return this.tracked[key];
+  return this.keys[key];
 };
 
-Keys.prototype.trackKey = function (event) {
+Inputs.prototype.handleKeyDown = function (event) {
   event.preventDefault();
-  if (typeof this.tracked[event.key] !== 'undefined') {
-    this.tracked[event.key].isHolded = true;
+  if (typeof this.keys[event.key] !== 'undefined') {
+    this.keys[event.key].isHolded = true;
   }
 };
 
-Keys.prototype.untrackKey = function (event) {
+Inputs.prototype.handleKeyUp = function (event) {
   event.preventDefault();
-  if (typeof this.tracked[event.key] !== 'undefined') {
-    this.tracked[event.key].isHolded = false;
+  if (typeof this.keys[event.key] !== 'undefined') {
+    this.keys[event.key].isHolded = false;
   }
 };
 
-Keys.prototype.update = function () {
-  for (var i in this.tracked) {
-    if (!this.tracked.hasOwnProperty(i)) {
+Inputs.prototype.updateKeys = function () {
+  for (var i in this.keys) {
+    if (!this.keys.hasOwnProperty(i)) {
       continue;
     }
-    if (this.tracked[i].isHolded) {
-      this.tracked[i].holdTime += game.loop.delta;
-      this.tracked[i].releaseFrame = 0;
-      if (this.tracked[i].pressFrame === 0) {
-        this.tracked[i].pressFrame = game.loop.frame;
+    if (this.keys[i].isHolded) {
+      this.keys[i].holdTime += game.loop.delta;
+      this.keys[i].releaseFrame = 0;
+      if (this.keys[i].pressFrame === 0) {
+        this.keys[i].pressFrame = game.loop.frame;
       }
     } else {
-      this.tracked[i].holdTime = 0;
-      this.tracked[i].pressFrame = 0;
-      if (this.tracked[i].releaseFrame === 0) {
-        this.tracked[i].releaseFrame = game.loop.frame;
+      this.keys[i].holdTime = 0;
+      this.keys[i].pressFrame = 0;
+      if (this.keys[i].releaseFrame === 0) {
+        this.keys[i].releaseFrame = game.loop.frame;
       }
     }
-    this.tracked[i].isDown = (this.tracked[i].pressFrame === game.loop.frame);
-    this.tracked[i].isUp = (this.tracked[i].releaseFrame === game.loop.frame);
+    this.keys[i].isDown = (this.keys[i].pressFrame === game.loop.frame);
+    this.keys[i].isUp = (this.keys[i].releaseFrame === game.loop.frame);
   }
+};
+
+// Pointers.
+
+Inputs.prototype.addPointer = function () {
+  var pointer = {
+    number: this.pointers.length + 1,
+    active: false,
+    isHolded: false,
+    isDown: false,
+    isUp: false,
+    holdTime: 0,
+    pressFrame: 0,
+    releaseFrame: 0,
+    id: 0,
+    x: 100,
+    y: 100
+  };
+  this.pointers.unshift(pointer);
+  return pointer;
+};
+
+Inputs.prototype.enablePointers = function (element) {
+  element.style.touchAction = 'none';
+  element.addEventListener('pointerdown', this.handlePointerDown.bind(this), false);
+  element.addEventListener('pointermove', this.handlePointerMove.bind(this), false);
+  element.addEventListener('pointerup', this.handlePointerUpAndCancel.bind(this), false);
+  element.addEventListener('pointercancel', this.handlePointerUpAndCancel.bind(this), false);
+};
+
+Inputs.prototype.getPointerByID = function (id) {
+  var output = false;
+  this.pointers.forEach(function (pointer) {
+    if (pointer.id === id) {
+      output = pointer;
+    }
+  });
+  return output;
+};
+
+Inputs.prototype.getInactivePointer = function () {
+  var output = false;
+  this.pointers.forEach(function (pointer) {
+    if (pointer.active === false) {
+      output = pointer;
+    }
+  });
+  return output;
+};
+
+Inputs.prototype.handlePointerDown = function (event) {
+  event.preventDefault();
+  var pointer = this.getPointerByID(event.pointerId) || this.getInactivePointer();
+  pointer.active = true;
+  pointer.id = event.pointerId;
+  pointer.isHolded = true;
+  pointer.x = event.clientX - event.target.offsetLeft;
+  pointer.y = event.clientY - event.target.offsetTop;
+};
+
+Inputs.prototype.handlePointerMove = function (event) {
+  event.preventDefault();
+  var pointer = this.getPointerByID(event.pointerId) || this.getInactivePointer();
+  pointer.active = true;
+  pointer.id = event.pointerId;
+  pointer.x = event.clientX - event.target.offsetLeft;
+  pointer.y = event.clientY - event.target.offsetTop;
+};
+
+Inputs.prototype.handlePointerUpAndCancel = function (event) {
+  event.preventDefault();
+  var pointer = this.getPointerByID(event.pointerId);
+  pointer.active = false;
+  pointer.isHolded = false;
+};
+
+Inputs.prototype.updatePointers = function (event) {
+  this.pointers.forEach(function (pointer) {
+    if (pointer.isHolded) {
+      pointer.holdTime += game.loop.delta;
+      pointer.releaseFrame = 0;
+      if (pointer.pressFrame === 0) {
+        pointer.pressFrame = game.loop.frame;
+      }
+    } else {
+      pointer.holdTime = 0;
+      pointer.pressFrame = 0;
+      if (pointer.releaseFrame === 0) {
+        pointer.releaseFrame = game.loop.frame;
+      }
+    }
+    pointer.isDown = (pointer.pressFrame === game.loop.frame);
+    pointer.isUp = (pointer.releaseFrame === game.loop.frame);
+
+  }.bind(this));
 };
 
 var Loader = function () {
@@ -444,105 +535,6 @@ Loop.prototype.step = function () {
 
 Loop.prototype.onStep = function () {};
 
-var Pointers = function (game) {
-  this.tracked = [];
-};
-
-Pointers.prototype.add = function () {
-  var pointer = {
-    number: this.tracked.length + 1,
-    active: false,
-    isHolded: false,
-    isDown: false,
-    isUp: false,
-    holdTime: 0,
-    pressFrame: 0,
-    releaseFrame: 0,
-    id: 0,
-    x: 100,
-    y: 100
-  };
-  this.tracked.unshift(pointer);
-  return pointer;
-};
-
-Pointers.prototype.enable = function (element) {
-  element.style.touchAction = 'none';
-  element.addEventListener('pointerdown', this.trackPointerDown.bind(this), false);
-  element.addEventListener('pointermove', this.trackPointerMove.bind(this), false);
-  element.addEventListener('pointerup', this.untrack.bind(this), false);
-  element.addEventListener('pointercancel', this.untrack.bind(this), false);
-};
-
-Pointers.prototype.getByID = function (id) {
-  var output = false;
-  this.tracked.forEach(function (pointer) {
-    if (pointer.id === id) {
-      output = pointer;
-    }
-  });
-  return output;
-};
-
-Pointers.prototype.getInactivePointer = function () {
-  var output = false;
-  this.tracked.forEach(function (pointer) {
-    if (pointer.active === false) {
-      output = pointer;
-    }
-  });
-  return output;
-};
-
-Pointers.prototype.trackPointerDown = function (event) {
-  event.preventDefault();
-  var pointer = this.getByID(event.pointerId) || this.getInactivePointer();
-  pointer.active = true;
-  pointer.id = event.pointerId;
-  pointer.isHolded = true;
-  pointer.x = event.clientX - event.target.offsetLeft;
-  pointer.y = event.clientY - event.target.offsetTop;
-};
-
-Pointers.prototype.trackPointerMove = function (event) {
-  event.preventDefault();
-  var pointer = this.getByID(event.pointerId) || this.getInactivePointer();
-  pointer.active = true;
-  pointer.id = event.pointerId;
-  pointer.x = event.clientX - event.target.offsetLeft;
-  pointer.y = event.clientY - event.target.offsetTop;
-};
-
-Pointers.prototype.untrack = function (event) {
-  event.preventDefault();
-  var pointer = this.getByID(event.pointerId);
-  pointer.active = false;
-  pointer.isHolded = false;
-};
-
-Pointers.prototype.update = function (event) {
-  this.tracked.forEach(function (pointer) {
-
-    if (pointer.isHolded) {
-      pointer.holdTime += game.loop.delta;
-      pointer.releaseFrame = 0;
-      if (pointer.pressFrame === 0) {
-        pointer.pressFrame = game.loop.frame;
-      }
-    } else {
-      pointer.holdTime = 0;
-      pointer.pressFrame = 0;
-      if (pointer.releaseFrame === 0) {
-        pointer.releaseFrame = game.loop.frame;
-      }
-    }
-    pointer.isDown = (pointer.pressFrame === game.loop.frame);
-    pointer.isUp = (pointer.releaseFrame === game.loop.frame);
-
-  }.bind(this));
-
-};
-
 var Pool = function (cls, reset) {
   this.cls = cls;
   this.pool = [];
@@ -727,10 +719,9 @@ var naive = {
   Calc: Calc,
   Canvas: Canvas,
   Game: Game,
-  Keys: Keys,
+  Inputs: Inputs,
   Loader: Loader,
   Loop: Loop,
-  Pointers: Pointers,
   Pool: Pool,
   Signal: Signal,
   State: State,
