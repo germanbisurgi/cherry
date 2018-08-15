@@ -131,7 +131,7 @@ Inputs.prototype.handlePointerUpAndCancel = function (event) {
   pointer.isHolded = false;
 };
 
-Inputs.prototype.updatePointers = function (event) {
+Inputs.prototype.updatePointers = function () {
   this.pointers.forEach(function (pointer) {
     if (pointer.isHolded) {
       pointer.holdTime += game.loop.delta;
@@ -150,4 +150,9 @@ Inputs.prototype.updatePointers = function (event) {
     pointer.isUp = (pointer.releaseFrame === game.loop.frame);
 
   }.bind(this));
+};
+
+Inputs.prototype.update = function () {
+  this.updatePointers();
+  this.updateKeys();
 };

@@ -76,12 +76,30 @@ var Canvas = function (container) {
   this.canvas.style = 'border: 1px solid pink; margin: 30px;';
 };
 
+Canvas.prototype.circle = function (x, y, radius) {
+  this.context.beginPath();
+  this.context.arc(x, y, radius, 0, 2 * Math.PI);
+  this.context.stroke();
+};
+
 Canvas.prototype.clear = function () {
   this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 };
 
 Canvas.prototype.image = function (image, x, y, w, h) {
   this.context.drawImage(image, 0, 0, image.width, image.height, x - w / 2, y - h / 2, w, h);
+};
+
+Canvas.prototype.line = function (ax, ay, bx, by) {
+  this.context.beginPath();
+  this.context.moveTo(ax, ay);
+  this.context.lineTo(bx, by);
+  this.context.stroke();
+};
+
+Canvas.prototype.rect = function (x, y, w, h) {
+  this.context.rect(x, y, w, h);
+  this.context.stroke();
 };
 
 Canvas.prototype.text = function (x, y, text) {
@@ -94,23 +112,23 @@ var Game = function () {
   this.loop = new naive.Loop();
   this.state = new naive.StateManager(this);
   this.inputs = new naive.Inputs(this);
+  this.userData = {};
 
   this.loop.onStep = function () {
     if (this.state.current !== null) {
       if (!this.state.current.preloaded) {
         this.state.current.preloaded = true;
-        this.state.current.preload(this);
+        this.state.current.preload(this, this.userData);
         this.loader.start();
       }
       if (!this.state.current.created && !this.loader.loading) {
         this.state.current.created = true;
-        this.state.current.create(this);
+        this.state.current.create(this, this.userData);
       }
       if (this.state.current.created) {
-        this.inputs.updateKeys();
-        this.inputs.updatePointers();
-        this.state.current.update(this);
-        this.state.current.render(this);
+        this.inputs.update();
+        this.state.current.update(this, this.userData);
+        this.state.current.render(this, this.userData);
       }
     }
   }.bind(this);
@@ -249,7 +267,7 @@ Inputs.prototype.handlePointerUpAndCancel = function (event) {
   pointer.isHolded = false;
 };
 
-Inputs.prototype.updatePointers = function (event) {
+Inputs.prototype.updatePointers = function () {
   this.pointers.forEach(function (pointer) {
     if (pointer.isHolded) {
       pointer.holdTime += game.loop.delta;
@@ -268,6 +286,11 @@ Inputs.prototype.updatePointers = function (event) {
     pointer.isUp = (pointer.releaseFrame === game.loop.frame);
 
   }.bind(this));
+};
+
+Inputs.prototype.update = function () {
+  this.updatePointers();
+  this.updateKeys();
 };
 
 var Loader = function () {
