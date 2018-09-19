@@ -604,7 +604,7 @@ Pool.prototype.use = function () {
 
   // if free object init and reuse it
   if (unusedItem) {
-    this.reset(unusedItem.object, ...args);
+    this.reset.apply([unusedItem.object].concat(args));
     unusedItem.active = true;
     this.used++;
     return unusedItem.object;
@@ -613,7 +613,7 @@ Pool.prototype.use = function () {
   // if no free object creates one
   var item = {
     active: true,
-    object: new this.cls(...args)
+    object: new (Function.prototype.bind.apply(this.cls, [null].concat(args)))()
   };
   this.pool.push(item);
   this.used++;
