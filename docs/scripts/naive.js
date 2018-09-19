@@ -604,7 +604,7 @@ Pool.prototype.use = function () {
 
   // if free object init and reuse it
   if (unusedItem) {
-    this.reset.apply([unusedItem.object].concat(args));
+    this.reset.apply(null, [unusedItem.object].concat(args));
     unusedItem.active = true;
     this.used++;
     return unusedItem.object;
