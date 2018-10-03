@@ -7,7 +7,7 @@ var Canvas = function (container) {
   }
   this.canvas.width = window.innerWidth * 0.9;
   this.canvas.height = window.innerHeight * 0.9;
-  this.canvas.style = 'border: 1px solid pink; margin: 30px;';
+  this.canvas.style = 'border: 1px solid pink;';
 };
 
 Canvas.prototype.circle = function (x, y, radius) {

@@ -1,14 +1,3 @@
-var Brick = function (x, y, v, image) {
-  this.x = x;
-  this.y = y;
-  this.velocity = v;
-  this.image = game.loader.getImage(image);
-};
-
-Brick.prototype.draw = function (render) {
-  render.image(this.image, this.x, this.y, 50, 50);
-};
-
 var Grid = function (x, y, width, height, cols, rows) {
   this.x = x;
   this.y = y;

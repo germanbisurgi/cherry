@@ -186,20 +186,22 @@ Loader.prototype.hasCompleted = function () {
 };
 
 Loader.prototype.start = function () {
-  this.loading = true;
-  this.onStart.dispatch();
-  for (var i = 0, len = this.queue.length; i < len; i++) {
-    if (this.queue[i].type === 'audio') {
-      this.loadAudio(this.queue[i]);
-    }
-    if (this.queue[i].type === 'audio-buffer') {
-      this.loadAudioBuffer(this.queue[i]);
-    }
-    if (this.queue[i].type === 'image') {
-      this.loadImage(this.queue[i]);
-    }
-    if (this.queue[i].type === 'json') {
-      this.loadJSON(this.queue[i]);
+  if (this.queue.length > 0) {
+    this.loading = true;
+    this.onStart.dispatch();
+    for (var i = 0, len = this.queue.length; i < len; i++) {
+      if (this.queue[i].type === 'audio') {
+        this.loadAudio(this.queue[i]);
+      }
+      if (this.queue[i].type === 'audio-buffer') {
+        this.loadAudioBuffer(this.queue[i]);
+      }
+      if (this.queue[i].type === 'image') {
+        this.loadImage(this.queue[i]);
+      }
+      if (this.queue[i].type === 'json') {
+        this.loadJSON(this.queue[i]);
+      }
     }
   }
 };

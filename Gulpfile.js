@@ -2,12 +2,15 @@ var gulp = require('gulp');
 var concat = require('gulp-concat');
 var scripts = [
   './src/polyfills.js',
+  './src/box2dweb.js',
   './src/calc.js',
   './src/canvas.js',
   './src/game.js',
-  './src/inputs.js',
+  './src/keys.js',
   './src/loader.js',
   './src/loop.js',
+  './src/physics.js',
+  './src/pointers.js',
   './src/pool.js',
   './src/signal.js',
   './src/state.js',
