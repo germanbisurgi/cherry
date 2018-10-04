@@ -9,8 +9,6 @@ setupState.create = function (game, $) {
   // canvas
   $.canvas = new naive.Canvas('.container');
 
-  game.loop.fps = 30;
-
   // keys
   $.arrowUp = game.keys.add('ArrowUp');
   $.arrorRight = game.keys.add('ArrowRight');
