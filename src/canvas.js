@@ -2,11 +2,13 @@ var Canvas = function (container) {
   this.canvas = document.createElement('canvas');
   this.context = this.canvas.getContext('2d');
   if (typeof container !== 'undefined') {
-    this.container = document.querySelector(container);
-    this.container.appendChild(this.canvas);
+    this.container = document.querySelector('.container');
+    if (this.container) {
+      this.container.appendChild(this.canvas);
+    }
   }
-  this.canvas.width = window.innerWidth * 0.9;
-  this.canvas.height = window.innerHeight * 0.9;
+  this.canvas.width = window.innerWidth;
+  this.canvas.height = window.innerHeight;
   this.canvas.style = 'border: 1px solid pink;';
 };
 

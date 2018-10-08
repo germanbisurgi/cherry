@@ -6,9 +6,6 @@ setupState.preload = function (game) {
 };
 
 setupState.create = function (game, $) {
-  // canvas
-  $.canvas = new naive.Canvas('.container');
-
   // keys
   $.arrowUp = game.keys.add('ArrowUp');
   $.arrorRight = game.keys.add('ArrowRight');
@@ -18,11 +15,6 @@ setupState.create = function (game, $) {
   // pointers
   $.pointer1 = game.pointers.add();
   $.pointer2 = game.pointers.add();
-
-  game.pointers.enablePointers($.canvas.canvas);
-
-  game.physics = new Physics(game.loop.fps, $.canvas.context);
-  game.physics.setGravity(0, 10);
 
   game.state.switch('test-state');
 };

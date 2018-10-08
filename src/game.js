@@ -4,25 +4,31 @@ var Game = function () {
   this.state = new naive.StateManager(this);
   this.keys = new naive.Keys(this);
   this.pointers = new naive.Pointers(this);
+  this.world = new naive.World();
+  this.canvas = new naive.Canvas('.container');
   this.globals = {};
 
+  this.pointers.enablePointers(this.canvas.canvas);
+
   this.loop.onStep = function () {
-    if (this.state.current !== null) {
-      if (!this.state.current.preloaded) {
-        this.state.current.preloaded = true;
-        this.state.current.preload(this, this.globals);
-        this.loader.start();
-      }
-      if (!this.state.current.created && !this.loader.loading) {
-        this.state.current.created = true;
-        this.state.current.create(this, this.globals);
-      }
-      if (this.state.current.created) {
-        this.keys.update();
-        this.pointers.update();
-        this.state.current.update(this, this.globals);
-        this.state.current.render(this, this.globals);
-      }
+    this.state.update();
+    if (!this.state.current.preloaded) {
+      this.state.current.preloaded = true;
+      this.state.current.preload(this, this.globals);
+      this.loader.start();
+    }
+    if (!this.state.current.created && !this.loader.loading) {
+      this.state.current.created = true;
+      this.state.current.create(this, this.globals);
+    }
+    if (this.state.current.created) {
+      this.world.update(this.loop.fps);
+      this.keys.update();
+      this.pointers.update();
+      this.state.current.update(this, this.globals);
+      this.canvas.clear();
+      this.world.draw(this.canvas.context);
+      this.state.current.render(this, this.globals);
     }
   }.bind(this);
 };

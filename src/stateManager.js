@@ -2,6 +2,7 @@ var StateManager = function (game) {
   this.current = null;
   this.game = game;
   this.states = [];
+  this.requested = null;
 };
 
 StateManager.prototype.add = function (state) {
@@ -19,7 +20,12 @@ StateManager.prototype.getByName = function (stateName) {
 };
 
 StateManager.prototype.switch = function (stateName) {
-  this.game.loop.nextStep(function () {
-    this.current = this.getByName(stateName);
-  }.bind(this));
+  this.requested = stateName;
+};
+
+StateManager.prototype.update = function () {
+  if (this.requested) {
+    this.current = this.getByName(this.requested);
+    this.requested = null;
+  }
 };
