@@ -3,6 +3,11 @@ testState.create = function (game, $) {
 
   game.world.setGravity(0, 10);
 
+  var world = {
+    width: 200,
+    height: 200
+  };
+
   // -------------------------------------------------------------------- static
 
   var staticEdge = game.world.addBody(0, window.innerHeight - 50, 'static');
@@ -58,6 +63,37 @@ testState.create = function (game, $) {
     {x: 30, y: 60},
     {x: -30, y: 60}
   ]);
+
+  // --------------------------------------------------------------------- joint
+
+  game.world.createDistanceJoint({
+    bodyA: kinematicCircle,
+    bodyB: circle,
+    length: 75,
+    ax: 0,
+    ay: 0,
+    bx: 0,
+    by: 0,
+    frequencyHz: 2,
+    damping: 0.25,
+    collideConnected: false
+  });
+
+  game.world.createRevoluteJoint({
+    bodyA: polygon,
+    bodyB: rectangle,
+    ax: -0,
+    ay: 0,
+    bx: 0,
+    by: 0,
+    motorSpeed: 5 * 10,
+    maxMotorTorque: 200,
+    enableMotor: true,
+    lowerAngle: 0,
+    upperAngle: 0,
+    enableLimit: false,
+    collideConnected: false
+  });
 
 };
 
