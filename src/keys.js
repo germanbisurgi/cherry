@@ -7,12 +7,12 @@ var Keys = function () {
 Keys.prototype.add = function (key) {
   this.keys[key] = {
     key: key,
-    isDown: false,
-    isUp: false,
-    isHolded: false,
+    start: false,
+    end: false,
+    hold: false,
     holdTime: 0,
-    pressFrame: 0,
-    releaseFrame: 0
+    startFrame: 0,
+    endFrame: 0
   };
   return this.keys[key];
 };
@@ -20,14 +20,14 @@ Keys.prototype.add = function (key) {
 Keys.prototype.handleKeyDown = function (event) {
   event.preventDefault();
   if (typeof this.keys[event.key] !== 'undefined') {
-    this.keys[event.key].isHolded = true;
+    this.keys[event.key].hold = true;
   }
 };
 
 Keys.prototype.handleKeyUp = function (event) {
   event.preventDefault();
   if (typeof this.keys[event.key] !== 'undefined') {
-    this.keys[event.key].isHolded = false;
+    this.keys[event.key].hold = false;
   }
 };
 
@@ -36,21 +36,21 @@ Keys.prototype.updateKeys = function () {
     if (!this.keys.hasOwnProperty(i)) {
       continue;
     }
-    if (this.keys[i].isHolded) {
+    if (this.keys[i].hold) {
       this.keys[i].holdTime += game.loop.delta;
-      this.keys[i].releaseFrame = 0;
-      if (this.keys[i].pressFrame === 0) {
-        this.keys[i].pressFrame = game.loop.frame;
+      this.keys[i].endFrame = 0;
+      if (this.keys[i].startFrame === 0) {
+        this.keys[i].startFrame = game.loop.frame;
       }
     } else {
       this.keys[i].holdTime = 0;
-      this.keys[i].pressFrame = 0;
-      if (this.keys[i].releaseFrame === 0) {
-        this.keys[i].releaseFrame = game.loop.frame;
+      this.keys[i].startFrame = 0;
+      if (this.keys[i].endFrame === 0) {
+        this.keys[i].endFrame = game.loop.frame;
       }
     }
-    this.keys[i].isDown = (this.keys[i].pressFrame === game.loop.frame);
-    this.keys[i].isUp = (this.keys[i].releaseFrame === game.loop.frame);
+    this.keys[i].start = (this.keys[i].startFrame === game.loop.frame);
+    this.keys[i].end = (this.keys[i].endFrame === game.loop.frame);
   }
 };
 

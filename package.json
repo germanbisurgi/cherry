@@ -21,11 +21,7 @@
   },
   "homepage": "https://github.com/germanbisurgi/comp#readme",
   "devDependencies": {
-    "codeceptjs": "^1.2.1",
-    "eslint": "^4.19.1",
     "gulp": "^3.9.1",
-    "gulp-concat": "^2.6.1",
-    "jest": "^23.1.0",
-    "live-server": "^1.2.0"
+    "gulp-concat": "^2.6.1"
   }
 }

@@ -3,11 +3,6 @@ testState.create = function (game, $) {
 
   game.world.setGravity(0, 10);
 
-  var world = {
-    width: 200,
-    height: 200
-  };
-
   // -------------------------------------------------------------------- static
 
   var staticEdge = game.world.addBody(0, window.innerHeight - 50, 'static');
@@ -137,17 +132,27 @@ testState.create = function (game, $) {
 };
 
 testState.update = function (game, $) {
-  game.pointers.pointers.forEach(function (p) {
-    if (p.isDown) {
-      game.world.dragStart(p);
+  game.pointers.pointers.forEach(function (pointer) {
+    if (pointer.start) {
+      game.world.dragStart(pointer);
     }
-    if (p.isHolded) {
-      game.world.dragMove(p);
+    if (pointer.hold) {
+      game.world.dragMove(pointer);
     }
-    if (p.isUp) {
-      game.world.dragEnd(p);
+    if (pointer.end) {
+      game.world.dragEnd(pointer);
     }
   });
+
+  if ($.arrowUp.start) {
+    console.log('start');
+  }
+  if ($.arrowUp.hold) {
+    console.log('hold');
+  }
+  if ($.arrowUp.end) {
+    console.log('end');
+  }
 };
 
 testState.render = function (game, $) {

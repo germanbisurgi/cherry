@@ -6,12 +6,12 @@ Pointers.prototype.add = function () {
   var pointer = {
     number: this.pointers.length + 1,
     active: false,
-    isHolded: false,
-    isDown: false,
-    isUp: false,
+    hold: false,
+    start: false,
+    end: false,
     holdTime: 0,
-    pressFrame: 0,
-    releaseFrame: 0,
+    startFrame: 0,
+    endFrame: 0,
     id: 0,
     startX: 0,
     startY: 0,
@@ -56,7 +56,7 @@ Pointers.prototype.handlePointerDown = function (event) {
   var pointer = this.getPointerByID(event.pointerId) || this.getInactivePointer();
   pointer.active = true;
   pointer.id = event.pointerId;
-  pointer.isHolded = true;
+  pointer.hold = true;
   pointer.startX = event.clientX - event.target.offsetLeft;
   pointer.startY = event.clientY - event.target.offsetTop;
   pointer.x = event.clientX - event.target.offsetLeft;
@@ -76,28 +76,28 @@ Pointers.prototype.handlePointerUpAndCancel = function (event) {
   event.preventDefault();
   var pointer = this.getPointerByID(event.pointerId);
   pointer.active = false;
-  pointer.isHolded = false;
+  pointer.hold = false;
   pointer.startX = 0;
   pointer.startY = 0;
 };
 
 Pointers.prototype.updatePointers = function () {
   this.pointers.forEach(function (pointer) {
-    if (pointer.isHolded) {
+    if (pointer.hold) {
       pointer.holdTime += game.loop.delta;
-      pointer.releaseFrame = 0;
-      if (pointer.pressFrame === 0) {
-        pointer.pressFrame = game.loop.frame;
+      pointer.endFrame = 0;
+      if (pointer.startFrame === 0) {
+        pointer.startFrame = game.loop.frame;
       }
     } else {
       pointer.holdTime = 0;
-      pointer.pressFrame = 0;
-      if (pointer.releaseFrame === 0) {
-        pointer.releaseFrame = game.loop.frame;
+      pointer.startFrame = 0;
+      if (pointer.endFrame === 0) {
+        pointer.endFrame = game.loop.frame;
       }
     }
-    pointer.isDown = (pointer.pressFrame === game.loop.frame);
-    pointer.isUp = (pointer.releaseFrame === game.loop.frame);
+    pointer.start = (pointer.startFrame === game.loop.frame);
+    pointer.end = (pointer.endFrame === game.loop.frame);
 
   }.bind(this));
 };
