@@ -23,8 +23,8 @@ var Game = function () {
     }
     if (this.state.current.created) {
       this.world.update(this.loop.fps);
-      this.keys.update();
-      this.pointers.update();
+      this.keys.update(this.loop.delta, this.loop.frame);
+      this.pointers.update(this.loop.delta, this.loop.frame);
       this.state.current.update(this, this.globals);
       this.canvas.clear();
       this.world.draw(this.canvas.context);

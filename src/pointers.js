@@ -81,27 +81,22 @@ Pointers.prototype.handlePointerUpAndCancel = function (event) {
   pointer.startY = 0;
 };
 
-Pointers.prototype.updatePointers = function () {
+Pointers.prototype.update = function (delta, frame) {
   this.pointers.forEach(function (pointer) {
     if (pointer.hold) {
-      pointer.holdTime += game.loop.delta;
+      pointer.holdTime += delta;
       pointer.endFrame = 0;
       if (pointer.startFrame === 0) {
-        pointer.startFrame = game.loop.frame;
+        pointer.startFrame = frame;
       }
     } else {
       pointer.holdTime = 0;
       pointer.startFrame = 0;
       if (pointer.endFrame === 0) {
-        pointer.endFrame = game.loop.frame;
+        pointer.endFrame = frame;
       }
     }
-    pointer.start = (pointer.startFrame === game.loop.frame);
-    pointer.end = (pointer.endFrame === game.loop.frame);
-
+    pointer.start = (pointer.startFrame === frame);
+    pointer.end = (pointer.endFrame === frame);
   }.bind(this));
-};
-
-Pointers.prototype.update = function () {
-  this.updatePointers();
 };

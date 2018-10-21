@@ -51,8 +51,8 @@ var World = function () {
     self.scale = scale;
   };
 
-  self.setGravity = function (_x, _y) {
-    self.world.SetGravity(new b2Vec2(_x, _y));
+  self.setGravity = function (x, y) {
+    self.world.SetGravity(new b2Vec2(x, y));
   };
 
   self.fasterEach = function (array, fn, thisContext) {
@@ -88,120 +88,120 @@ var World = function () {
     return fixtures;
   };
 
-  self.queryPoint = function (_point, _function) {
+  self.queryPoint = function (point, callback) {
     self.world.QueryPoint(
       function (fixture) {
-        _function(fixture);
+        callback(fixture);
       },
-      {x: _point.x, y: _point.y}
+      {x: point.x, y: point.y}
     );
   };
 
-  self.rayCastOne = function (_pointA, _pointB) {
+  self.rayCastOne = function (pointA, pointB) {
     return self.world.RayCastOne(
-      {x: _pointA.x / self.scale, y: _pointA.y / self.scale},
-      {x: _pointB.x / self.scale, y: _pointB.y / self.scale}
+      {x: pointA.x / self.scale, y: pointA.y / self.scale},
+      {x: pointB.x / self.scale, y: pointB.y / self.scale}
     );
   };
 
-  self.rayCastAll = function (_pointA, _pointB) {
+  self.rayCastAll = function (pointA, pointB) {
     return self.world.RayCastOne(
-      {x: _pointA.x / self.scale, y: _pointA.y / self.scale},
-      {x: _pointB.x / self.scale, y: _pointB.y / self.scale}
+      {x: pointA.x / self.scale, y: pointA.y / self.scale},
+      {x: pointB.x / self.scale, y: pointB.y / self.scale}
     );
   };
 
-  self.rayCast = function (_pointA, _pointB, _callback) {
+  self.rayCast = function (pointA, pointB, callback) {
     self.world.RayCast(
-      _callback,
-      {x: _pointA.x / self.scale, y: _pointA.y / self.scale},
-      {x: _pointB.x / self.scale, y: _pointB.y / self.scale}
+      callback,
+      {x: pointA.x / self.scale, y: pointA.y / self.scale},
+      {x: pointB.x / self.scale, y: pointB.y / self.scale}
     );
   };
 
   // ---------------------------------------------------------------------- body
 
-  self.addBody = function (_x, _y, _type, _bodyDefinition) {
-    _bodyDefinition = _bodyDefinition || {};
+  self.addBody = function (x, y, type, bodyDefinition) {
+    bodyDefinition = bodyDefinition || {};
     var bodyDef = new b2BodyDef();
-    bodyDef.position.x = _x / self.scale;
-    bodyDef.position.y = _y / self.scale;
-    bodyDef.active = _bodyDefinition.active ? _bodyDefinition.active : true;
-    bodyDef.allowSleep = _bodyDefinition.allowSleep ? _bodyDefinition.allowSleep : true;
-    bodyDef.awake = _bodyDefinition.awake ? _bodyDefinition.awake : true;
-    bodyDef.bullet = _bodyDefinition.bullet ? _bodyDefinition.bullet : false;
-    bodyDef.fixedRotation = _bodyDefinition.fixedRotation ? _bodyDefinition.fixedRotation : false;
-    bodyDef.angle = _bodyDefinition.angle || _bodyDefinition.angle === 0 ? _bodyDefinition.angle : 0;
-    bodyDef.angularDamping = _bodyDefinition.angularDamping || _bodyDefinition.angularDamping === 0 ? _bodyDefinition.angularDamping : 0;
-    bodyDef.angularVelocity = _bodyDefinition.angularVelocity || _bodyDefinition.angularVelocity === 0 ? _bodyDefinition.angularVelocity : 0;
-    bodyDef.linearDamping = _bodyDefinition.linearDamping || _bodyDefinition.linearDamping === 0 ? _bodyDefinition.linearDamping : 0;
-    bodyDef.linearVelocity = _bodyDefinition.linearVelocity ? _bodyDefinition.linearVelocity : {x: 0, y: 0};
-    bodyDef.userData = _bodyDefinition.userData ? _bodyDefinition.userData : null;
-    if (_type === 'static') {
+    bodyDef.position.x = x / self.scale;
+    bodyDef.position.y = y / self.scale;
+    bodyDef.active = bodyDefinition.active ? bodyDefinition.active : true;
+    bodyDef.allowSleep = bodyDefinition.allowSleep ? bodyDefinition.allowSleep : true;
+    bodyDef.awake = bodyDefinition.awake ? bodyDefinition.awake : true;
+    bodyDef.bullet = bodyDefinition.bullet ? bodyDefinition.bullet : false;
+    bodyDef.fixedRotation = bodyDefinition.fixedRotation ? bodyDefinition.fixedRotation : false;
+    bodyDef.angle = bodyDefinition.angle || bodyDefinition.angle === 0 ? bodyDefinition.angle : 0;
+    bodyDef.angularDamping = bodyDefinition.angularDamping || bodyDefinition.angularDamping === 0 ? bodyDefinition.angularDamping : 0;
+    bodyDef.angularVelocity = bodyDefinition.angularVelocity || bodyDefinition.angularVelocity === 0 ? bodyDefinition.angularVelocity : 0;
+    bodyDef.linearDamping = bodyDefinition.linearDamping || bodyDefinition.linearDamping === 0 ? bodyDefinition.linearDamping : 0;
+    bodyDef.linearVelocity = bodyDefinition.linearVelocity ? bodyDefinition.linearVelocity : {x: 0, y: 0};
+    bodyDef.userData = bodyDefinition.userData ? bodyDefinition.userData : null;
+    if (type === 'static') {
       bodyDef.type = b2Body.b2_staticBody;
     }
-    if (_type === 'dynamic') {
+    if (type === 'dynamic') {
       bodyDef.type = b2Body.b2_dynamicBody;
     }
-    if (_type === 'kinematic') {
+    if (type === 'kinematic') {
       bodyDef.type = b2Body.b2_kinematicBody;
     }
 
     var body = self.world.CreateBody(bodyDef);
     body.draggable = true;
 
-    body.addCircle = function (_offsetX, _offsetY, _radius, _fixtureDefinition) {
-      var fixtureDef = self.getFixtureDef(_fixtureDefinition);
-      fixtureDef.shape = new b2CircleShape(_radius / self.scale);
+    body.addCircle = function (offsetX, offsetY, radius, fixtureDefinition) {
+      var fixtureDef = self.getFixtureDef(fixtureDefinition);
+      fixtureDef.shape = new b2CircleShape(radius / self.scale);
       fixtureDef.shape.m_p = {
-        x: _offsetX / self.scale || 0,
-        y: _offsetY / self.scale || 0
+        x: offsetX / self.scale || 0,
+        y: offsetY / self.scale || 0
       };
       var fixture = body.CreateFixture(fixtureDef);
       return fixture;
     };
 
-    body.addRectangle = function (_offsetX, _offsetY, _width, _height, _fixtureDefinition) {
-      var fixtureDef = self.getFixtureDef(_fixtureDefinition);
+    body.addRectangle = function (offsetX, offsetY, width, height, fixtureDefinition) {
+      var fixtureDef = self.getFixtureDef(fixtureDefinition);
       fixtureDef.shape = new b2PolygonShape();
       fixtureDef.shape.SetAsBox(
-        _width * 0.5 / self.scale,
-        _height * 0.5 / self.scale
+        width * 0.5 / self.scale,
+        height * 0.5 / self.scale
       );
-      self.fasterEach(fixtureDef.shape.m_vertices, function (_vert) {
-        _vert.x += _offsetX / self.scale || 0;
-        _vert.y += _offsetY / self.scale || 0;
+      self.fasterEach(fixtureDef.shape.m_vertices, function (vert) {
+        vert.x += offsetX / self.scale || 0;
+        vert.y += offsetY / self.scale || 0;
       }.bind(this));
-      fixtureDef.shape.m_centroid.x += _offsetX / self.scale || 0;
-      fixtureDef.shape.m_centroid.y += _offsetY / self.scale || 0;
+      fixtureDef.shape.m_centroid.x += offsetX / self.scale || 0;
+      fixtureDef.shape.m_centroid.y += offsetY / self.scale || 0;
       var fixture = body.CreateFixture(fixtureDef);
       return fixture;
     };
 
-    body.addPolygon = function (_offsetX, _offsetY, _points, _fixtureDefinition) {
-      var fixtureDef = self.getFixtureDef(_fixtureDefinition);
+    body.addPolygon = function (offsetX, offsetY, points, fixtureDefinition) {
+      var fixtureDef = self.getFixtureDef(fixtureDefinition);
       fixtureDef.shape = new b2PolygonShape();
-      self.fasterEach(_points, function (_point) {
-        _point.x /= self.scale;
-        _point.y /= self.scale;
+      self.fasterEach(points, function (point) {
+        point.x /= self.scale;
+        point.y /= self.scale;
       });
-      fixtureDef.shape.SetAsArray(_points, _points.length);
-      self.fasterEach(fixtureDef.shape.m_vertices, function (_vert) {
-        _vert.x += _offsetX / self.scale || 0;
-        _vert.y += _offsetY / self.scale || 0;
+      fixtureDef.shape.SetAsArray(points, points.length);
+      self.fasterEach(fixtureDef.shape.m_vertices, function (vert) {
+        vert.x += offsetX / self.scale || 0;
+        vert.y += offsetY / self.scale || 0;
       });
       var fixture = body.CreateFixture(fixtureDef);
       return fixture;
     };
 
-    body.addEdge = function (_x1, _y1, _x2, _y2, _fixtureDefinition) {
-      var fixtureDef = self.getFixtureDef(_fixtureDefinition);
+    body.addEdge = function (x1, y1, x2, y2, fixtureDefinition) {
+      var fixtureDef = self.getFixtureDef(fixtureDefinition);
       fixtureDef.shape = new b2PolygonShape();
-      _x1 /= self.scale;
-      _y1 /= self.scale;
-      _x2 /= self.scale;
-      _y2 /= self.scale;
-      fixtureDef.shape.SetAsEdge({x: _x1, y: _y1}, {x: _x2, y: _y2});
+      x1 /= self.scale;
+      y1 /= self.scale;
+      x2 /= self.scale;
+      y2 /= self.scale;
+      fixtureDef.shape.SetAsEdge({x: x1, y: y1}, {x: x2, y: y2});
       var fixture = body.CreateFixture(fixtureDef);
       return fixture;
     };
@@ -265,11 +265,11 @@ var World = function () {
       body.SetAngularVelocity(angularVelocity / self.scale);
     };
 
-    body.setLinearVelocity = function (_x, _y) {
+    body.setLinearVelocity = function (x, y) {
       body.SetAwake(true);
       body.SetLinearVelocity({
-        x: _x / self.scale,
-        y: _y / self.scale
+        x: x / self.scale,
+        y: y / self.scale
       });
     };
 
@@ -278,14 +278,14 @@ var World = function () {
     return body;
   };
 
-  self.getFixtureDef = function (_fixtureDefinition) {
-    _fixtureDefinition = _fixtureDefinition || {};
+  self.getFixtureDef = function (fixtureDefinition) {
+    fixtureDefinition = fixtureDefinition || {};
     var fixDef = new b2FixtureDef();
-    fixDef.density = _fixtureDefinition.density || _fixtureDefinition.density === 0 ? _fixtureDefinition.density : 1;
-    fixDef.friction = _fixtureDefinition.friction || _fixtureDefinition.friction === 0 ? _fixtureDefinition.friction : 0.5;
-    fixDef.restitution = _fixtureDefinition.restitution || _fixtureDefinition.restitution === 0 ? _fixtureDefinition.restitution : 0.3;
-    fixDef.isSensor = _fixtureDefinition.isSensor ? _fixtureDefinition.isSensor : false;
-    fixDef.userData = _fixtureDefinition.userData ? _fixtureDefinition.userData : null;
+    fixDef.density = fixtureDefinition.density || fixtureDefinition.density === 0 ? fixtureDefinition.density : 1;
+    fixDef.friction = fixtureDefinition.friction || fixtureDefinition.friction === 0 ? fixtureDefinition.friction : 0.5;
+    fixDef.restitution = fixtureDefinition.restitution || fixtureDefinition.restitution === 0 ? fixtureDefinition.restitution : 0.3;
+    fixDef.isSensor = fixtureDefinition.isSensor ? fixtureDefinition.isSensor : false;
+    fixDef.userData = fixtureDefinition.userData ? fixtureDefinition.userData : null;
     return fixDef;
   };
 
@@ -333,8 +333,8 @@ var World = function () {
 			x: (x + game.render.camera.x) / self.scale,
 			y: (y + game.render.camera.y) / self.scale
 		}
-		var x = (_x + game.render.camera.x)/ self.scale;
-		var y = (_y + game.render.camera.y)/ self.scale;
+		var x = (x + game.render.camera.x)/ self.scale;
+		var y = (y + game.render.camera.y)/ self.scale;
 		var angle = game.render.camera.angle;
 		var ox = (game.render.camera.x + game.render.camera.width / 2)/ self.scale;
 		var oy = (game.render.camera.x + game.render.camera.height / 2)/ self.scale;
@@ -405,11 +405,11 @@ var World = function () {
 
   // -------------------------------------------------------------------- joints
 
-  self.createMouseJoint = function (_point, _body, fps) {
+  self.createMouseJoint = function (point, body, fps) {
     var jointDefinition = new Box2D.Dynamics.Joints.b2MouseJointDef();
     jointDefinition.bodyA = self.world.GetGroundBody();
-    jointDefinition.bodyB = _body;
-    jointDefinition.target.Set(_point.x, _point.y);
+    jointDefinition.bodyB = body;
+    jointDefinition.target.Set(point.x, point.y);
     jointDefinition.maxForce = 100000;
     jointDefinition.timeStep = 1 / fps;
     return self.world.CreateJoint(jointDefinition);
@@ -504,8 +504,8 @@ var World = function () {
     return pulleyJoint;
   };
 
-  self.destroyJoint = function (_joint) {
-    self.world.DestroyJoint(_joint);
+  self.destroyJoint = function (joint) {
+    self.world.DestroyJoint(joint);
   };
 
 };

@@ -31,29 +31,25 @@ Keys.prototype.handleKeyUp = function (event) {
   }
 };
 
-Keys.prototype.updateKeys = function () {
+Keys.prototype.update = function (delta, frame) {
   for (var i in this.keys) {
     if (!this.keys.hasOwnProperty(i)) {
       continue;
     }
     if (this.keys[i].hold) {
-      this.keys[i].holdTime += game.loop.delta;
+      this.keys[i].holdTime += delta;
       this.keys[i].endFrame = 0;
       if (this.keys[i].startFrame === 0) {
-        this.keys[i].startFrame = game.loop.frame;
+        this.keys[i].startFrame = frame;
       }
     } else {
       this.keys[i].holdTime = 0;
       this.keys[i].startFrame = 0;
       if (this.keys[i].endFrame === 0) {
-        this.keys[i].endFrame = game.loop.frame;
+        this.keys[i].endFrame = frame;
       }
     }
-    this.keys[i].start = (this.keys[i].startFrame === game.loop.frame);
-    this.keys[i].end = (this.keys[i].endFrame === game.loop.frame);
+    this.keys[i].start = (this.keys[i].startFrame === frame);
+    this.keys[i].end = (this.keys[i].endFrame === frame);
   }
-};
-
-Keys.prototype.update = function () {
-  this.updateKeys();
 };
