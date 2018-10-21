@@ -46,6 +46,9 @@ testState.create = function (game, $) {
 
   // ------------------------------------------------------------------- dynamic
 
+  $.ball = game.world.addBody(50, 350, 'dynamic');
+  $.ball.addCircle(0, 0, 20);
+
   var circle = game.world.addBody(50, 350, 'dynamic');
   circle.addCircle(0, 0, 40);
 
@@ -61,7 +64,7 @@ testState.create = function (game, $) {
   var pulleyCircleB = game.world.addBody(50, 350, 'dynamic');
   pulleyCircleB.addCircle(0, 0, 40);
 
-  var polygon = game.world.addBody(250, 350, 'dynamic');
+  polygon = game.world.addBody(250, 350, 'dynamic');
   polygon.addPolygon(0, 0, [
     {x: 0, y: 0},
     {x: 30, y: 60},
@@ -70,64 +73,10 @@ testState.create = function (game, $) {
 
   // --------------------------------------------------------------------- joint
 
-  game.world.createDistanceJoint({
-    bodyA: kinematicCircle,
-    bodyB: circle,
-    length: 75,
-    ax: 30,
-    ay: 0,
-    bx: 0,
-    by: 0,
-    frequencyHz: 2,
-    damping: 0.25,
-    collideConnected: false
-  });
-
-  game.world.createRevoluteJoint({
-    bodyA: polygon,
-    bodyB: rectangle,
-    ax: -0,
-    ay: 0,
-    bx: 0,
-    by: 0,
-    motorSpeed: 5 * 10,
-    maxMotorTorque: 200,
-    enableMotor: true,
-    lowerAngle: 0,
-    upperAngle: 0,
-    enableLimit: false,
-    collideConnected: false
-  });
-
-  self.prismaticJoint = game.world.createPrismaticJoint({
-		bodyA: staticRectangle,
-		bodyB: prismaticRectangleA,
-		axisX: 1,
-		axisY: 0,
-		ax: 0,
-		ay: 0,
-		bx: 0,
-		by: 0,
-		lowerTranslation: 0,
-		upperTranslation: 50,
-		enableLimit: true,
-		motorSpeed: 30,
-		maxMotorForce: 30,
-		enableMotor: true,
-		collideConnected: false
-  });
-  
-  self.pulleyJoint = game.world.createPulleyJoint({
-		bodyA: pulleyCircleA,
-		bodyB: pulleyCircleB,
-		groundAnchorA: {x: 400, y: 50},
-		groundAnchorB: {x: 500, y: 50},
-		offsetA: {x: 0, y: 0},
-		offsetB: {x: 0, y: 0},
-		ratio: 1,
-		lengthA: 100,
-		lengthB: 100,
-	});
+  game.world.createDistanceJoint(kinematicCircle, circle, 75, 30, 0, 0, 0, 2, 0.25, false);
+  game.world.createRevoluteJoint(polygon, rectangle, 0, 0, 0, 0, 50, 200, true, 0, 0, false, false);
+  game.world.createPrismaticJoint(staticRectangle, prismaticRectangleA, 1, 0, 0, 0, 0, 0, 0, 50, true, 30, 30, true, false);
+  game.world.createPulleyJoint(pulleyCircleA, pulleyCircleB, 400, 50, 500, 50, 0, 0, 0, 0, 1, 100, 100);
 
 };
 
@@ -144,14 +93,20 @@ testState.update = function (game, $) {
     }
   });
 
-  if ($.arrowUp.start) {
-    console.log('start');
-  }
+  // if ($.arrowUp.start) {}
+  // if ($.arrowUp.end) {}
+
   if ($.arrowUp.hold) {
-    console.log('hold');
+    $.ball.applyForce({x: 0, y: ($.ball.getMass() * -10) - 10}, $.ball.getWorldCenter());
   }
-  if ($.arrowUp.end) {
-    console.log('end');
+  if ($.arrorRight.hold) {
+    $.ball.applyForce({x: $.ball.getMass() * 2, y: 0}, $.ball.getWorldCenter());
+  }
+  if ($.arrowDown.hold) {
+    $.ball.applyForce({x: 0, y: 501}, $.ball.getWorldCenter());
+  }
+  if ($.arrowLeft.hold) {
+    $.ball.applyForce({x: $.ball.getMass() * -2, y: 0}, $.ball.getWorldCenter());
   }
 };
 

@@ -12049,89 +12049,89 @@ var World = function () {
     return self.world.CreateJoint(jointDefinition);
   };
 
-  self.createDistanceJoint = function (_config) {
-    var ax = _config.ax || _config.ax === 0 ? _config.ax / self.scale : 0;
-    var ay = _config.ay || _config.ay === 0 ? _config.ay / self.scale : 0;
-    var bx = _config.bx || _config.bx === 0 ? _config.bx / self.scale : 0;
-    var by = _config.by || _config.by === 0 ? _config.by / self.scale : 0;
+  self.createDistanceJoint = function (bodyA, bodyB, length, ax, ay, bx, by, frequencyHz, damping, collideConnected) {
+    ax = ax || ax === 0 ? ax / self.scale : 0;
+    ay = ay || ay === 0 ? ay / self.scale : 0;
+    bx = bx || bx === 0 ? bx / self.scale : 0;
+    by = by || by === 0 ? by / self.scale : 0;
     var jointDefinition = new Box2D.Dynamics.Joints.b2DistanceJointDef();
     jointDefinition.Initialize(
-      _config.bodyA,
-      _config.bodyB,
-      {x: _config.bodyA.GetWorldCenter().x + (ax), y: _config.bodyA.GetWorldCenter().y + (ay)},
-      {x: _config.bodyB.GetWorldCenter().x + (bx), y: _config.bodyB.GetWorldCenter().y + (by)}
+      bodyA,
+      bodyB,
+      {x: bodyA.GetWorldCenter().x + (ax), y: bodyA.GetWorldCenter().y + (ay)},
+      {x: bodyB.GetWorldCenter().x + (bx), y: bodyB.GetWorldCenter().y + (by)}
     );
-    jointDefinition.length = _config.length || _config.length === 0 ? _config.length / self.scale : jointDefinition.length;
-    jointDefinition.frequencyHz = _config.frequencyHz || _config.frequencyHz === 0 ? _config.frequencyHz : jointDefinition.frequencyHz;
-    jointDefinition.damping = _config.damping || _config.damping === 0 ? _config.damping : jointDefinition.damping;
-    jointDefinition.collideConnected = _config.collideConnected ? _config.collideConnected : jointDefinition.collideConnected;
+    jointDefinition.length = length || length === 0 ? length / self.scale : jointDefinition.length;
+    jointDefinition.frequencyHz = frequencyHz || frequencyHz === 0 ? frequencyHz : jointDefinition.frequencyHz;
+    jointDefinition.damping = damping || damping === 0 ? damping : jointDefinition.damping;
+    jointDefinition.collideConnected = collideConnected ? collideConnected : jointDefinition.collideConnected;
     return self.world.CreateJoint(jointDefinition);
   };
 
-  self.createRevoluteJoint = function (_config) {
+  self.createRevoluteJoint = function (bodyA, bodyB, ax, ay, bx, by, motorSpeed, maxMotorTorque, enableMotor, lowerAngle, upperAngle, enableLimit, collideConnected) {
     var jointDefinition = new Box2D.Dynamics.Joints.b2RevoluteJointDef();
     jointDefinition.Initialize(
-      _config.bodyA,
-      _config.bodyB,
-      _config.bodyA.GetWorldCenter()
+      bodyA,
+      bodyB,
+      bodyA.GetWorldCenter()
     );
-    var ax = _config.ax || _config.ax === 0 ? _config.ax / self.scale : 0;
-    var ay = _config.ay || _config.ay === 0 ? _config.ay / self.scale : 0;
-    var bx = _config.bx || _config.bx === 0 ? _config.bx / self.scale : 0;
-    var by = _config.by || _config.by === 0 ? _config.by / self.scale : 0;
+    ax = ax || ax === 0 ? ax / self.scale : 0;
+    ay = ay || ay === 0 ? ay / self.scale : 0;
+    bx = bx || bx === 0 ? bx / self.scale : 0;
+    by = by || by === 0 ? by / self.scale : 0;
     jointDefinition.localAnchorA = {x: ax, y: ay};
     jointDefinition.localAnchorB = {x: bx, y: by};
-    jointDefinition.motorSpeed = _config.motorSpeed || _config.motorSpeed === 0 ? _config.motorSpeed * 0.0174532925199432957 : 0;
-    jointDefinition.lowerAngle = _config.lowerAngle || _config.lowerAngle === 0 ? _config.lowerAngle * 0.0174532925199432957 : 0;
-    jointDefinition.upperAngle = _config.upperAngle || _config.upperAngle === 0 ? _config.upperAngle * 0.0174532925199432957 : 0;
-    jointDefinition.maxMotorTorque = _config.maxMotorTorque || _config.maxMotorTorque === 0 ? _config.maxMotorTorque : 0;
-    jointDefinition.enableMotor = _config.enableMotor ? _config.enableMotor : false;
-    jointDefinition.enableLimit = _config.enableLimit ? _config.enableLimit : false;
-    jointDefinition.collideConnected = _config.collideConnected ? _config.collideConnected : false;
+    jointDefinition.motorSpeed = motorSpeed || motorSpeed === 0 ? motorSpeed * 0.0174532925199432957 : 0;
+    jointDefinition.lowerAngle = lowerAngle || lowerAngle === 0 ? lowerAngle * 0.0174532925199432957 : 0;
+    jointDefinition.upperAngle = upperAngle || upperAngle === 0 ? upperAngle * 0.0174532925199432957 : 0;
+    jointDefinition.maxMotorTorque = maxMotorTorque || maxMotorTorque === 0 ? maxMotorTorque : 0;
+    jointDefinition.enableMotor = enableMotor ? enableMotor : false;
+    jointDefinition.enableLimit = enableLimit ? enableLimit : false;
+    jointDefinition.collideConnected = collideConnected ? collideConnected : false;
     return self.world.CreateJoint(jointDefinition);
   };
 
-  self.createPrismaticJoint = function (_config) {
-    var axisX = _config.axisX || _config.axisX === 0 ? _config.axisX : 0;
-    var axisY = _config.axisY || _config.axisY === 0 ? _config.axisY : 0;
+  self.createPrismaticJoint = function (bodyA, bodyB, axisX, axisY, ax, ay, bx, by, lowerTranslation, upperTranslation, enableLimit, motorSpeed, maxMotorForce, enableMotor, collideConnected) {
+    axisX = axisX || axisX === 0 ? axisX : 0;
+    axisY = axisY || axisY === 0 ? axisY : 0;
     var jointDefinition = new Box2D.Dynamics.Joints.b2PrismaticJointDef();
     jointDefinition.Initialize(
-      _config.bodyA,
-      _config.bodyB,
-      _config.bodyA.GetWorldCenter(),
+      bodyA,
+      bodyB,
+      bodyA.GetWorldCenter(),
       {x: axisX, y: axisY}
     );
-    var ax = _config.ax || _config.ax === 0 ? _config.ax / self.scale : 0;
-    var ay = _config.ay || _config.ay === 0 ? _config.ay / self.scale : 0;
-    var bx = _config.bx || _config.bx === 0 ? _config.bx / self.scale : 0;
-    var by = _config.by || _config.by === 0 ? _config.by / self.scale : 0;
+    ax = ax || ax === 0 ? ax / self.scale : 0;
+    ay = ay || ay === 0 ? ay / self.scale : 0;
+    bx = bx || bx === 0 ? bx / self.scale : 0;
+    by = by || by === 0 ? by / self.scale : 0;
     jointDefinition.localAnchorA = {x: ax, y: ay};
     jointDefinition.localAnchorB = {x: bx, y: by};
-    jointDefinition.lowerTranslation = _config.lowerTranslation || _config.lowerTranslation === 0 ? _config.lowerTranslation / self.scale : 0;
-    jointDefinition.upperTranslation = _config.upperTranslation || _config.upperTranslation === 0 ? _config.upperTranslation / self.scale : 0;
-    jointDefinition.enableLimit = _config.enableLimit ? _config.enableLimit : false;
-    jointDefinition.motorSpeed = _config.motorSpeed || _config.motorSpeed === 0 ? _config.motorSpeed * 0.0174532925199432957 : 0;
-    jointDefinition.maxMotorForce = _config.maxMotorForce || _config.maxMotorForce === 0 ? _config.maxMotorForce : 0;
-    jointDefinition.enableMotor = _config.enableMotor ? _config.enableMotor : false;
-    jointDefinition.collideConnected = _config.collideConnected ? _config.collideConnected : false;
+    jointDefinition.lowerTranslation = lowerTranslation || lowerTranslation === 0 ? lowerTranslation / self.scale : 0;
+    jointDefinition.upperTranslation = upperTranslation || upperTranslation === 0 ? upperTranslation / self.scale : 0;
+    jointDefinition.enableLimit = enableLimit ? enableLimit : false;
+    jointDefinition.motorSpeed = motorSpeed || motorSpeed === 0 ? motorSpeed * 0.0174532925199432957 : 0;
+    jointDefinition.maxMotorForce = maxMotorForce || maxMotorForce === 0 ? maxMotorForce : 0;
+    jointDefinition.enableMotor = enableMotor ? enableMotor : false;
+    jointDefinition.collideConnected = collideConnected ? collideConnected : false;
     return self.world.CreateJoint(jointDefinition);
   };
 
-  self.createPulleyJoint = function (config) {
+  self.createPulleyJoint = function (bodyA, bodyB, groundAnchorAX, groundAnchorAY, groundAnchorBX, groundAnchorBY, offsetAX, offsetAY, offsetBX, offsetBY, ratio, lengthA, lengthB) {
     var jointDefinition = new Box2D.Dynamics.Joints.b2PulleyJointDef();
     jointDefinition.Initialize(
-      config.bodyA,
-      config.bodyB,
-      {x: config.groundAnchorA.x / self.scale, y: config.groundAnchorA.y / self.scale},
-      {x: config.groundAnchorB.x / self.scale, y: config.groundAnchorB.y / self.scale},
-      {x: config.bodyA.GetWorldCenter().x + config.offsetA.x / self.scale, y: config.bodyA.GetWorldCenter().y + config.offsetA.y / self.scale},
-      {x: config.bodyB.GetWorldCenter().x + config.offsetB.x / self.scale, y: config.bodyB.GetWorldCenter().y + config.offsetB.y / self.scale},
-      config.ratio
+      bodyA,
+      bodyB,
+      {x: groundAnchorAX / self.scale, y: groundAnchorAY / self.scale},
+      {x: groundAnchorBX / self.scale, y: groundAnchorBY / self.scale},
+      {x: bodyA.GetWorldCenter().x + offsetAX / self.scale, y: bodyA.GetWorldCenter().y + offsetAY / self.scale},
+      {x: bodyB.GetWorldCenter().x + offsetBX / self.scale, y: bodyB.GetWorldCenter().y + offsetBY / self.scale},
+      ratio
     );
-    jointDefinition.lengthA = config.lengthA / self.scale;
-    jointDefinition.lengthB = config.lengthB / self.scale;
-    jointDefinition.maxLengthA = (config.lengthA / self.scale + config.lengthB / self.scale) * 2;
-    jointDefinition.maxLengthB = (config.lengthA / self.scale + config.lengthB / self.scale) * 2;
+    jointDefinition.lengthA = lengthA / self.scale;
+    jointDefinition.lengthB = lengthB / self.scale;
+    jointDefinition.maxLengthA = (lengthA / self.scale + lengthB / self.scale) * 2;
+    jointDefinition.maxLengthB = (lengthA / self.scale + lengthB / self.scale) * 2;
     var pulleyJoint = self.world.CreateJoint(jointDefinition);
     pulleyJoint.m_maxLength1 = pulleyJoint.m_constant;
     pulleyJoint.m_maxLength2 = pulleyJoint.m_constant;
