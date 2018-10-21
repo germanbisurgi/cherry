@@ -28,14 +28,14 @@ testState.create = function (game, $) {
 
   // ----------------------------------------------------------------- kinematic
 
-  var kinematicEdge = game.world.addBody(300, 200, 'kinematic');
+  var kinematicEdge = game.world.addBody(350, 350, 'kinematic');
   kinematicEdge.addEdge(0, 0, -30, -100);
   kinematicEdge.addEdge(0, 0, 30, -100);
-  kinematicEdge.setAngularVelocity(40);
+  kinematicEdge.setAngularVelocity(100);
 
   var kinematicCircle = game.world.addBody(50, 200, 'kinematic');
   kinematicCircle.addCircle(0, 0, 30);
-  kinematicCircle.setAngularVelocity(40);
+  kinematicCircle.setAngularVelocity(300);
 
   var kinematicRectangle = game.world.addBody(150, 200, 'kinematic');
   kinematicRectangle.addRectangle(0, 0, 40, 40);
@@ -57,6 +57,15 @@ testState.create = function (game, $) {
   var rectangle = game.world.addBody(150, 350, 'dynamic');
   rectangle.addRectangle(0, 0, 40, 40);
 
+  var prismaticRectangleA = game.world.addBody(350, 350, 'dynamic');
+  prismaticRectangleA.addRectangle(0, 0, 40, 40);
+
+  var pulleyCircleA = game.world.addBody(50, 350, 'dynamic');
+  pulleyCircleA.addCircle(0, 0, 40);
+
+  var pulleyCircleB = game.world.addBody(50, 350, 'dynamic');
+  pulleyCircleB.addCircle(0, 0, 40);
+
   var polygon = game.world.addBody(250, 350, 'dynamic');
   polygon.addPolygon(0, 0, [
     {x: 0, y: 0},
@@ -70,7 +79,7 @@ testState.create = function (game, $) {
     bodyA: kinematicCircle,
     bodyB: circle,
     length: 75,
-    ax: 0,
+    ax: 30,
     ay: 0,
     bx: 0,
     by: 0,
@@ -94,6 +103,36 @@ testState.create = function (game, $) {
     enableLimit: false,
     collideConnected: false
   });
+
+  self.prismaticJoint = game.world.createPrismaticJoint({
+		bodyA: staticRectangle,
+		bodyB: prismaticRectangleA,
+		axisX: 1,
+		axisY: 0,
+		ax: 0,
+		ay: 0,
+		bx: 0,
+		by: 0,
+		lowerTranslation: 0,
+		upperTranslation: 50,
+		enableLimit: true,
+		motorSpeed: 30,
+		maxMotorForce: 30,
+		enableMotor: true,
+		collideConnected: false
+  });
+  
+  self.pulleyJoint = game.world.createPulleyJoint({
+		bodyA: pulleyCircleA,
+		bodyB: pulleyCircleB,
+		groundAnchorA: {x: 400, y: 50},
+		groundAnchorB: {x: 500, y: 50},
+		offsetA: {x: 0, y: 0},
+		offsetB: {x: 0, y: 0},
+		ratio: 1,
+		lengthA: 100,
+		lengthB: 100,
+	});
 
 };
 
