@@ -16,5 +16,5 @@ setupState.create = function (game, $) {
   $.pointer1 = game.pointers.add();
   $.pointer2 = game.pointers.add();
 
-  game.state.switch('test-state');
+  game.state.switch('map-state');
 };
