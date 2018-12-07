@@ -28,6 +28,7 @@
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",
     "http-server": "^0.11.1",
+    "jest": "^23.6.0",
     "live-server": "^1.2.1",
     "nightmare": "^3.0.1"
   }
