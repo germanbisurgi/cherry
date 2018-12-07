@@ -6,6 +6,7 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
+      - run: sudo apt-get update -y
       - run: sudo apt-get install xvfb -y
       - run: sudo npm install
       - run: eslint ./src
