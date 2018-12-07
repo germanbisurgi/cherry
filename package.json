@@ -4,7 +4,6 @@
   "description": "",
   "main": "dist/naive.js",
   "scripts": {
-    "install": "npm install -g eslint jest live-server http-server codeceptjs nightmare co --unsafe-perm=true",
     "watch": "gulp watch",
     "serve": "live-server .",
     "lint": "eslint . --fix",
@@ -22,7 +21,9 @@
   },
   "homepage": "https://github.com/germanbisurgi/comp#readme",
   "devDependencies": {
+    "eslint": "^5.9.0",
     "gulp": "^3.9.1",
-    "gulp-concat": "^2.6.1"
+    "gulp-concat": "^2.6.1",
+    "live-server": "^1.2.1"
   }
 }
