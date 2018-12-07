@@ -7,7 +7,7 @@ jobs:
     steps:
       - checkout
       - run: sudo apt-get install xvfb -y
-      - run: sudo npm install -g eslint jest live-server http-server codeceptjs nightmare co --unsafe-perm=true
+      - run: sudo npm install
       - run: eslint ./src
       - run: jest
       - run:
