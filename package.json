@@ -5,9 +5,11 @@
   "main": "dist/naive.js",
   "scripts": {
     "watch": "gulp watch",
-    "serve": "live-server .",
-    "lint": "eslint . --fix",
-    "jest": "jest"
+    "live-server": "live-server .",
+    "http-server": "http-server -p 9191 --cors",
+    "eslint": "eslint .",
+    "jest": "jest",
+    "codeceptjs": "codeceptjs run --steps"
   },
   "repository": {
     "type": "git",

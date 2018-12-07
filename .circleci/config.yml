@@ -9,10 +9,10 @@ jobs:
       - run: sudo apt-get update -y
       - run: sudo apt-get install xvfb -y
       - run: sudo npm install --unsafe-perm=true
-      - run: eslint ./src
-      - run: jest
+      - run: npm run eslint .
+      - run: npm run jest
       - run:
           name: Execute Server in background
-          command: http-server -p 9191 --cors
+          command: npm run jest http-server
           background: true
-      - run: xvfb-run -a codeceptjs run --steps
+      - run: xvfb-run -a npm run codeceptjs
