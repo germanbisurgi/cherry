@@ -1,37 +1,29 @@
-var Keys = function () {
+var KeysSystem = function () {
   this.keys = {};
   document.addEventListener('keydown', this.handleKeyDown.bind(this), false);
   document.addEventListener('keyup', this.handleKeyUp.bind(this), false);
 };
 
-Keys.prototype.add = function (key) {
-  this.keys[key] = {
-    key: key,
-    start: false,
-    end: false,
-    hold: false,
-    holdTime: 0,
-    startFrame: 0,
-    endFrame: 0
-  };
+KeysSystem.prototype.add = function (key) {
+  this.keys[key] = new naive.Key(key);
   return this.keys[key];
 };
 
-Keys.prototype.handleKeyDown = function (event) {
+KeysSystem.prototype.handleKeyDown = function (event) {
   event.preventDefault();
   if (typeof this.keys[event.key] !== 'undefined') {
     this.keys[event.key].hold = true;
   }
 };
 
-Keys.prototype.handleKeyUp = function (event) {
+KeysSystem.prototype.handleKeyUp = function (event) {
   event.preventDefault();
   if (typeof this.keys[event.key] !== 'undefined') {
     this.keys[event.key].hold = false;
   }
 };
 
-Keys.prototype.update = function (delta, frame) {
+KeysSystem.prototype.update = function (delta, frame) {
   for (var i in this.keys) {
     if (!this.keys.hasOwnProperty(i)) {
       continue;

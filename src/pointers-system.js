@@ -1,28 +1,14 @@
-var Pointers = function () {
+var PointersSystem = function () {
   this.pointers = [];
 };
 
-Pointers.prototype.add = function () {
-  var pointer = {
-    number: this.pointers.length + 1,
-    active: false,
-    hold: false,
-    start: false,
-    end: false,
-    holdTime: 0,
-    startFrame: 0,
-    endFrame: 0,
-    id: 0,
-    startX: 0,
-    startY: 0,
-    x: 0,
-    y: 0
-  };
+PointersSystem.prototype.add = function () {
+  var pointer = new naive.Pointer(this.pointers.length + 1);
   this.pointers.unshift(pointer);
   return pointer;
 };
 
-Pointers.prototype.enablePointers = function (element) {
+PointersSystem.prototype.enablePointers = function (element) {
   element.style.touchAction = 'none';
   element.addEventListener('pointerdown', this.handlePointerDown.bind(this), false);
   element.addEventListener('pointermove', this.handlePointerMove.bind(this), false);
@@ -31,7 +17,7 @@ Pointers.prototype.enablePointers = function (element) {
   element.addEventListener('pointerleave', this.handlePointerUpAndCancel.bind(this), false);
 };
 
-Pointers.prototype.getPointerByID = function (id) {
+PointersSystem.prototype.getPointerByID = function (id) {
   var output = false;
   this.pointers.forEach(function (pointer) {
     if (pointer.id === id) {
@@ -41,7 +27,7 @@ Pointers.prototype.getPointerByID = function (id) {
   return output;
 };
 
-Pointers.prototype.getInactivePointer = function () {
+PointersSystem.prototype.getInactivePointer = function () {
   var output = false;
   this.pointers.forEach(function (pointer) {
     if (pointer.active === false) {
@@ -51,7 +37,7 @@ Pointers.prototype.getInactivePointer = function () {
   return output;
 };
 
-Pointers.prototype.handlePointerDown = function (event) {
+PointersSystem.prototype.handlePointerDown = function (event) {
   event.preventDefault();
   var pointer = this.getPointerByID(event.pointerId) || this.getInactivePointer();
   pointer.active = true;
@@ -63,7 +49,7 @@ Pointers.prototype.handlePointerDown = function (event) {
   pointer.y = event.clientY - event.target.offsetTop;
 };
 
-Pointers.prototype.handlePointerMove = function (event) {
+PointersSystem.prototype.handlePointerMove = function (event) {
   event.preventDefault();
   var pointer = this.getPointerByID(event.pointerId) || this.getInactivePointer();
   pointer.active = true;
@@ -72,7 +58,7 @@ Pointers.prototype.handlePointerMove = function (event) {
   pointer.y = event.clientY - event.target.offsetTop;
 };
 
-Pointers.prototype.handlePointerUpAndCancel = function (event) {
+PointersSystem.prototype.handlePointerUpAndCancel = function (event) {
   event.preventDefault();
   var pointer = this.getPointerByID(event.pointerId);
   pointer.active = false;
@@ -81,7 +67,7 @@ Pointers.prototype.handlePointerUpAndCancel = function (event) {
   pointer.startY = 0;
 };
 
-Pointers.prototype.update = function (delta, frame) {
+PointersSystem.prototype.update = function (delta, frame) {
   this.pointers.forEach(function (pointer) {
     if (pointer.hold) {
       pointer.holdTime += delta;

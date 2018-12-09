@@ -10979,10 +10979,10 @@ Canvas.prototype.text = function (x, y, text) {
 var Game = function () {
   this.loader = new naive.Loader();
   this.loop = new naive.Loop();
-  this.state = new naive.StateManager();
-  this.keys = new naive.Keys();
-  this.pointers = new naive.Pointers();
-  this.physics = new naive.Physics();
+  this.state = new naive.StateSystem();
+  this.keys = new naive.KeysSystem();
+  this.pointers = new naive.PointersSystem();
+  this.physics = new naive.PhysicsSystem();
   this.render = new naive.RenderSystem();
 
   this.globals = {};
@@ -11015,40 +11015,42 @@ var Game = function () {
   }.bind(this);
 };
 
-var Keys = function () {
+var Key = function (key) {
+  this.key = key;
+  this.start = false;
+  this.end = false;
+  this.hold = false;
+  this.holdTime = 0;
+  this.startFrame = 0;
+  this.endFrame = 0;
+};
+
+var KeysSystem = function () {
   this.keys = {};
   document.addEventListener('keydown', this.handleKeyDown.bind(this), false);
   document.addEventListener('keyup', this.handleKeyUp.bind(this), false);
 };
 
-Keys.prototype.add = function (key) {
-  this.keys[key] = {
-    key: key,
-    start: false,
-    end: false,
-    hold: false,
-    holdTime: 0,
-    startFrame: 0,
-    endFrame: 0
-  };
+KeysSystem.prototype.add = function (key) {
+  this.keys[key] = new naive.Key(key);
   return this.keys[key];
 };
 
-Keys.prototype.handleKeyDown = function (event) {
+KeysSystem.prototype.handleKeyDown = function (event) {
   event.preventDefault();
   if (typeof this.keys[event.key] !== 'undefined') {
     this.keys[event.key].hold = true;
   }
 };
 
-Keys.prototype.handleKeyUp = function (event) {
+KeysSystem.prototype.handleKeyUp = function (event) {
   event.preventDefault();
   if (typeof this.keys[event.key] !== 'undefined') {
     this.keys[event.key].hold = false;
   }
 };
 
-Keys.prototype.update = function (delta, frame) {
+KeysSystem.prototype.update = function (delta, frame) {
   for (var i in this.keys) {
     if (!this.keys.hasOwnProperty(i)) {
       continue;
@@ -11335,7 +11337,7 @@ var b2Contacts = Box2D.Dynamics.Contacts;
 var b2ContactListener = Box2D.Dynamics.b2ContactListener;
 var b2MouseJoint = Box2D.Dynamics.Joints.b2MouseJointDef;
 
-var Physics = function () {
+var PhysicsSystem = function () {
   'use strict';
   var self = this;
   self.scale = 100; // how many pixels is 1 meter
@@ -11833,31 +11835,33 @@ var Physics = function () {
 
 };
 
-var Pointers = function () {
+var Pointer = function (number) {
+  this.number = number;
+  this.active = false;
+  this.hold = false;
+  this.start = false;
+  this.end = false;
+  this.holdTime = 0;
+  this.startFrame = 0;
+  this.endFrame = 0;
+  this.id = 0;
+  this.startX = 0;
+  this.startY = 0;
+  this.x = 0;
+  this.y = 0;
+};
+
+var PointersSystem = function () {
   this.pointers = [];
 };
 
-Pointers.prototype.add = function () {
-  var pointer = {
-    number: this.pointers.length + 1,
-    active: false,
-    hold: false,
-    start: false,
-    end: false,
-    holdTime: 0,
-    startFrame: 0,
-    endFrame: 0,
-    id: 0,
-    startX: 0,
-    startY: 0,
-    x: 0,
-    y: 0
-  };
+PointersSystem.prototype.add = function () {
+  var pointer = new naive.Pointer(this.pointers.length + 1);
   this.pointers.unshift(pointer);
   return pointer;
 };
 
-Pointers.prototype.enablePointers = function (element) {
+PointersSystem.prototype.enablePointers = function (element) {
   element.style.touchAction = 'none';
   element.addEventListener('pointerdown', this.handlePointerDown.bind(this), false);
   element.addEventListener('pointermove', this.handlePointerMove.bind(this), false);
@@ -11866,7 +11870,7 @@ Pointers.prototype.enablePointers = function (element) {
   element.addEventListener('pointerleave', this.handlePointerUpAndCancel.bind(this), false);
 };
 
-Pointers.prototype.getPointerByID = function (id) {
+PointersSystem.prototype.getPointerByID = function (id) {
   var output = false;
   this.pointers.forEach(function (pointer) {
     if (pointer.id === id) {
@@ -11876,7 +11880,7 @@ Pointers.prototype.getPointerByID = function (id) {
   return output;
 };
 
-Pointers.prototype.getInactivePointer = function () {
+PointersSystem.prototype.getInactivePointer = function () {
   var output = false;
   this.pointers.forEach(function (pointer) {
     if (pointer.active === false) {
@@ -11886,7 +11890,7 @@ Pointers.prototype.getInactivePointer = function () {
   return output;
 };
 
-Pointers.prototype.handlePointerDown = function (event) {
+PointersSystem.prototype.handlePointerDown = function (event) {
   event.preventDefault();
   var pointer = this.getPointerByID(event.pointerId) || this.getInactivePointer();
   pointer.active = true;
@@ -11898,7 +11902,7 @@ Pointers.prototype.handlePointerDown = function (event) {
   pointer.y = event.clientY - event.target.offsetTop;
 };
 
-Pointers.prototype.handlePointerMove = function (event) {
+PointersSystem.prototype.handlePointerMove = function (event) {
   event.preventDefault();
   var pointer = this.getPointerByID(event.pointerId) || this.getInactivePointer();
   pointer.active = true;
@@ -11907,7 +11911,7 @@ Pointers.prototype.handlePointerMove = function (event) {
   pointer.y = event.clientY - event.target.offsetTop;
 };
 
-Pointers.prototype.handlePointerUpAndCancel = function (event) {
+PointersSystem.prototype.handlePointerUpAndCancel = function (event) {
   event.preventDefault();
   var pointer = this.getPointerByID(event.pointerId);
   pointer.active = false;
@@ -11916,7 +11920,7 @@ Pointers.prototype.handlePointerUpAndCancel = function (event) {
   pointer.startY = 0;
 };
 
-Pointers.prototype.update = function (delta, frame) {
+PointersSystem.prototype.update = function (delta, frame) {
   this.pointers.forEach(function (pointer) {
     if (pointer.hold) {
       pointer.holdTime += delta;
@@ -12102,18 +12106,18 @@ State.prototype.update = function () {};
 
 State.prototype.render = function () {};
 
-var StateManager = function (game) {
+var StateSystem = function (game) {
   this.current = null;
   this.game = game;
   this.states = [];
   this.requested = null;
 };
 
-StateManager.prototype.add = function (state) {
+StateSystem.prototype.add = function (state) {
   this.states.push(state);
 };
 
-StateManager.prototype.getByName = function (stateName) {
+StateSystem.prototype.getByName = function (stateName) {
   var output = false;
   this.states.forEach(function (state) {
     if (state.name === stateName) {
@@ -12123,11 +12127,11 @@ StateManager.prototype.getByName = function (stateName) {
   return output;
 };
 
-StateManager.prototype.switch = function (stateName) {
+StateSystem.prototype.switch = function (stateName) {
   this.requested = stateName;
 };
 
-StateManager.prototype.update = function () {
+StateSystem.prototype.update = function () {
   if (this.requested) {
     this.current = this.getByName(this.requested);
     this.requested = null;
@@ -12138,16 +12142,18 @@ var naive = {
   Calc: Calc,
   Canvas: Canvas,
   Game: Game,
-  Keys: Keys,
+  Key: Key,
+  KeysSystem: KeysSystem,
   Loader: Loader,
   Loop: Loop,
-  Pointers: Pointers,
-  Physics: Physics,
+  Pointer: Pointer,
+  PointersSystem: PointersSystem,
+  PhysicsSystem: PhysicsSystem,
   Pool: Pool,
   RenderSystem: RenderSystem,
   Signal: Signal,
   State: State,
-  StateManager: StateManager
+  StateSystem: StateSystem
 };
 
 if (typeof module !== 'undefined') {

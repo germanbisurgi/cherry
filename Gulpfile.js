@@ -6,16 +6,18 @@ var scripts = [
   './src/calc.js',
   './src/canvas.js',
   './src/game.js',
-  './src/keys.js',
+  './src/key.js',
+  './src/keys-system.js',
   './src/loader.js',
   './src/loop.js',
-  './src/physics.js',
-  './src/pointers.js',
+  './src/physics-system.js',
+  './src/pointer.js',
+  './src/pointers-system.js',
   './src/pool.js',
   './src/render-system.js',
   './src/signal.js',
   './src/state.js',
-  './src/stateManager.js',
+  './src/state-system.js',
   './src/outro.js'
 ];
 

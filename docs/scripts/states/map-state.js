@@ -7,8 +7,8 @@ mapState.create = function (game, $) {
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -52,7 +52,20 @@ mapState.create = function (game, $) {
 
 };
 
-mapState.update = function (game) {
+mapState.update = function (game, $) {
+
+  if ($.arrowUp.hold) {
+    $.ball.applyForce({x: 0, y: ($.ball.getMass() * -4)}, $.ball.getWorldCenter());
+  }
+  if ($.arrorRight.hold) {
+    $.ball.applyForce({x: $.ball.getMass() * 4, y: 0}, $.ball.getWorldCenter());
+  }
+  if ($.arrowDown.hold) {
+    $.ball.applyForce({x: 0, y: $.ball.getMass() * 4}, $.ball.getWorldCenter());
+  }
+  if ($.arrowLeft.hold) {
+    $.ball.applyForce({x: $.ball.getMass() * -4, y: 0}, $.ball.getWorldCenter());
+  }
 
   game.pointers.pointers.forEach(function (pointer) {
     if (pointer.start) {

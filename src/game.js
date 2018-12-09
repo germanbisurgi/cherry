@@ -1,10 +1,10 @@
 var Game = function () {
   this.loader = new naive.Loader();
   this.loop = new naive.Loop();
-  this.state = new naive.StateManager();
-  this.keys = new naive.Keys();
-  this.pointers = new naive.Pointers();
-  this.physics = new naive.Physics();
+  this.state = new naive.StateSystem();
+  this.keys = new naive.KeysSystem();
+  this.pointers = new naive.PointersSystem();
+  this.physics = new naive.PhysicsSystem();
   this.render = new naive.RenderSystem();
 
   this.globals = {};
