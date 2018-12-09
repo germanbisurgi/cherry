@@ -1,8 +1,8 @@
 var naive = require('../../dist/naive');
 var state = new naive.State('menu');
-var stateManager = new naive.StateManager();
+var stateManager = new naive.StateSystem();
 
-describe('StateManager', function () {
+describe('StateSystem', function () {
   it('should have correct inital values', function () {
     expect(stateManager.current).toBe(null);
     expect(stateManager.requested).toBe(null);
