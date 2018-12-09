@@ -11450,7 +11450,7 @@ var PhysicsSystem = function () {
     var body = self.world.CreateBody(bodyDef);
     body.draggable = true;
 
-    body.addCircle = function (offsetX, offsetY, radius, fixtureDefinition) {
+    body.addCircle = function (radius, offsetX, offsetY, fixtureDefinition) {
       var fixtureDef = self.getFixtureDef(fixtureDefinition);
       fixtureDef.shape = new b2CircleShape(radius / self.scale);
       fixtureDef.shape.m_p = {
