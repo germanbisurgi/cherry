@@ -10878,6 +10878,14 @@ var i;
 for (i = 0; i < Box2D.postDefs.length; ++i) Box2D.postDefs[i]();
 delete Box2D.postDefs;
 
+var Asset = function (name, type, url) {
+  this.name = name;
+  this.type = type;
+  this.url = url;
+  this.content = null;
+};
+
+
 var Calc = function () {};
 
 Calc.prototype.angleToPoint = function (point, angle, radius) {
@@ -11086,41 +11094,25 @@ var Loader = function () {
 };
 
 Loader.prototype.addAudio = function (name, url) {
-  var asset = {
-    name: name,
-    type: 'audio',
-    url: url
-  };
+  var asset = new naive.Asset(name, 'audio', url);
   this.queue.push(asset);
   this.onQueued.dispatch(asset);
 };
 
 Loader.prototype.addAudioBuffer = function (name, url) {
-  var asset = {
-    name: name,
-    type: 'audio-buffer',
-    url: url
-  };
+  var asset = new naive.Asset(name, 'audio-buffer', url);
   this.queue.push(asset);
   this.onQueued.dispatch(asset);
 };
 
 Loader.prototype.addImage = function (name, url) {
-  var asset = {
-    name: name,
-    type: 'image',
-    url: url
-  };
+  var asset = new naive.Asset(name, 'image', url);
   this.queue.push(asset);
   this.onQueued.dispatch(asset);
 };
 
 Loader.prototype.addJSON = function (name, url) {
-  var asset = {
-    name: name,
-    type: 'json',
-    url: url
-  };
+  var asset = new naive.Asset(name, 'json', url);
   this.queue.push(asset);
   this.onQueued.dispatch(asset);
 };
@@ -11129,14 +11121,10 @@ Loader.prototype.loadAudio = function (asset) {
   var self = this;
   var audio = new Audio();
   audio.oncanplaythrough = function () {
-    var cacheAsset = {
-      name: asset.name,
-      type: 'audio',
-      content: audio
-    };
-    self.cache.push(cacheAsset);
+    asset.content = audio;
+    self.cache.push(asset);
     self.success++;
-    self.onLoad.dispatch(cacheAsset);
+    self.onLoad.dispatch(asset);
     self.hasCompleted();
     audio.oncanplaythrough = null;
   };
@@ -11155,14 +11143,10 @@ Loader.prototype.loadAudioBuffer = function (asset) {
   xhr.responseType = 'arraybuffer';
   xhr.onload = function () {
     AudioContext.decodeAudioData(this.response, function (buffer) {
-      var cacheAsset = {
-        name: asset.name,
-        type: 'audio-buffer',
-        content: buffer
-      };
-      self.cache.push(cacheAsset);
+      asset.content = buffer;
+      self.cache.push(asset);
       self.success++;
-      self.onLoad.dispatch(cacheAsset);
+      self.onLoad.dispatch(asset);
       self.hasCompleted();
     }, function () {
       self.errors++;
@@ -11180,14 +11164,10 @@ Loader.prototype.loadImage = function (asset) {
   var self = this;
   var image = new Image();
   image.onload = function () {
-    var cacheAsset = {
-      name: asset.name,
-      type: 'image',
-      content: image
-    };
-    self.cache.push(cacheAsset);
+    asset.content = image;
+    self.cache.push(asset);
     self.success++;
-    self.onLoad.dispatch(cacheAsset);
+    self.onLoad.dispatch(asset);
     self.hasCompleted();
   };
   image.onerror = function () {
@@ -11203,14 +11183,10 @@ Loader.prototype.loadJSON = function (asset) {
   xhr.open('GET', asset.url, true);
   xhr.onload = function () {
     if (this.status === 200) {
-      var cacheAsset = {
-        name: asset.name,
-        type: 'json',
-        content: JSON.parse(this.response)
-      };
-      self.cache.push(cacheAsset);
+      asset.content = JSON.parse(this.response);
+      self.cache.push(asset);
       self.success++;
-      self.onLoad.dispatch(cacheAsset);
+      self.onLoad.dispatch(asset);
       self.hasCompleted();
     } else {
       self.errors++;
@@ -12139,6 +12115,7 @@ StateSystem.prototype.update = function () {
 };
 
 var naive = {
+  Asset: Asset,
   Calc: Calc,
   Canvas: Canvas,
   Game: Game,

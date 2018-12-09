@@ -3,6 +3,7 @@ var concat = require('gulp-concat');
 var scripts = [
   './src/polyfills.js',
   './src/box2dweb.js',
+  './src/asset.js',
   './src/calc.js',
   './src/canvas.js',
   './src/game.js',
