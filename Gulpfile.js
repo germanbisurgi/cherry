@@ -14,7 +14,7 @@ var scripts = [
   './src/signal.js',
   './src/state.js',
   './src/stateManager.js',
-  './src/world.js',
+  './src/physics.js',
   './src/outro.js'
 ];
 

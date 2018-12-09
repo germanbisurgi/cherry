@@ -6,7 +6,7 @@ var naive = {
   Loader: Loader,
   Loop: Loop,
   Pointers: Pointers,
-  World: World,
+  Physics: Physics,
   Pool: Pool,
   Signal: Signal,
   State: State,

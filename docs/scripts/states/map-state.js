@@ -1,7 +1,7 @@
 var mapState = new naive.State('map-state');
 mapState.create = function (game, $) {
 
-  game.world.setGravity(0, 10);
+  game.physics.setGravity(0, 10);
 
   var map = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -32,20 +32,20 @@ mapState.create = function (game, $) {
       posX = x * tileSize + tileSize / 2;
       posY = y * tileSize + tileSize / 2;
       if (tile === 1) {
-        $.bolaAnchor = game.world.addBody(posX, posY, 'static');
+        $.bolaAnchor = game.physics.addBody(posX, posY, 'static');
         $.bolaAnchor.addRectangle(0, 0, tileSize, tileSize);
       }
       if (tile === 2) {
-        $.ball = game.world.addBody(posX, posY, 'dynamic');
+        $.ball = game.physics.addBody(posX, posY, 'dynamic');
         $.ball.addCircle(0, 0, 7);
       }
       if (tile === 3) {
-        var anchor = game.world.addBody(posX, posY, 'kinematic');
+        var anchor = game.physics.addBody(posX, posY, 'kinematic');
         anchor.addCircle(0, 0, 10);
         anchor.setAngularVelocity(1000);
-        var bola = game.world.addBody(posX, posY, 'dynamic');
+        var bola = game.physics.addBody(posX, posY, 'dynamic');
         bola.addCircle(0, 0, 8);
-        game.world.createDistanceJoint(anchor, bola, 30, 10, 0, 0, 0, 3, 0.25, true);
+        game.physics.createDistanceJoint(anchor, bola, 30, 10, 0, 0, 0, 3, 0.25, true);
       }
     });
   });
@@ -56,13 +56,13 @@ mapState.update = function (game, $) {
 
   game.pointers.pointers.forEach(function (pointer) {
     if (pointer.start) {
-      game.world.dragStart(pointer);
+      game.physics.dragStart(pointer);
     }
     if (pointer.hold) {
-      game.world.dragMove(pointer);
+      game.physics.dragMove(pointer);
     }
     if (pointer.end) {
-      game.world.dragEnd(pointer);
+      game.physics.dragEnd(pointer);
     }
   });
 

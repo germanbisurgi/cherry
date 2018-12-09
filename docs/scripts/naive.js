@@ -10982,7 +10982,7 @@ var Game = function () {
   this.state = new naive.StateManager();
   this.keys = new naive.Keys();
   this.pointers = new naive.Pointers();
-  this.world = new naive.World();
+  this.physics = new naive.Physics();
   this.canvas = new naive.Canvas('.container');
   this.globals = {};
 
@@ -11000,12 +11000,12 @@ var Game = function () {
       this.state.current.create(this, this.globals);
     }
     if (this.state.current.created) {
-      this.world.update(this.loop.fps);
+      this.physics.update(this.loop.fps);
       this.keys.update(this.loop.delta, this.loop.frame);
       this.pointers.update(this.loop.delta, this.loop.frame);
       this.state.current.update(this, this.globals);
       this.canvas.clear();
-      this.world.draw(this.canvas.context);
+      this.physics.draw(this.canvas.context);
       this.state.current.render(this, this.globals);
     }
   }.bind(this);
@@ -11276,7 +11276,7 @@ Loader.prototype.start = function () {
 };
 
 var Loop = function () {
-  this.accumulator  = 0;
+  this.accumulator = 0;
   this.delta = 0;
   this.lastTime = 0;
   this.lastStep = 0;
@@ -11620,7 +11620,7 @@ var b2Contacts = Box2D.Dynamics.Contacts;
 var b2ContactListener = Box2D.Dynamics.b2ContactListener;
 var b2MouseJoint = Box2D.Dynamics.Joints.b2MouseJointDef;
 
-var World = function () {
+var Physics = function () {
   'use strict';
   var self = this;
   self.scale = 100; // how many pixels is 1 meter
@@ -12126,7 +12126,7 @@ var naive = {
   Loader: Loader,
   Loop: Loop,
   Pointers: Pointers,
-  World: World,
+  Physics: Physics,
   Pool: Pool,
   Signal: Signal,
   State: State,

@@ -1,5 +1,5 @@
 var Loop = function () {
-  this.accumulator  = 0;
+  this.accumulator = 0;
   this.delta = 0;
   this.lastTime = 0;
   this.lastStep = 0;
