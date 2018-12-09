@@ -114,7 +114,7 @@ physicsState.render = function (game, $) {
   game.pointers.pointers.forEach(function (p) {
     if (p.active) {
       game.render.canvas.text(p.x - 70, p.y - 50, 'n: ' + p.number + ' time: ' + Math.floor(p.holdTime));
-      game.render.canvas.image(game.loader.getImage('circle'), p.x, p.y, 40, 40);
+      game.render.canvas.image(game.assets.getImage('circle'), p.x, p.y, 40, 40);
     }
   });
   game.render.canvas.text(10, 30, 'fps: ' + 1 / game.loop.delta * 1000);

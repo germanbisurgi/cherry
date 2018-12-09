@@ -1,12 +1,11 @@
 var Game = function () {
-  this.loader = new naive.Loader();
+  this.assets = new naive.AssetsSystem();
   this.loop = new naive.Loop();
   this.state = new naive.StateSystem();
   this.keys = new naive.KeysSystem();
   this.pointers = new naive.PointersSystem();
   this.physics = new naive.PhysicsSystem();
   this.render = new naive.RenderSystem();
-
   this.globals = {};
 
   this.pointers.enablePointers(this.render.canvas.canvas);
@@ -16,9 +15,9 @@ var Game = function () {
     if (!this.state.current.preloaded) {
       this.state.current.preloaded = true;
       this.state.current.preload(this, this.globals);
-      this.loader.start();
+      this.assets.start();
     }
-    if (!this.state.current.created && !this.loader.loading) {
+    if (!this.state.current.created && !this.assets.loading) {
       this.state.current.created = true;
       this.state.current.create(this, this.globals);
     }

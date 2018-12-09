@@ -1,4 +1,4 @@
-var Loader = function () {
+var AssetsSystem = function () {
   this.loaded = false;
   this.errors = 0;
   this.success = 0;
@@ -10,31 +10,31 @@ var Loader = function () {
   this.onQueued = new naive.Signal();
 };
 
-Loader.prototype.addAudio = function (name, url) {
+AssetsSystem.prototype.addAudio = function (name, url) {
   var asset = new naive.Asset(name, 'audio', url);
   this.queue.push(asset);
   this.onQueued.dispatch(asset);
 };
 
-Loader.prototype.addAudioBuffer = function (name, url) {
+AssetsSystem.prototype.addAudioBuffer = function (name, url) {
   var asset = new naive.Asset(name, 'audio-buffer', url);
   this.queue.push(asset);
   this.onQueued.dispatch(asset);
 };
 
-Loader.prototype.addImage = function (name, url) {
+AssetsSystem.prototype.addImage = function (name, url) {
   var asset = new naive.Asset(name, 'image', url);
   this.queue.push(asset);
   this.onQueued.dispatch(asset);
 };
 
-Loader.prototype.addJSON = function (name, url) {
+AssetsSystem.prototype.addJSON = function (name, url) {
   var asset = new naive.Asset(name, 'json', url);
   this.queue.push(asset);
   this.onQueued.dispatch(asset);
 };
 
-Loader.prototype.loadAudio = function (asset) {
+AssetsSystem.prototype.loadAudio = function (asset) {
   var self = this;
   var audio = new Audio();
   audio.oncanplaythrough = function () {
@@ -52,7 +52,7 @@ Loader.prototype.loadAudio = function (asset) {
   audio.src = asset.url;
 };
 
-Loader.prototype.loadAudioBuffer = function (asset) {
+AssetsSystem.prototype.loadAudioBuffer = function (asset) {
   var self = this;
   var xhr = new window.XMLHttpRequest();
   var AudioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -77,7 +77,7 @@ Loader.prototype.loadAudioBuffer = function (asset) {
   xhr.send();
 };
 
-Loader.prototype.loadImage = function (asset) {
+AssetsSystem.prototype.loadImage = function (asset) {
   var self = this;
   var image = new Image();
   image.onload = function () {
@@ -94,7 +94,7 @@ Loader.prototype.loadImage = function (asset) {
   image.src = asset.url;
 };
 
-Loader.prototype.loadJSON = function (asset) {
+AssetsSystem.prototype.loadJSON = function (asset) {
   var xhr = new window.XMLHttpRequest();
   var self = this;
   xhr.open('GET', asset.url, true);
@@ -117,7 +117,7 @@ Loader.prototype.loadJSON = function (asset) {
   xhr.send();
 };
 
-Loader.prototype.get = function (type, name) {
+AssetsSystem.prototype.get = function (type, name) {
   for (var i = 0, len = this.cache.length; i < len; i++) {
     if (this.cache[i].type === type && this.cache[i].name === name) {
       return this.cache[i];
@@ -126,23 +126,23 @@ Loader.prototype.get = function (type, name) {
   return false;
 };
 
-Loader.prototype.getAudioBuffer = function (name) {
+AssetsSystem.prototype.getAudioBuffer = function (name) {
   return this.get('audio', name).content;
 };
 
-Loader.prototype.getAudio = function (name) {
+AssetsSystem.prototype.getAudio = function (name) {
   return this.get('audio-buffer', name).content;
 };
 
-Loader.prototype.getImage = function (name) {
+AssetsSystem.prototype.getImage = function (name) {
   return this.get('image', name).content;
 };
 
-Loader.prototype.getJSON = function (name) {
+AssetsSystem.prototype.getJSON = function (name) {
   return this.get('json', name).content;
 };
 
-Loader.prototype.hasCompleted = function () {
+AssetsSystem.prototype.hasCompleted = function () {
   if (this.queue.length === this.success + this.errors) {
     this.queue = [];
     this.loading = false;
@@ -153,7 +153,7 @@ Loader.prototype.hasCompleted = function () {
   }
 };
 
-Loader.prototype.start = function () {
+AssetsSystem.prototype.start = function () {
   if (this.queue.length > 0) {
     this.loading = true;
     this.onStart.dispatch();

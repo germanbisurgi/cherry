@@ -1,8 +1,8 @@
 var setupState = new naive.State('setup-state');
 
 setupState.preload = function (game) {
-  game.loader.addImage('circle', './assets/images/circle.png');
-  game.loader.addImage('brick', './assets/images/brick.png');
+  game.assets.addImage('circle', './assets/images/circle.png');
+  game.assets.addImage('brick', './assets/images/brick.png');
 };
 
 setupState.create = function (game, $) {

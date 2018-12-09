@@ -5,7 +5,7 @@ var naive = {
   Game: Game,
   Key: Key,
   KeysSystem: KeysSystem,
-  Loader: Loader,
+  AssetsSystem: AssetsSystem,
   Loop: Loop,
   Pointer: Pointer,
   PointersSystem: PointersSystem,
