@@ -49,7 +49,7 @@
       <button class="add-incorrect-json">Add incorrect JSON</button>
       <button class="start">Start</button>
       <button class="get">Get</button>
-    <button class="console-log">console.log(loader)</button>
+    <button class="console-log">console.log(assets)</button>
     </div>
 
     <div class="flex-sm-4">
@@ -71,7 +71,7 @@
     ready.innerText = 'DOM READY';
   });
 
-  var loader = new naive.Loader();
+  var assets = new naive.AssetsSystem();
   var promise = null;
 
   // properties
@@ -102,63 +102,63 @@
   var consoleLog = document.querySelector('.console-log');
 
   var refresh = function () {
-    queue.innerText = JSON.stringify(loader.queue.length);
-    cache.innerText = JSON.stringify(loader.cache.length);
-    success.innerText = JSON.stringify(loader.success);
-    errors.innerText = JSON.stringify(loader.errors);
-    queueItems.innerText = JSON.stringify(loader.queue);
+    queue.innerText = JSON.stringify(assets.queue.length);
+    cache.innerText = JSON.stringify(assets.cache.length);
+    success.innerText = JSON.stringify(assets.success);
+    errors.innerText = JSON.stringify(assets.errors);
+    queueItems.innerText = JSON.stringify(assets.queue);
   };
 
   addAudio.addEventListener('click', function () {
-    loader.addAudio('tic', '../../assets/audio/tic.mp3');
+    assets.addAudio('tic', '../../assets/audio/tic.mp3');
   });
 
   addAudioBuffer.addEventListener('click', function () {
-    loader.addAudioBuffer('tic', '../../assets/audio/tic.mp3');
+    assets.addAudioBuffer('tic', '../../assets/audio/tic.mp3');
   });
 
   addImage.addEventListener('click', function () {
-    loader.addImage('brick', '../../assets/images/brick.png');
+    assets.addImage('brick', '../../assets/images/brick.png');
   });
 
   addJSON.addEventListener('click', function () {
-    loader.addJSON('test', '../../assets/json/test.json');
+    assets.addJSON('test', '../../assets/json/test.json');
   });
 
   addIncorrectAudio.addEventListener('click', function () {
-    loader.addAudio('tic', '../incorrect/path/to/tic.mp3');
+    assets.addAudio('tic', '../incorrect/path/to/tic.mp3');
   });
 
   addIncorrectAudioBuffer.addEventListener('click', function () {
-    loader.addAudioBuffer('tic', '../incorrect/path/to/tic.mp3');
+    assets.addAudioBuffer('tic', '../incorrect/path/to/tic.mp3');
   });
 
   addIncorrectImage.addEventListener('click', function () {
-    loader.addImage('brick', '../incorrect/path/to/brick.png');
+    assets.addImage('brick', '../incorrect/path/to/brick.png');
   });
 
   addIncorrectJSON.addEventListener('click', function () {
-    loader.addJSON('test', '../incorrect/path/to/test.json');
+    assets.addJSON('test', '../incorrect/path/to/test.json');
   });
 
   start.addEventListener('click', function () {
-    loader.start();
+    assets.start();
   });
 
   get.addEventListener('click', function () {
-    got.innerText = loader.get('audio', 'tic').name;
+    got.innerText = assets.get('audio', 'tic').name;
   });
 
-  loader.onQueued.add(function () {
+  assets.onQueued.add(function () {
     refresh();
   });
 
-  loader.onStart.add(function () {
+  assets.onStart.add(function () {
     refresh();
     console.log('started');
   });
 
-  loader.onLoad.add(function (asset) {
+  assets.onLoad.add(function (asset) {
     refresh();
       if (asset.type === 'audio') {
         asset.content.setAttribute('controls', 'true');
@@ -175,13 +175,13 @@
       }
   });
 
-  loader.onComplete.add(function () {
+  assets.onComplete.add(function () {
     refresh();
     complete.innerText = 'yes';
   });
 
   consoleLog.addEventListener('click', function () {
-    console.log(loader);
+    console.log(assets);
   });
 
 </script>
