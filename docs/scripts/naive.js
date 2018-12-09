@@ -11041,7 +11041,7 @@ AssetsSystem.prototype.hasCompleted = function () {
   }
 };
 
-AssetsSystem.prototype.start = function () {
+AssetsSystem.prototype.load = function () {
   if (this.queue.length > 0) {
     this.loading = true;
     this.onStart.dispatch();
@@ -11177,7 +11177,7 @@ var Game = function () {
     if (!this.state.current.preloaded) {
       this.state.current.preloaded = true;
       this.state.current.preload(this, this.globals);
-      this.assets.start();
+      this.assets.load();
     }
     if (!this.state.current.created && !this.assets.loading) {
       this.state.current.created = true;
@@ -11461,7 +11461,7 @@ var PhysicsSystem = function () {
       return fixture;
     };
 
-    body.addRectangle = function (offsetX, offsetY, width, height, fixtureDefinition) {
+    body.addRectangle = function (width, height, offsetX, offsetY, fixtureDefinition) {
       var fixtureDef = self.getFixtureDef(fixtureDefinition);
       fixtureDef.shape = new b2PolygonShape();
       fixtureDef.shape.SetAsBox(
@@ -11978,15 +11978,42 @@ Pool.prototype.use = function () {
   return item.object;
 };
 
+var Renderable = function (image, x, y, width, height, angle) {
+  this.image = image;
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+  this.angle = angle;
+};
+
 var RenderSystem = function () {
   this.renderables = [];
   this.canvas = new naive.Canvas('.container');
   this.context = this.canvas.context;
 };
 
+RenderSystem.prototype.addRenderable = function (image, x, y, width, height, angle) {
+  var renderable = new naive.Renderable(image, x, y, width, height, angle);
+  this.renderables.push(renderable);
+  return renderable;
+};
+
 RenderSystem.prototype.draw = function () {
   this.canvas.clear();
-  // render renderables.
+  this.renderables.forEach(function (renderable) {
+    this.context.save();
+    this.context.translate(renderable.x, renderable.y);
+    this.context.rotate(renderable.angle);
+    this.context.drawImage(
+      renderable.image,
+      renderable.width * -0.5,
+      renderable.height * -0.5,
+      renderable.width,
+      renderable.height
+    );
+    this.context.restore();
+  }.bind(this));
 };
 
 
@@ -12126,6 +12153,7 @@ var naive = {
   PointersSystem: PointersSystem,
   PhysicsSystem: PhysicsSystem,
   Pool: Pool,
+  Renderable: Renderable,
   RenderSystem: RenderSystem,
   Signal: Signal,
   State: State,

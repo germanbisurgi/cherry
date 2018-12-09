@@ -11,6 +11,7 @@ var naive = {
   PointersSystem: PointersSystem,
   PhysicsSystem: PhysicsSystem,
   Pool: Pool,
+  Renderable: Renderable,
   RenderSystem: RenderSystem,
   Signal: Signal,
   State: State,

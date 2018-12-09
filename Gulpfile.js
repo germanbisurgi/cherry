@@ -15,6 +15,7 @@ var scripts = [
   './src/pointer.js',
   './src/pointers-system.js',
   './src/pool.js',
+  './src/renderable.js',
   './src/render-system.js',
   './src/signal.js',
   './src/state.js',

@@ -161,7 +161,7 @@ var PhysicsSystem = function () {
       return fixture;
     };
 
-    body.addRectangle = function (offsetX, offsetY, width, height, fixtureDefinition) {
+    body.addRectangle = function (width, height, offsetX, offsetY, fixtureDefinition) {
       var fixtureDef = self.getFixtureDef(fixtureDefinition);
       fixtureDef.shape = new b2PolygonShape();
       fixtureDef.shape.SetAsBox(
