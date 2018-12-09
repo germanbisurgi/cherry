@@ -1,4 +1,4 @@
-var physicsState = new naive.State('test-state');
+var physicsState = new naive.State('physics-state');
 physicsState.create = function (game, $) {
 
   game.physics.setGravity(0, 10);
@@ -113,9 +113,9 @@ physicsState.update = function (game, $) {
 physicsState.render = function (game, $) {
   game.pointers.pointers.forEach(function (p) {
     if (p.active) {
-      game.canvas.text(p.x - 70, p.y - 50, 'n: ' + p.number + ' time: ' + Math.floor(p.holdTime));
-      game.canvas.image(game.loader.getImage('circle'), p.x, p.y, 40, 40);
+      game.render.canvas.text(p.x - 70, p.y - 50, 'n: ' + p.number + ' time: ' + Math.floor(p.holdTime));
+      game.render.canvas.image(game.loader.getImage('circle'), p.x, p.y, 40, 40);
     }
   });
-  game.canvas.text(10, 30, 'fps: ' + 1 / game.loop.delta * 1000);
+  game.render.canvas.text(10, 30, 'fps: ' + 1 / game.loop.delta * 1000);
 };

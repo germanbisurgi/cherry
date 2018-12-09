@@ -1,7 +1,7 @@
 var mapState = new naive.State('map-state');
 mapState.create = function (game, $) {
 
-  game.physics.setGravity(0, 10);
+  game.physics.setGravity(0, 0);
 
   var map = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -37,14 +37,14 @@ mapState.create = function (game, $) {
       }
       if (tile === 2) {
         $.ball = game.physics.addBody(posX, posY, 'dynamic');
-        $.ball.addCircle(0, 0, 7);
+        $.ball.addCircle(0, 0, 20);
       }
       if (tile === 3) {
         var anchor = game.physics.addBody(posX, posY, 'kinematic');
         anchor.addCircle(0, 0, 10);
         anchor.setAngularVelocity(1000);
         var bola = game.physics.addBody(posX, posY, 'dynamic');
-        bola.addCircle(0, 0, 8);
+        bola.addCircle(0, 0, 15);
         game.physics.createDistanceJoint(anchor, bola, 30, 10, 0, 0, 0, 3, 0.25, true);
       }
     });
@@ -52,7 +52,7 @@ mapState.create = function (game, $) {
 
 };
 
-mapState.update = function (game, $) {
+mapState.update = function (game) {
 
   game.pointers.pointers.forEach(function (pointer) {
     if (pointer.start) {
@@ -68,5 +68,12 @@ mapState.update = function (game, $) {
 
 };
 
-mapState.render = function (game, $) {
+mapState.render = function () {
+  game.pointers.pointers.forEach(function (p) {
+    if (p.active) {
+      game.render.canvas.text(p.x - 70, p.y - 50, 'n: ' + p.number + ' time: ' + Math.floor(p.holdTime));
+      game.render.canvas.image(game.loader.getImage('circle'), p.x, p.y, 40, 40);
+    }
+  });
+  game.render.canvas.text(10, 30, 'fps: ' + 1 / game.loop.delta * 1000);
 };

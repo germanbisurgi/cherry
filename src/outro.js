@@ -8,6 +8,7 @@ var naive = {
   Pointers: Pointers,
   Physics: Physics,
   Pool: Pool,
+  RenderSystem: RenderSystem,
   Signal: Signal,
   State: State,
   StateManager: StateManager

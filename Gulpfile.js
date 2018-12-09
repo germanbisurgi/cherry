@@ -12,6 +12,7 @@ var scripts = [
   './src/physics.js',
   './src/pointers.js',
   './src/pool.js',
+  './src/render-system.js',
   './src/signal.js',
   './src/state.js',
   './src/stateManager.js',

@@ -5,10 +5,11 @@ var Game = function () {
   this.keys = new naive.Keys();
   this.pointers = new naive.Pointers();
   this.physics = new naive.Physics();
-  this.canvas = new naive.Canvas('.container');
+  this.render = new naive.RenderSystem();
+
   this.globals = {};
 
-  this.pointers.enablePointers(this.canvas.canvas);
+  this.pointers.enablePointers(this.render.canvas.canvas);
 
   this.loop.onStep = function () {
     this.state.update();
@@ -22,12 +23,15 @@ var Game = function () {
       this.state.current.create(this, this.globals);
     }
     if (this.state.current.created) {
-      this.physics.update(this.loop.fps);
+      // update
       this.keys.update(this.loop.delta, this.loop.frame);
       this.pointers.update(this.loop.delta, this.loop.frame);
+      this.physics.update(this.loop.fps);
+
       this.state.current.update(this, this.globals);
-      this.canvas.clear();
-      this.physics.draw(this.canvas.context);
+      // draw
+      this.render.draw();
+      this.physics.draw(this.render.context);
       this.state.current.render(this, this.globals);
     }
   }.bind(this);
