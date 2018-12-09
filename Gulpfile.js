@@ -9,12 +9,12 @@ var scripts = [
   './src/keys.js',
   './src/loader.js',
   './src/loop.js',
+  './src/physics.js',
   './src/pointers.js',
   './src/pool.js',
   './src/signal.js',
   './src/state.js',
   './src/stateManager.js',
-  './src/physics.js',
   './src/outro.js'
 ];
 
