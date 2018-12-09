@@ -15,7 +15,7 @@ var Game = function () {
     if (!this.state.current.preloaded) {
       this.state.current.preloaded = true;
       this.state.current.preload(this, this.globals);
-      this.assets.start();
+      this.assets.load();
     }
     if (!this.state.current.created && !this.assets.loading) {
       this.state.current.created = true;

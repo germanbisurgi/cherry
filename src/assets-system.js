@@ -153,7 +153,7 @@ AssetsSystem.prototype.hasCompleted = function () {
   }
 };
 
-AssetsSystem.prototype.start = function () {
+AssetsSystem.prototype.load = function () {
   if (this.queue.length > 0) {
     this.loading = true;
     this.onStart.dispatch();
