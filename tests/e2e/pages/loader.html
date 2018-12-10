@@ -142,7 +142,7 @@
   });
 
   start.addEventListener('click', function () {
-    assets.start();
+    assets.load();
   });
 
   get.addEventListener('click', function () {
@@ -165,7 +165,7 @@
         audioContainer.appendChild(asset.content);
       }
       if (asset.type === 'audio-buffer') {
-        audioContainer.innerHTML += '<p>AudioBuffer</p>';
+        audioBufferContainer.innerHTML += '<p>AudioBuffer</p>';
       }
       if (asset.type === 'image') {
         imagesContainer.appendChild(asset.content);
