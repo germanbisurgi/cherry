@@ -11355,7 +11355,7 @@ var PhysicsSystem = function () {
     self.world.SetGravity(new b2Vec2(x, y));
   };
 
-  self.fasterEach = function (array, fn, thisContext) {
+  self.fasterEach = function (array, fn) {
     var length = array.length;
     var i;
     for (i = 0; i < length; i++) {
@@ -11457,8 +11457,7 @@ var PhysicsSystem = function () {
         x: offsetX / self.scale || 0,
         y: offsetY / self.scale || 0
       };
-      var fixture = body.CreateFixture(fixtureDef);
-      return fixture;
+      return body.CreateFixture(fixtureDef);
     };
 
     body.addRectangle = function (width, height, offsetX, offsetY, fixtureDefinition) {
@@ -11474,8 +11473,7 @@ var PhysicsSystem = function () {
       }.bind(this));
       fixtureDef.shape.m_centroid.x += offsetX / self.scale || 0;
       fixtureDef.shape.m_centroid.y += offsetY / self.scale || 0;
-      var fixture = body.CreateFixture(fixtureDef);
-      return fixture;
+      return body.CreateFixture(fixtureDef);
     };
 
     body.addPolygon = function (offsetX, offsetY, points, fixtureDefinition) {
@@ -11490,8 +11488,7 @@ var PhysicsSystem = function () {
         vert.x += offsetX / self.scale || 0;
         vert.y += offsetY / self.scale || 0;
       });
-      var fixture = body.CreateFixture(fixtureDef);
-      return fixture;
+      return body.CreateFixture(fixtureDef);
     };
 
     body.addEdge = function (x1, y1, x2, y2, fixtureDefinition) {
@@ -11502,8 +11499,7 @@ var PhysicsSystem = function () {
       x2 /= self.scale;
       y2 /= self.scale;
       fixtureDef.shape.SetAsEdge({x: x1, y: y1}, {x: x2, y: y2});
-      var fixture = body.CreateFixture(fixtureDef);
-      return fixture;
+      return body.CreateFixture(fixtureDef);
     };
 
     body.applyForce = function (force, point) {
@@ -11530,11 +11526,11 @@ var PhysicsSystem = function () {
       body.ApplyTorque(torque / self.scale);
     };
 
-    body.getAngle = function (force, point) {
+    body.getAngle = function () {
       return body.GetAngle();
     };
 
-    body.getMass = function (force, point) {
+    body.getMass = function () {
       return body.GetMass() * self.scale;
     };
 
