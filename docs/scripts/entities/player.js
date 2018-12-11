@@ -2,7 +2,6 @@ var Player = function (game) {
   this.body = game.physics.addBody(50, 50, 'dynamic');
   this.body.addRectangle(50, 50);
   this.body.onContactBegin = function () {
-    console.log('contact begin')
   };
   this.renderable = game.render.addRenderable(game.assets.getImage('brick'), 50, 50, 50, 50, 0);
 };

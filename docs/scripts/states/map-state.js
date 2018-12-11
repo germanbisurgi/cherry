@@ -46,7 +46,6 @@ mapState.create = function (game, $) {
       }
       if (tile === 2) {
         player = new Player(game);
-        console.log(player)
       }
       if (tile === 3) {
         var anchor = game.physics.addBody(posX, posY, 'kinematic');
