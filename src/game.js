@@ -6,6 +6,7 @@ var Game = function () {
   this.pointers = new naive.PointersSystem();
   this.physics = new naive.PhysicsSystem();
   this.render = new naive.RenderSystem();
+  this.calc = new naive.Calc();
   this.globals = {};
 
   this.pointers.enablePointers(this.render.canvas.canvas);
@@ -26,7 +27,6 @@ var Game = function () {
       this.keys.update(this.loop.delta, this.loop.frame);
       this.pointers.update(this.loop.delta, this.loop.frame);
       this.physics.update(this.loop.fps);
-
       this.state.current.update(this, this.globals);
       // draw
       this.render.draw();

@@ -1,10 +1,11 @@
 var mapState = new naive.State('map-state');
+var player;
 mapState.create = function (game, $) {
 
   var brick = game.assets.getImage('brick');
 
   game.physics.setGravity(0, 0);
-  game.loop.fps = 50;
+  game.loop.fps = 25;
 
   var map = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -44,8 +45,8 @@ mapState.create = function (game, $) {
         game.render.addRenderable(brick, posX, posY, tileSize, tileSize);
       }
       if (tile === 2) {
-        $.ball = game.physics.addBody(posX, posY, 'dynamic');
-        $.ball.addCircle(20);
+        player = new Player(game);
+        console.log(player)
       }
       if (tile === 3) {
         var anchor = game.physics.addBody(posX, posY, 'kinematic');
@@ -61,6 +62,8 @@ mapState.create = function (game, $) {
 };
 
 mapState.update = function (game, $) {
+
+  player.update();
 
   if ($.arrowUp.hold) {
     $.ball.applyForce({x: 0, y: ($.ball.getMass() * -4)}, $.ball.getWorldCenter());

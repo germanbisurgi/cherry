@@ -17,7 +17,6 @@ var PhysicsSystem = function () {
   var self = this;
   self.scale = 100; // how many pixels is 1 meter
   self.world = new b2World(new b2Vec2(0, 0), true);
-  self.bodies = [];
   self.mouseJoints = [];
   self.debugDraw = null;
   self.contacts = new b2ContactListener();
@@ -249,12 +248,12 @@ var PhysicsSystem = function () {
     };
 
     body.onContactBegin = function (myfixture, otherFixture) {};
-
     body.onContactEnd = function (myfixture, otherFixture) {};
-
     body.onContactPreSolve = function (myfixture, otherFixture) {};
-
     body.onContactPostSolve = function (myfixture, otherFixture) {};
+    body.onDragStart = function () {};
+    body.onDragMove = function () {};
+    body.onDragEnd = function () {};
 
     body.setAngularVelocity = function (angularVelocity) {
       body.SetAwake(true);
@@ -268,9 +267,6 @@ var PhysicsSystem = function () {
         y: y / self.scale
       });
     };
-
-    self.bodies.push(body);
-
     return body;
   };
 
@@ -311,14 +307,6 @@ var PhysicsSystem = function () {
     context.restore();
   };
 
-  self.clear = function () {
-    self.fasterEach(self.bodies, function (body) {
-      body.GetWorld().DestroyBody(body);
-    });
-    self.bodies = [];
-    self.mouseJoints = [];
-  };
-
   self.vector = function (x, y) {
     return {
       x: (x) / self.scale,
@@ -348,6 +336,7 @@ var PhysicsSystem = function () {
       ),
       function (fixture) {
         if (fixture.GetBody().draggable) {
+          fixture.GetBody().onDragStart();
           self.mouseJoints.push(
             {
               number: pointer.number,
@@ -381,12 +370,14 @@ var PhysicsSystem = function () {
             pointer.y
           )
         );
+        mouseJoint.body.onDragMove();
       }
     });
   };
 
   self.dragEnd = function (pointer) {
     self.fasterEach(self.mouseJoints, function (mouseJoint) {
+      mouseJoint.body.onDragEnd();
       if (mouseJoint.number === pointer.number) {
         mouseJoint.body = null;
         self.destroyJoint(mouseJoint.joint);
@@ -503,5 +494,4 @@ var PhysicsSystem = function () {
   self.destroyJoint = function (joint) {
     self.world.DestroyJoint(joint);
   };
-
 };

@@ -4,6 +4,7 @@ window.addEventListener('load', function () {
   game.state.add(setupState);
   game.state.add(physicsState);
   game.state.add(mapState);
+  game.state.add(angryState);
   game.state.switch('setup-state');
   game.loop.start();
 });
