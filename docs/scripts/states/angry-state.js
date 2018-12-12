@@ -66,9 +66,7 @@ angryState.create = function (game) {
   };
 };
 
-angryState.update = function (game) {
-
-  // game.loop.stop();
+angryState.update = function (game, $) {
 
   game.pointers.pointers.forEach(function (pointer) {
     if (pointer.start) {
@@ -82,6 +80,19 @@ angryState.update = function (game) {
     }
   });
 
+  if ($.arrowUp.hold) {
+    game.camera.zoom += 0.01;
+  }
+  if ($.arrorRight.hold) {
+    game.camera.angle += 0.01;
+  }
+  if ($.arrowDown.hold) {
+    game.camera.zoom -= 0.01;
+  }
+  if ($.arrowLeft.hold) {
+    game.camera.angle -= 0.01;
+  }
+  // game.camera.follow(player.getPosition());
 };
 
 angryState.render = function () {

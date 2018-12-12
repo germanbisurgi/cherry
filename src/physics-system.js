@@ -14,7 +14,7 @@ var b2MouseJoint = Box2D.Dynamics.Joints.b2MouseJointDef;
 
 var PhysicsSystem = function (game) {
   var self = this;
-  this.game = game;
+  self.game = game;
   self.scale = 100; // how many pixels is 1 meter
   self.world = new b2World(new b2Vec2(0, 0), true);
   self.mouseJoints = [];
@@ -450,7 +450,7 @@ var PhysicsSystem = function (game) {
   self.draw = function () {
     if (!self.debugDraw) {
       var debugDraw = new b2DebugDraw();
-      debugDraw.SetSprite(game.canvas.context);
+      debugDraw.SetSprite(self.game.canvas.context);
       debugDraw.SetDrawScale(self.scale);
       debugDraw.SetFillAlpha(0.5);
       debugDraw.SetFillAlpha(0.5);
@@ -462,23 +462,25 @@ var PhysicsSystem = function (game) {
       };
     }
 
-    game.canvas.clear();
-    game.canvas.context.save();
-    game.canvas.context.scale(game.canvas.camera.zoom, game.canvas.camera.zoom);
-    game.canvas.context.translate(-game.canvas.camera.x, -game.canvas.camera.y);
-    game.canvas.context.rotate(-game.camera.angle);
-    self.world.DrawDebugData();
-    game.canvas.context.restore();
+    self.game.canvas.clear();
+    self.game.canvas.context.save();
 
+    self.game.canvas.context.scale(self.game.camera.zoom, self.game.camera.zoom);
+    self.game.canvas.context.translate(-self.game.camera.x, -self.game.camera.y);
+    self.game.canvas.context.rotate(-self.game.camera.angle);
+
+    self.world.DrawDebugData();
+    self.game.canvas.context.restore();
   };
+
   self.parseVector = function (x, y) {
     var parsedVector =  {
-      x: (x + game.camera.x * game.camera.zoom) / self.scale / game.camera.zoom,
-      y: (y + game.camera.y * game.camera.zoom) / self.scale / game.camera.zoom
+      x: (x + self.game.camera.x * self.game.camera.zoom) / self.scale / self.game.camera.zoom,
+      y: (y + self.game.camera.y * self.game.camera.zoom) / self.scale / self.game.camera.zoom
     };
     parsedVector = {
-      x: parsedVector.x * Math.cos(game.camera.angle) - parsedVector.y * Math.sin(game.camera.angle),
-      y: parsedVector.x * Math.sin(game.camera.angle) + parsedVector.y * Math.cos(game.camera.angle)
+      x: parsedVector.x * Math.cos(self.game.camera.angle) - parsedVector.y * Math.sin(self.game.camera.angle),
+      y: parsedVector.x * Math.sin(self.game.camera.angle) + parsedVector.y * Math.cos(self.game.camera.angle)
     };
     return parsedVector;
   };
