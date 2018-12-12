@@ -1,6 +1,7 @@
 var naive = {
   Asset: Asset,
   Calc: Calc,
+  Camera: Camera,
   Canvas: Canvas,
   Game: Game,
   Key: Key,

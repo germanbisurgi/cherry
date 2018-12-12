@@ -6,6 +6,7 @@ var scripts = [
   './src/asset.js',
   './src/assets-system.js',
   './src/calc.js',
+  './src/camera.js',
   './src/canvas.js',
   './src/game.js',
   './src/key.js',

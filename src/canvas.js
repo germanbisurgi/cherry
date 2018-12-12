@@ -1,17 +1,15 @@
-var Canvas = function (container) {
-  this.nativeWidth = 800;
-  this.nativeHeight = 480;
-  this.deviceWidth = window.innerWidth;
-  this.deviceHeight = window.innerHeight;
+var Canvas = function () {
+  this.camera = new naive.Camera();
   this.container = document.querySelector('.container');
   this.canvas = document.createElement('canvas');
   this.context = this.canvas.getContext('2d');
+
   if (this.container) {
     this.container.appendChild(this.canvas);
   }
 
   this.resize();
-
+  window.addEventListener('resize', this.resize.bind(this));
 };
 
 Canvas.prototype.resize = function () {

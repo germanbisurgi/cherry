@@ -1,5 +1,7 @@
-var PointersSystem = function () {
+var PointersSystem = function (game) {
+  this.game = game;
   this.pointers = [];
+  this.enablePointers();
 };
 
 PointersSystem.prototype.add = function () {
@@ -8,13 +10,13 @@ PointersSystem.prototype.add = function () {
   return pointer;
 };
 
-PointersSystem.prototype.enablePointers = function (element) {
-  element.style.touchAction = 'none';
-  element.addEventListener('pointerdown', this.handlePointerDown.bind(this), false);
-  element.addEventListener('pointermove', this.handlePointerMove.bind(this), false);
-  element.addEventListener('pointerup', this.handlePointerUpAndCancel.bind(this), false);
-  element.addEventListener('pointercancel', this.handlePointerUpAndCancel.bind(this), false);
-  element.addEventListener('pointerleave', this.handlePointerUpAndCancel.bind(this), false);
+PointersSystem.prototype.enablePointers = function () {
+  this.game.canvas.canvas.style.touchAction = 'none';
+  this.game.canvas.canvas.addEventListener('pointerdown', this.handlePointerDown.bind(this), false);
+  this.game.canvas.canvas.addEventListener('pointermove', this.handlePointerMove.bind(this), false);
+  this.game.canvas.canvas.addEventListener('pointerup', this.handlePointerUpAndCancel.bind(this), false);
+  this.game.canvas.canvas.addEventListener('pointercancel', this.handlePointerUpAndCancel.bind(this), false);
+  this.game.canvas.canvas.addEventListener('pointerleave', this.handlePointerUpAndCancel.bind(this), false);
 };
 
 PointersSystem.prototype.getPointerByID = function (id) {

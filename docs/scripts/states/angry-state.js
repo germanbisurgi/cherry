@@ -13,30 +13,30 @@ angryState.create = function (game) {
   game.loop.fps = 25;
 
   // ground
-  var ground = game.physics.addBody(window.innerWidth / 2, window.innerHeight - 50, 'static');
+  var ground = game.physics.addBody(150, 250, 'static');
   ground.addEdge(-1000, 0, 1000, 0);
 
   // slingshot
-  slingshot = game.physics.addBody(350, window.innerHeight - 200, 'static');
-  slingshot.addCircle(225, 0, 0, {isSensor: true});
+  slingshot = game.physics.addBody(150, 150, 'static');
+  slingshot.addCircle(100, 0, 0, {isSensor: true});
 
   // player
-  player = game.physics.addBody(350, window.innerHeight - 50, 'dynamic', {bullet: true});
+  player = game.physics.addBody(100, 150, 'dynamic', {bullet: true});
   player.addCircle(25);
   player.draggable = true;
 
   // enemy
-  enemy = game.physics.addBody(1350, window.innerHeight - 50, 'dynamic');
+  enemy = game.physics.addBody(450, 220, 'dynamic');
   enemy.addCircle(30);
 
   // boxes
-  game.physics.addBody(1250, window.innerHeight - 50 - 20, 'dynamic').addRectangle(40, 40);
-  game.physics.addBody(1250, window.innerHeight - 50 - 60, 'dynamic').addRectangle(40, 40);
-  game.physics.addBody(1250, window.innerHeight - 50 - 100, 'dynamic').addRectangle(40, 40);
-  game.physics.addBody(1450, window.innerHeight - 50 - 20, 'dynamic').addRectangle(40, 40);
-  game.physics.addBody(1450, window.innerHeight - 50 - 60, 'dynamic').addRectangle(40, 40);
-  game.physics.addBody(1450, window.innerHeight - 50 - 100, 'dynamic').addRectangle(40, 40);
-  game.physics.addBody(1350, window.innerHeight - 50 - 140, 'dynamic').addRectangle(200, 40);
+  game.physics.addBody(350, 230, 'dynamic').addRectangle(40, 40);
+  game.physics.addBody(350, 190, 'dynamic').addRectangle(40, 40);
+  game.physics.addBody(350, 150, 'dynamic').addRectangle(40, 40);
+  game.physics.addBody(570, 230, 'dynamic').addRectangle(40, 40);
+  game.physics.addBody(570, 190, 'dynamic').addRectangle(40, 40);
+  game.physics.addBody(570, 150, 'dynamic').addRectangle(40, 40);
+  game.physics.addBody(460, 110, 'dynamic').addRectangle(260, 40);
 
   player.onDragStart = function () {
     canLaunch = true;
@@ -45,7 +45,7 @@ angryState.create = function (game) {
 
   player.onDragMove = function () {
     distance = game.calc.distance(player.getPosition(), slingshot.getPosition());
-    if (distance > 200) {
+    if (distance > 100) {
       canLaunch = false;
       game.physics.destroyJoint(distanceJoint);
     }
@@ -67,6 +67,8 @@ angryState.create = function (game) {
 };
 
 angryState.update = function (game) {
+
+  // game.loop.stop();
 
   game.pointers.pointers.forEach(function (pointer) {
     if (pointer.start) {
