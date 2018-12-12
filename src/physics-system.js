@@ -13,7 +13,6 @@ var b2ContactListener = Box2D.Dynamics.b2ContactListener;
 var b2MouseJoint = Box2D.Dynamics.Joints.b2MouseJointDef;
 
 var PhysicsSystem = function () {
-  'use strict';
   var self = this;
   self.scale = 100; // how many pixels is 1 meter
   self.world = new b2World(new b2Vec2(0, 0), true);
@@ -91,6 +90,7 @@ var PhysicsSystem = function () {
     self.world.QueryPoint(
       function (fixture) {
         callback(fixture);
+        return true; // continue quering for the next fixture.
       },
       {x: point.x, y: point.y}
     );
@@ -147,7 +147,7 @@ var PhysicsSystem = function () {
     }
 
     var body = self.world.CreateBody(bodyDef);
-    body.draggable = true;
+    body.draggable = false;
 
     body.addCircle = function (radius, offsetX, offsetY, fixtureDefinition) {
       var fixtureDef = self.getFixtureDef(fixtureDefinition);
@@ -281,49 +281,11 @@ var PhysicsSystem = function () {
     return fixDef;
   };
 
-  self.update = function (fps) {
-    self.world.Step(1 / fps, 8, 3);
-    self.world.ClearForces();
-  };
-
-  self.draw = function (context) {
-    if (!self.debugDraw) {
-      var debugDraw = new b2DebugDraw();
-      debugDraw.SetSprite(context);
-      debugDraw.SetDrawScale(self.scale);
-      debugDraw.SetFillAlpha(0.5);
-      debugDraw.SetFillAlpha(0.5);
-      debugDraw.SetFlags(b2DebugDraw.e_shapeBit);
-      // debugDraw.SetFlags(b2DebugDraw.e_aabbBit);
-      // debugDraw.AppendFlags(b2DebugDraw.e_centerOfMassBit);
-      debugDraw.AppendFlags(b2DebugDraw.e_jointBit);
-      self.world.SetDebugDraw(debugDraw);
-      self.world.m_debugDraw.m_sprite.graphics.clear = function () {
-        return false;
-      };
-    }
-    context.save();
-    self.world.DrawDebugData();
-    context.restore();
-  };
-
   self.vector = function (x, y) {
     return {
       x: (x) / self.scale,
       y: (y) / self.scale
     };
-
-    /* return {
-			x: (x + game.render.camera.x) / self.scale,
-			y: (y + game.render.camera.y) / self.scale
-		}
-		var x = (x + game.render.camera.x)/ self.scale;
-		var y = (y + game.render.camera.y)/ self.scale;
-		var angle = game.render.camera.angle;
-		var ox = (game.render.camera.x + game.render.camera.width / 2)/ self.scale;
-		var oy = (game.render.camera.x + game.render.camera.height / 2)/ self.scale;
-		var radius = game.mathematics.distance(x, y, ox, oy)/ self.scale;
-		return game.mathematics.angleToPoint(angle, ox, oy, radius); */
   };
 
   // ------------------------------------------------------------- drag and drop
@@ -335,7 +297,8 @@ var PhysicsSystem = function () {
         pointer.y
       ),
       function (fixture) {
-        if (fixture.GetBody().draggable) {
+        //0 static, 1 kinematic, 2 dynamic.
+        if (fixture.GetBody().GetType() === 2 && fixture.GetBody().draggable) {
           fixture.GetBody().onDragStart();
           self.mouseJoints.push(
             {
@@ -493,5 +456,44 @@ var PhysicsSystem = function () {
 
   self.destroyJoint = function (joint) {
     self.world.DestroyJoint(joint);
+  };
+
+  self.update = function (fps) {
+    self.world.Step(1 / fps, 8, 3);
+    self.world.ClearForces();
+  };
+
+  self.draw = function (canvas) {
+    if (!self.debugDraw) {
+      var debugDraw = new b2DebugDraw();
+      debugDraw.SetSprite(canvas.context);
+      debugDraw.SetDrawScale(self.scale);
+      debugDraw.SetFillAlpha(0.5);
+      debugDraw.SetFillAlpha(0.5);
+      debugDraw.SetFlags(b2DebugDraw.e_shapeBit);
+      // debugDraw.SetFlags(b2DebugDraw.e_aabbBit);
+      // debugDraw.AppendFlags(b2DebugDraw.e_centerOfMassBit);
+      debugDraw.AppendFlags(b2DebugDraw.e_jointBit);
+      self.world.SetDebugDraw(debugDraw);
+      self.world.m_debugDraw.m_sprite.graphics.clear = function () {
+        return false;
+      };
+    }
+    canvas.clear();
+    canvas.context.save();
+    self.world.DrawDebugData();
+    canvas.context.restore();
+
+    /* return {
+			x: (x + game.render.camera.x) / self.scale,
+			y: (y + game.render.camera.y) / self.scale
+		}
+		var x = (x + game.render.camera.x)/ self.scale;
+		var y = (y + game.render.camera.y)/ self.scale;
+		var angle = game.render.camera.angle;
+		var ox = (game.render.camera.x + game.render.camera.width / 2)/ self.scale;
+		var oy = (game.render.camera.x + game.render.camera.height / 2)/ self.scale;
+		var radius = game.mathematics.distance(x, y, ox, oy)/ self.scale;
+		return game.mathematics.angleToPoint(angle, ox, oy, radius); */
   };
 };

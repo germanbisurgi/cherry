@@ -6,7 +6,6 @@ var distanceJoint;
 var distance;
 var angle;
 var canLaunch;
-var angryFace;
 
 angryState.create = function (game) {
 
@@ -16,15 +15,15 @@ angryState.create = function (game) {
   // ground
   var ground = game.physics.addBody(window.innerWidth / 2, window.innerHeight - 50, 'static');
   ground.addEdge(-1000, 0, 1000, 0);
-  angryFace = game.render.addRenderable(game.assets.getImage('angry-face'), 50, 50, 50, 50, 0);
+
+  // slingshot
+  slingshot = game.physics.addBody(350, window.innerHeight - 200, 'static');
+  slingshot.addCircle(225, 0, 0, {isSensor: true});
 
   // player
   player = game.physics.addBody(350, window.innerHeight - 50, 'dynamic', {bullet: true});
   player.addCircle(25);
-
-  // slingshot
-  slingshot = game.physics.addBody(350, window.innerHeight - 200, 'static');
-  // slingshot.addCircle(20);
+  player.draggable = true;
 
   // enemy
   enemy = game.physics.addBody(1350, window.innerHeight - 50, 'dynamic');
@@ -69,10 +68,6 @@ angryState.create = function (game) {
 
 angryState.update = function (game) {
 
-  angryFace.x = player.getPosition().x;
-  angryFace.y = player.getPosition().y;
-  angryFace.angle = player.getAngle();
-
   game.pointers.pointers.forEach(function (pointer) {
     if (pointer.start) {
       game.physics.dragStart(pointer);
@@ -90,9 +85,9 @@ angryState.update = function (game) {
 angryState.render = function () {
   game.pointers.pointers.forEach(function (p) {
     if (p.active) {
-      game.render.canvas.text(p.x - 70, p.y - 50, 'n: ' + p.number + ' time: ' + Math.floor(p.holdTime));
-      game.render.canvas.image(game.assets.getImage('circle'), p.x, p.y, 40, 40);
+      game.canvas.text(p.x - 70, p.y - 50, 'n: ' + p.number + ' time: ' + Math.floor(p.holdTime));
+      game.canvas.image(game.assets.getImage('circle'), p.x, p.y, 40, 40);
     }
   });
-  game.render.canvas.text(10, 30, 'fps: ' + 1 / game.loop.delta * 1000);
+  game.canvas.text(10, 30, 'fps: ' + 1 / game.loop.delta * 1000);
 };

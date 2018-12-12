@@ -11116,17 +11116,24 @@ Calc.prototype.randomInt = function (min, max) {
 };
 
 var Canvas = function (container) {
+  this.nativeWidth = 800;
+  this.nativeHeight = 480;
+  this.deviceWidth = window.innerWidth;
+  this.deviceHeight = window.innerHeight;
+  this.container = document.querySelector('.container');
   this.canvas = document.createElement('canvas');
   this.context = this.canvas.getContext('2d');
-  if (typeof container !== 'undefined') {
-    this.container = document.querySelector('.container');
-    if (this.container) {
-      this.container.appendChild(this.canvas);
-    }
+  if (this.container) {
+    this.container.appendChild(this.canvas);
   }
+
+  this.resize();
+
+};
+
+Canvas.prototype.resize = function () {
   this.canvas.width = window.innerWidth;
   this.canvas.height = window.innerHeight;
-  this.canvas.style = 'border: 1px solid pink;';
 };
 
 Canvas.prototype.circle = function (x, y, radius) {
@@ -11157,6 +11164,7 @@ Canvas.prototype.rect = function (x, y, w, h) {
 
 Canvas.prototype.text = function (x, y, text) {
   this.context.font = '16px monospace';
+  this.context.fillStyle = 'white';
   this.context.fillText(text, x, y);
 };
 
@@ -11167,11 +11175,11 @@ var Game = function () {
   this.keys = new naive.KeysSystem();
   this.pointers = new naive.PointersSystem();
   this.physics = new naive.PhysicsSystem();
-  this.render = new naive.RenderSystem();
+  this.canvas = new naive.Canvas();
   this.calc = new naive.Calc();
   this.globals = {};
 
-  this.pointers.enablePointers(this.render.canvas.canvas);
+  this.pointers.enablePointers(this.canvas.canvas);
 
   this.loop.onStep = function () {
     this.state.update();
@@ -11191,8 +11199,8 @@ var Game = function () {
       this.physics.update(this.loop.fps);
       this.state.current.update(this, this.globals);
       // draw
-      this.render.draw();
-      this.physics.draw(this.render.context);
+      // this.render.draw();
+      this.physics.draw(this.canvas);
       this.state.current.render(this, this.globals);
     }
   }.bind(this);
@@ -11313,7 +11321,6 @@ var b2ContactListener = Box2D.Dynamics.b2ContactListener;
 var b2MouseJoint = Box2D.Dynamics.Joints.b2MouseJointDef;
 
 var PhysicsSystem = function () {
-  'use strict';
   var self = this;
   self.scale = 100; // how many pixels is 1 meter
   self.world = new b2World(new b2Vec2(0, 0), true);
@@ -11391,6 +11398,7 @@ var PhysicsSystem = function () {
     self.world.QueryPoint(
       function (fixture) {
         callback(fixture);
+        return true; // continue quering for the next fixture.
       },
       {x: point.x, y: point.y}
     );
@@ -11447,7 +11455,7 @@ var PhysicsSystem = function () {
     }
 
     var body = self.world.CreateBody(bodyDef);
-    body.draggable = true;
+    body.draggable = false;
 
     body.addCircle = function (radius, offsetX, offsetY, fixtureDefinition) {
       var fixtureDef = self.getFixtureDef(fixtureDefinition);
@@ -11581,49 +11589,11 @@ var PhysicsSystem = function () {
     return fixDef;
   };
 
-  self.update = function (fps) {
-    self.world.Step(1 / fps, 8, 3);
-    self.world.ClearForces();
-  };
-
-  self.draw = function (context) {
-    if (!self.debugDraw) {
-      var debugDraw = new b2DebugDraw();
-      debugDraw.SetSprite(context);
-      debugDraw.SetDrawScale(self.scale);
-      debugDraw.SetFillAlpha(0.5);
-      debugDraw.SetFillAlpha(0.5);
-      debugDraw.SetFlags(b2DebugDraw.e_shapeBit);
-      // debugDraw.SetFlags(b2DebugDraw.e_aabbBit);
-      // debugDraw.AppendFlags(b2DebugDraw.e_centerOfMassBit);
-      debugDraw.AppendFlags(b2DebugDraw.e_jointBit);
-      self.world.SetDebugDraw(debugDraw);
-      self.world.m_debugDraw.m_sprite.graphics.clear = function () {
-        return false;
-      };
-    }
-    context.save();
-    self.world.DrawDebugData();
-    context.restore();
-  };
-
   self.vector = function (x, y) {
     return {
       x: (x) / self.scale,
       y: (y) / self.scale
     };
-
-    /* return {
-			x: (x + game.render.camera.x) / self.scale,
-			y: (y + game.render.camera.y) / self.scale
-		}
-		var x = (x + game.render.camera.x)/ self.scale;
-		var y = (y + game.render.camera.y)/ self.scale;
-		var angle = game.render.camera.angle;
-		var ox = (game.render.camera.x + game.render.camera.width / 2)/ self.scale;
-		var oy = (game.render.camera.x + game.render.camera.height / 2)/ self.scale;
-		var radius = game.mathematics.distance(x, y, ox, oy)/ self.scale;
-		return game.mathematics.angleToPoint(angle, ox, oy, radius); */
   };
 
   // ------------------------------------------------------------- drag and drop
@@ -11635,7 +11605,8 @@ var PhysicsSystem = function () {
         pointer.y
       ),
       function (fixture) {
-        if (fixture.GetBody().draggable) {
+        //0 static, 1 kinematic, 2 dynamic.
+        if (fixture.GetBody().GetType() === 2 && fixture.GetBody().draggable) {
           fixture.GetBody().onDragStart();
           self.mouseJoints.push(
             {
@@ -11793,6 +11764,45 @@ var PhysicsSystem = function () {
 
   self.destroyJoint = function (joint) {
     self.world.DestroyJoint(joint);
+  };
+
+  self.update = function (fps) {
+    self.world.Step(1 / fps, 8, 3);
+    self.world.ClearForces();
+  };
+
+  self.draw = function (canvas) {
+    if (!self.debugDraw) {
+      var debugDraw = new b2DebugDraw();
+      debugDraw.SetSprite(canvas.context);
+      debugDraw.SetDrawScale(self.scale);
+      debugDraw.SetFillAlpha(0.5);
+      debugDraw.SetFillAlpha(0.5);
+      debugDraw.SetFlags(b2DebugDraw.e_shapeBit);
+      // debugDraw.SetFlags(b2DebugDraw.e_aabbBit);
+      // debugDraw.AppendFlags(b2DebugDraw.e_centerOfMassBit);
+      debugDraw.AppendFlags(b2DebugDraw.e_jointBit);
+      self.world.SetDebugDraw(debugDraw);
+      self.world.m_debugDraw.m_sprite.graphics.clear = function () {
+        return false;
+      };
+    }
+    canvas.clear();
+    canvas.context.save();
+    self.world.DrawDebugData();
+    canvas.context.restore();
+
+    /* return {
+			x: (x + game.render.camera.x) / self.scale,
+			y: (y + game.render.camera.y) / self.scale
+		}
+		var x = (x + game.render.camera.x)/ self.scale;
+		var y = (y + game.render.camera.y)/ self.scale;
+		var angle = game.render.camera.angle;
+		var ox = (game.render.camera.x + game.render.camera.width / 2)/ self.scale;
+		var oy = (game.render.camera.x + game.render.camera.height / 2)/ self.scale;
+		var radius = game.mathematics.distance(x, y, ox, oy)/ self.scale;
+		return game.mathematics.angleToPoint(angle, ox, oy, radius); */
   };
 };
 

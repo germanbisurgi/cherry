@@ -1,15 +1,22 @@
 var Canvas = function (container) {
+  this.nativeWidth = 800;
+  this.nativeHeight = 480;
+  this.deviceWidth = window.innerWidth;
+  this.deviceHeight = window.innerHeight;
+  this.container = document.querySelector('.container');
   this.canvas = document.createElement('canvas');
   this.context = this.canvas.getContext('2d');
-  if (typeof container !== 'undefined') {
-    this.container = document.querySelector('.container');
-    if (this.container) {
-      this.container.appendChild(this.canvas);
-    }
+  if (this.container) {
+    this.container.appendChild(this.canvas);
   }
+
+  this.resize();
+
+};
+
+Canvas.prototype.resize = function () {
   this.canvas.width = window.innerWidth;
   this.canvas.height = window.innerHeight;
-  this.canvas.style = 'border: 1px solid pink;';
 };
 
 Canvas.prototype.circle = function (x, y, radius) {
@@ -40,5 +47,6 @@ Canvas.prototype.rect = function (x, y, w, h) {
 
 Canvas.prototype.text = function (x, y, text) {
   this.context.font = '16px monospace';
+  this.context.fillStyle = 'white';
   this.context.fillText(text, x, y);
 };
