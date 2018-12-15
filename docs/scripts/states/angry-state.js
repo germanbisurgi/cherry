@@ -10,7 +10,7 @@ var canLaunch;
 angryState.create = function (game) {
 
   game.physics.setGravity(0, 5);
-  game.loop.fps = 25;
+  // game.loop.fps = 25;
 
   // ground
   var ground = game.physics.addBody(150, 250, 'static');
