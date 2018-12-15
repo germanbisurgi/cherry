@@ -70,29 +70,57 @@ angryState.update = function (game, $) {
 
   game.pointers.pointers.forEach(function (pointer) {
     if (pointer.start) {
-      game.physics.dragStart(pointer);
+      game.physics.dragStart(pointer.getPosition());
     }
     if (pointer.hold) {
-      game.physics.dragMove(pointer);
+      game.physics.dragMove(pointer.getPosition());
     }
     if (pointer.end) {
-      game.physics.dragEnd(pointer);
+      game.physics.dragEnd(pointer.getPosition());
     }
   });
 
   if ($.arrowUp.hold) {
-    game.camera.zoom += 0.01;
+    game.camera.y -= 15;
   }
   if ($.arrorRight.hold) {
-    game.camera.angle += 0.01;
+    game.camera.x += 15;
   }
   if ($.arrowDown.hold) {
-    game.camera.zoom -= 0.01;
+    game.camera.y += 15;
   }
   if ($.arrowLeft.hold) {
-    game.camera.angle -= 0.01;
+    game.camera.x -= 15;
   }
-  // game.camera.follow(player.getPosition());
+
+  if ($.w.hold) {
+    game.camera.zoom += 0.1;
+  }
+  if ($.d.hold) {
+    game.camera.angle -= 0.1;
+  }
+  if ($.s.hold) {
+    game.camera.zoom -= 0.1;
+  }
+  if ($.a.hold) {
+    game.camera.angle += 0.1;
+  }
+
+  if ($.u.hold) {
+    player.applyImpulse({x: 0, y: -10}, player.getWorldCenter());
+  }
+  if ($.k.hold) {
+    player.applyImpulse({x: 10, y: 0}, player.getWorldCenter());
+  }
+  if ($.j.hold) {
+    player.applyImpulse({x: 0, y: 10}, player.getWorldCenter());
+  }
+  if ($.h.hold) {
+    player.applyImpulse({x: -10, y: 0}, player.getWorldCenter());
+  }
+
+  game.camera.follow(player.getPosition());
+
 };
 
 angryState.render = function () {

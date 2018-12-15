@@ -4,9 +4,9 @@ var Game = function () {
   this.state = new naive.StateSystem(this);
   this.physics = new naive.PhysicsSystem(this);
   this.calc = new naive.Calc();
+  this.keys = new naive.KeysSystem(this);
   this.camera = new naive.Camera(this);
   this.canvas = new naive.Canvas(this);
-  this.keys = new naive.KeysSystem(this);
   this.pointers = new naive.PointersSystem(this);
   this.globals = {};
 

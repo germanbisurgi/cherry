@@ -1,11 +1,10 @@
 var Canvas = function () {
-  this.camera = new naive.Camera();
   this.container = document.querySelector('.container');
-  this.canvas = document.createElement('canvas');
-  this.context = this.canvas.getContext('2d');
+  this.element = document.createElement('canvas');
+  this.context = this.element.getContext('2d');
 
   if (this.container) {
-    this.container.appendChild(this.canvas);
+    this.container.appendChild(this.element);
   }
 
   this.resize();
@@ -13,8 +12,8 @@ var Canvas = function () {
 };
 
 Canvas.prototype.resize = function () {
-  this.canvas.width = window.innerWidth;
-  this.canvas.height = window.innerHeight;
+  this.element.width = window.innerWidth;
+  this.element.height = window.innerHeight;
 };
 
 Canvas.prototype.circle = function (x, y, radius) {
@@ -24,7 +23,7 @@ Canvas.prototype.circle = function (x, y, radius) {
 };
 
 Canvas.prototype.clear = function () {
-  this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  this.context.clearRect(0, 0, this.element.width, this.element.height);
 };
 
 Canvas.prototype.image = function (image, x, y, w, h) {

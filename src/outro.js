@@ -13,7 +13,7 @@ var naive = {
   PhysicsSystem: PhysicsSystem,
   Pool: Pool,
   Renderable: Renderable,
-  RenderSystem: RenderSystem,
+  Render: Render,
   Signal: Signal,
   State: State,
   StateSystem: StateSystem

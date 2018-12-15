@@ -284,15 +284,15 @@ var PhysicsSystem = function (game) {
 
   // ------------------------------------------------------------- drag and drop
 
-  self.dragStart = function (pointer) {
+  self.dragStart = function (point) {
     self.queryPoint(
-      self.parseVector(pointer.x, pointer.y),
+      self.parseVector(point),
       function (fixture) {
         if (fixture.GetBody().draggable) {
           fixture.GetBody().onDragStart();
           self.mouseJoints.push(
             {
-              number: pointer.number,
+              number: point.number,
               body: fixture.GetBody(),
               joint: null
             }
@@ -302,30 +302,30 @@ var PhysicsSystem = function (game) {
     );
   };
 
-  self.dragMove = function (pointer) {
+  self.dragMove = function (point) {
     self.fasterEach(self.mouseJoints, function (mouseJoint) {
-      if (mouseJoint.number === pointer.number) {
+      if (mouseJoint.number === point.number) {
         if (!mouseJoint.body) {
           return;
         }
         if (!mouseJoint.joint) {
           mouseJoint.joint = self.createMouseJoint(
-            self.parseVector(pointer.x, pointer.y),
+            self.parseVector(point),
             mouseJoint.body
           );
         }
         mouseJoint.joint.SetTarget(
-          self.parseVector(pointer.x, pointer.y)
+          self.parseVector(point)
         );
         mouseJoint.body.onDragMove();
       }
     });
   };
 
-  self.dragEnd = function (pointer) {
+  self.dragEnd = function (point) {
     self.fasterEach(self.mouseJoints, function (mouseJoint) {
       mouseJoint.body.onDragEnd();
-      if (mouseJoint.number === pointer.number) {
+      if (mouseJoint.number === point.number) {
         mouseJoint.body = null;
         self.destroyJoint(mouseJoint.joint);
         mouseJoint.joint = null;
@@ -447,6 +447,8 @@ var PhysicsSystem = function (game) {
     self.world.ClearForces();
   };
 
+  self.point = {x: 0, y: 0};
+
   self.draw = function () {
     if (!self.debugDraw) {
       var debugDraw = new b2DebugDraw();
@@ -465,24 +467,69 @@ var PhysicsSystem = function (game) {
     self.game.canvas.clear();
     self.game.canvas.context.save();
 
-    self.game.canvas.context.scale(self.game.camera.zoom, self.game.camera.zoom);
-    self.game.canvas.context.translate(-self.game.camera.x, -self.game.camera.y);
-    self.game.canvas.context.rotate(-self.game.camera.angle);
+    self.game.canvas.context.translate(
+      (self.game.camera.width / 2),
+      (self.game.camera.height / 2)
+    );
 
+    // rotate
+    self.game.canvas.context.rotate(self.game.camera.angle);
+
+    // translate
+    self.game.canvas.context.scale(self.game.camera.zoom, self.game.camera.zoom);
+
+    self.game.canvas.context.strokeStyle = 'red';
+    self.game.canvas.circle(0, 0, 10);
+
+    self.game.canvas.context.translate(
+      -(self.game.camera.width / 2),
+      -(self.game.camera.height / 2)
+    );
+
+    // translate
+    self.game.canvas.context.translate(
+      -self.game.camera.x,
+      -self.game.camera.y
+    );
+
+    self.game.canvas.context.strokeStyle = 'yellow';
+    self.game.canvas.circle(self.point.x, self.point.y, 10);
     self.world.DrawDebugData();
     self.game.canvas.context.restore();
   };
 
-  self.parseVector = function (x, y) {
-    var parsedVector =  {
-      x: (x + self.game.camera.x * self.game.camera.zoom) / self.scale / self.game.camera.zoom,
-      y: (y + self.game.camera.y * self.game.camera.zoom) / self.scale / self.game.camera.zoom
+  self.parseVector = function (point) {
+
+    // fin angle between camera center and point
+    var angle = self.game.calc.angleBetweenPoints(
+      {
+        x: self.game.camera.width / 2,
+        y: self.game.camera.height / 2
+      },
+      point
+    );
+
+    // find radius between camera center and point
+    var radius = self.game.calc.distance(
+      {
+        x: self.game.camera.width / 2,
+        y: self.game.camera.height / 2
+      },
+      point
+    ) / self.game.camera.zoom;
+
+    // find the new point width offseted angle
+    var newPoint = self.game.calc.angleToPoint(
+      self.game.camera.getCenter(),
+      angle - self.game.camera.angle,
+      radius
+    );
+
+    self.point = newPoint;
+    return {
+      x: self.point.x / self.scale,
+      y: self.point.y / self.scale
     };
-    parsedVector = {
-      x: parsedVector.x * Math.cos(self.game.camera.angle) - parsedVector.y * Math.sin(self.game.camera.angle),
-      y: parsedVector.x * Math.sin(self.game.camera.angle) + parsedVector.y * Math.cos(self.game.camera.angle)
-    };
-    return parsedVector;
   };
 
 };

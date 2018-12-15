@@ -1,9 +1,9 @@
 var Calc = function () {};
 
-Calc.prototype.angleToPoint = function (point, angle, radius) {
+Calc.prototype.angleToPoint = function (origin, angle, radius) {
   return {
-    x: Math.cos(angle) * radius + point.x,
-    y: Math.sin(angle) * radius + point.y
+    x: Math.cos(angle) * radius + origin.x,
+    y: Math.sin(angle) * radius + origin.y
   };
 };
 
@@ -33,8 +33,8 @@ Calc.prototype.norm = function (value, min, max) {
 
 Calc.prototype.angleBetweenPoints = function (p1, p2) {
   var theta = Math.atan2(p2.y - p1.y, p2.x - p1.x);
-  if (theta < 0) {
-    theta += 6.283185307179586;
+  while (theta < 0) {
+    theta += Math.PI * 2;
   }
   return theta;
 };

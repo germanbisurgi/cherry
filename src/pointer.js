@@ -13,3 +13,10 @@ var Pointer = function (number) {
   this.x = 0;
   this.y = 0;
 };
+
+Pointer.prototype.getPosition = function () {
+  return {
+    x: this.x,
+    y: this.y
+  };
+};

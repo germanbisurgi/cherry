@@ -12,7 +12,14 @@ setupState.create = function (game, $) {
   $.arrorRight = game.keys.add('ArrowRight');
   $.arrowDown = game.keys.add('ArrowDown');
   $.arrowLeft = game.keys.add('ArrowLeft');
-
+  $.w = game.keys.add('w');
+  $.d = game.keys.add('d');
+  $.s = game.keys.add('s');
+  $.a = game.keys.add('a');
+  $.u = game.keys.add('u');
+  $.k = game.keys.add('k');
+  $.j = game.keys.add('j');
+  $.h = game.keys.add('h');
   // pointers
   $.pointer1 = game.pointers.add();
   $.pointer2 = game.pointers.add();
