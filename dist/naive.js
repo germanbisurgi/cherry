@@ -11116,8 +11116,7 @@ Calc.prototype.randomInt = function (min, max) {
 };
 
 Camera = function () {
-  this.x = 0;
-  this.y = 0;
+  this.position = {x: 0, y: 0};
   this.width = 0;
   this.height = 0;
   this.zoom = 1;
@@ -11130,10 +11129,10 @@ Camera = function () {
 };
 
 Camera.prototype.follow = function (point) {
-  // this.x += (this.zoom * point.x - (window.innerWidth / 2) - this.x) * this.lerp;
-  // this.y += (this.zoom * point.y - (window.innerHeight / 2) - this.y) * this.lerp;
-  this.x = point.x - this.width / 2;
-  this.y = point.y - this.height / 2;
+  // this.position.x += (this.zoom * point.x - (window.innerWidth / 2) - this.position.x) * this.lerp;
+  // this.position.y += (this.zoom * point.y - (window.innerHeight / 2) - this.position.y) * this.lerp;
+  this.position.x = point.x - this.width / 2;
+  this.position.y = point.y - this.height / 2;
 };
 
 Camera.prototype.resize = function () {
@@ -11142,18 +11141,23 @@ Camera.prototype.resize = function () {
 };
 
 Camera.prototype.getPosition = function () {
-  return {
-    x: this.x,
-    y: this.y
-  };
+  return this.position;
 };
 
 Camera.prototype.getCenter = function () {
   return {
-    x: this.x + this.width / 2,
-    y: this.y + this.height / 2
+    x: this.position.x + this.width / 2,
+    y: this.position.y + this.height / 2
   };
 };
+
+Camera.prototype.getViewCenter = function () {
+  return {
+    x: this.width / 2,
+    y: this.height / 2
+  }
+};
+
 
 var Canvas = function () {
   this.container = document.querySelector('.container');
@@ -11832,12 +11836,10 @@ var PhysicsSystem = function (game) {
 
     // translate
     self.game.canvas.context.translate(
-      -self.game.camera.x,
-      -self.game.camera.y
+      -self.game.camera.position.x,
+      -self.game.camera.position.y
     );
 
-    self.game.canvas.context.strokeStyle = 'yellow';
-    self.game.canvas.circle(self.point.x, self.point.y, 10);
     self.world.DrawDebugData();
     self.game.canvas.context.restore();
   };
@@ -11845,22 +11847,10 @@ var PhysicsSystem = function (game) {
   self.parseVector = function (point) {
 
     // fin angle between camera center and point
-    var angle = self.game.calc.angleBetweenPoints(
-      {
-        x: self.game.camera.width / 2,
-        y: self.game.camera.height / 2
-      },
-      point
-    );
+    var angle = self.game.calc.angleBetweenPoints(self.game.camera.getViewCenter(), point);
 
     // find radius between camera center and point
-    var radius = self.game.calc.distance(
-      {
-        x: self.game.camera.width / 2,
-        y: self.game.camera.height / 2
-      },
-      point
-    ) / self.game.camera.zoom;
+    var radius = self.game.calc.distance(self.game.camera.getViewCenter(), point) / self.game.camera.zoom;
 
     // find the new point width offseted angle
     var newPoint = self.game.calc.angleToPoint(
@@ -11869,10 +11859,9 @@ var PhysicsSystem = function (game) {
       radius
     );
 
-    self.point = newPoint;
     return {
-      x: self.point.x / self.scale,
-      y: self.point.y / self.scale
+      x: newPoint.x / self.scale,
+      y: newPoint.y / self.scale
     };
   };
 

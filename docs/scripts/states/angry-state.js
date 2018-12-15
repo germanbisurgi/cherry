@@ -81,16 +81,16 @@ angryState.update = function (game, $) {
   });
 
   if ($.arrowUp.hold) {
-    game.camera.y -= 15;
+    game.camera.position.y -= 15;
   }
   if ($.arrorRight.hold) {
-    game.camera.x += 15;
+    game.camera.position.x += 15;
   }
   if ($.arrowDown.hold) {
-    game.camera.y += 15;
+    game.camera.position.y += 15;
   }
   if ($.arrowLeft.hold) {
-    game.camera.x -= 15;
+    game.camera.position.x -= 15;
   }
 
   if ($.w.hold) {
@@ -119,7 +119,7 @@ angryState.update = function (game, $) {
     player.applyImpulse({x: -10, y: 0}, player.getWorldCenter());
   }
 
-  game.camera.follow(player.getPosition());
+  // game.camera.follow(player.getPosition());
 
 };
 
