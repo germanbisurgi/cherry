@@ -230,6 +230,13 @@ var PhysicsSystem = function (game) {
       return body.GetAngle();
     };
 
+    body.getLinearVelocity = function () {
+      return {
+        x: body.GetLinearVelocity().x * self.scale,
+        y: body.GetLinearVelocity().y * self.scale
+      };
+    };
+
     body.getMass = function () {
       return body.GetMass() * self.scale;
     };

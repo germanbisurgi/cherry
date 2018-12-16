@@ -6,15 +6,20 @@ var distanceJoint;
 var distance;
 var angle;
 var canLaunch;
+var oldPosition;
+var newPosition;
 
 angryState.create = function (game) {
 
   game.physics.setGravity(0, 5);
   // game.loop.fps = 25;
 
+  game.camera.zoom = 0.5;
+  game.camera.position = {x: 400, y: -220};
+
   // ground
   var ground = game.physics.addBody(150, 250, 'static');
-  ground.addEdge(-1000, 0, 1000, 0);
+  ground.addEdge(-10000, 0, 10000, 0);
 
   // slingshot
   slingshot = game.physics.addBody(150, 150, 'static');
@@ -25,18 +30,31 @@ angryState.create = function (game) {
   player.addCircle(25);
   player.draggable = true;
 
+  var torso = game.physics.addBody(100, 150, 'dynamic');
+  torso.addRectangle(20, 50);
+  torso.draggable = true;
+  game.physics.createRevoluteJoint(player, torso, 0, 0, 0, -50, 0, 0, false, -30, 30, true, false);
+
+  var arm = game.physics.addBody(100, 150, 'dynamic');
+  arm.addRectangle(10, 30);
+  game.physics.createRevoluteJoint(torso, arm, 0, -10, 0, -10, 0, 0, false, 0, 0, false, false);
+
+  var leg = game.physics.addBody(100, 150, 'dynamic');
+  leg.addRectangle(15, 40);
+  game.physics.createRevoluteJoint(torso, leg, 0, 20, 0, -10, 0, 0, false, 0, 0, false, false);
+
   // enemy
-  enemy = game.physics.addBody(450, 220, 'dynamic');
+  enemy = game.physics.addBody(1450, 220, 'dynamic');
   enemy.addCircle(30);
 
   // boxes
-  game.physics.addBody(350, 230, 'dynamic').addRectangle(40, 40);
-  game.physics.addBody(350, 190, 'dynamic').addRectangle(40, 40);
-  game.physics.addBody(350, 150, 'dynamic').addRectangle(40, 40);
-  game.physics.addBody(570, 230, 'dynamic').addRectangle(40, 40);
-  game.physics.addBody(570, 190, 'dynamic').addRectangle(40, 40);
-  game.physics.addBody(570, 150, 'dynamic').addRectangle(40, 40);
-  game.physics.addBody(460, 110, 'dynamic').addRectangle(260, 40);
+  game.physics.addBody(1350, 230, 'dynamic').addRectangle(40, 40);
+  game.physics.addBody(1350, 190, 'dynamic').addRectangle(40, 40);
+  game.physics.addBody(1350, 150, 'dynamic').addRectangle(40, 40);
+  game.physics.addBody(1570, 230, 'dynamic').addRectangle(40, 40);
+  game.physics.addBody(1570, 190, 'dynamic').addRectangle(40, 40);
+  game.physics.addBody(1570, 150, 'dynamic').addRectangle(40, 40);
+  game.physics.addBody(1460, 110, 'dynamic').addRectangle(260, 40);
 
   player.onDragStart = function () {
     canLaunch = true;
@@ -94,13 +112,13 @@ angryState.update = function (game, $) {
   }
 
   if ($.w.hold) {
-    game.camera.zoom += 0.1;
+    game.camera.zoom += 0.01;
   }
   if ($.d.hold) {
     game.camera.angle -= 0.1;
   }
   if ($.s.hold) {
-    game.camera.zoom -= 0.1;
+    game.camera.zoom -= 0.01;
   }
   if ($.a.hold) {
     game.camera.angle += 0.1;
@@ -119,8 +137,21 @@ angryState.update = function (game, $) {
     player.applyImpulse({x: -10, y: 0}, player.getWorldCenter());
   }
 
-  // game.camera.follow(player.getPosition());
+  if (!oldPosition) {
+    oldPosition = player.getPosition();
+  }
+  newPosition = player.getPosition();
+  var velocity = game.calc.distance(oldPosition, newPosition);
+  oldPosition = newPosition;
 
+  if (velocity > 30) {
+    // game.camera.zoom = game.calc.lerp(0.05, game.camera.zoom, 0.9);
+  } else {
+    // game.camera.zoom = game.calc.lerp(0.05, game.camera.zoom, 1);
+  }
+
+  // game.camera.zoom /= velocity;
+  // game.camera.follow(player.getPosition());
 };
 
 angryState.render = function () {
