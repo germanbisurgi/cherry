@@ -103,8 +103,8 @@ angryState.update = function (game, $) {
       {x: $.pointer2.startX, y: $.pointer2.startY},
     );
     var currentDistance = game.calc.distance(
-      {x: $.pointer1.x, y: $.pointer1.x},
-      {x: $.pointer2.x, y: $.pointer2.x},
+      {x: $.pointer1.x, y: $.pointer1.y},
+      {x: $.pointer2.x, y: $.pointer2.y},
     );
     if (currentDistance > startDistance) {
       game.camera.zoom -= 0.05;
@@ -113,7 +113,6 @@ angryState.update = function (game, $) {
     if (currentDistance < startDistance) {
       game.camera.zoom += 0.05;
     }
-    game.camera.position.y += ($.pointer1.y - $.pointer1.startY) / 5;
   }
 
   game.pointers.pointers.forEach(function (pointer) {
