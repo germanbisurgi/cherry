@@ -14,16 +14,16 @@ angryState.create = function (game) {
   game.physics.setGravity(0, 5);
   // game.loop.fps = 25;
 
+  game.camera.position = {x: 400, y: -200};
   game.camera.zoom = 0.5;
-  game.camera.position = {x: 400, y: -220};
 
   // ground
   var ground = game.physics.addBody(150, 250, 'static');
   ground.addEdge(-10000, 0, 10000, 0);
 
   // slingshot
-  slingshot = game.physics.addBody(150, 150, 'static');
-  slingshot.addCircle(100, 0, 0, {isSensor: true});
+  slingshot = game.physics.addBody(150, 100, 'static');
+  slingshot.addCircle(150, 0, 0, {isSensor: true});
 
   // player
   player = game.physics.addBody(100, 150, 'dynamic', {bullet: true});
@@ -38,10 +38,12 @@ angryState.create = function (game) {
   var arm = game.physics.addBody(100, 150, 'dynamic');
   arm.addRectangle(10, 30);
   game.physics.createRevoluteJoint(torso, arm, 0, -10, 0, -10, 0, 0, false, 0, 0, false, false);
+  arm.draggable = true;
 
   var leg = game.physics.addBody(100, 150, 'dynamic');
   leg.addRectangle(15, 40);
   game.physics.createRevoluteJoint(torso, leg, 0, 20, 0, -10, 0, 0, false, 0, 0, false, false);
+  leg.draggable = true;
 
   // enemy
   enemy = game.physics.addBody(1450, 220, 'dynamic');
@@ -63,7 +65,7 @@ angryState.create = function (game) {
 
   player.onDragMove = function () {
     distance = game.calc.distance(player.getPosition(), slingshot.getPosition());
-    if (distance > 100) {
+    if (distance > 150) {
       canLaunch = false;
       game.physics.destroyJoint(distanceJoint);
     }
@@ -76,8 +78,8 @@ angryState.create = function (game) {
     if (canLaunch) {
       player.applyImpulse(
         {
-          x: Math.cos(angle) * distance * 4,
-          y: Math.sin(angle) * distance * 4
+          x: Math.cos(angle) * distance * 5,
+          y: Math.sin(angle) * distance * 5
         },
         player.getWorldCenter());
     }
@@ -85,6 +87,13 @@ angryState.create = function (game) {
 };
 
 angryState.update = function (game, $) {
+
+
+  if ($.pointer1.hold && $.pointer2.hold) {
+    console.log($.pointer1.startX, $.pointer1.x, $.pointer1.x - $.pointer1.startX);
+    game.camera.position.x += ($.pointer1.x - $.pointer1.startX) / 5;
+    game.camera.position.y += ($.pointer1.y - $.pointer1.startY) / 5;
+  }
 
   game.pointers.pointers.forEach(function (pointer) {
     if (pointer.start) {
@@ -149,6 +158,8 @@ angryState.update = function (game, $) {
   } else {
     // game.camera.zoom = game.calc.lerp(0.05, game.camera.zoom, 1);
   }
+
+
 
   // game.camera.zoom /= velocity;
   // game.camera.follow(player.getPosition());
