@@ -57,7 +57,7 @@ var PhysicsSystem = function (game) {
   self.fasterEach = function (array, fn) {
     var length = array.length;
     var i;
-    for (i = 0; i < length; i++) {
+    for (i = length - 1; i >= 0; i--) {
       fn(array[i], i, array);
     }
   };
@@ -291,16 +291,17 @@ var PhysicsSystem = function (game) {
 
   // ------------------------------------------------------------- drag and drop
 
-  self.dragStart = function (point) {
+  self.dragStart = function (point, id) {
     self.queryPoint(
       self.parseVector(point),
       function (fixture) {
-        if (fixture.GetBody().draggable) {
-          fixture.GetBody().onDragStart();
+        var body = fixture.GetBody();
+        if (body.draggable) {
+          body.onDragStart();
           self.mouseJoints.push(
             {
-              number: point.number,
-              body: fixture.GetBody(),
+              id: id,
+              body: body,
               joint: null
             }
           );
@@ -309,9 +310,9 @@ var PhysicsSystem = function (game) {
     );
   };
 
-  self.dragMove = function (point) {
+  self.dragMove = function (point, id) {
     self.fasterEach(self.mouseJoints, function (mouseJoint) {
-      if (mouseJoint.number === point.number) {
+      if (mouseJoint.id === id) {
         if (!mouseJoint.body) {
           return;
         }
@@ -329,10 +330,10 @@ var PhysicsSystem = function (game) {
     });
   };
 
-  self.dragEnd = function (point) {
+  self.dragEnd = function (point, id) {
     self.fasterEach(self.mouseJoints, function (mouseJoint) {
       mouseJoint.body.onDragEnd();
-      if (mouseJoint.number === point.number) {
+      if (mouseJoint.id === id) {
         mouseJoint.body = null;
         self.destroyJoint(mouseJoint.joint);
         mouseJoint.joint = null;

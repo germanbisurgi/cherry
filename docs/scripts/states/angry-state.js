@@ -38,13 +38,13 @@ angryState.create = function (game) {
 
   var arm = game.physics.addBody(100, 150, 'dynamic');
   arm.addRectangle(10, 30);
-  game.physics.createRevoluteJoint(torso, arm, 0, -10, 0, -10, 0, 0, false, 0, 0, false, false);
   arm.draggable = true;
+  game.physics.createRevoluteJoint(torso, arm, 0, -10, 0, -10, 0, 0, false, 0, 0, false, false);
 
   var leg = game.physics.addBody(100, 150, 'dynamic');
   leg.addRectangle(15, 40);
-  game.physics.createRevoluteJoint(torso, leg, 0, 20, 0, -10, 0, 0, false, 0, 0, false, false);
   leg.draggable = true;
+  game.physics.createRevoluteJoint(torso, leg, 0, 20, 0, -10, 0, 0, false, 0, 0, false, false);
 
   // enemy
   enemy = game.physics.addBody(1450, 220, 'dynamic');
@@ -117,13 +117,13 @@ angryState.update = function (game, $) {
 
   game.pointers.pointers.forEach(function (pointer) {
     if (pointer.start) {
-      game.physics.dragStart(pointer.getPosition());
+      game.physics.dragStart(pointer.getPosition(), pointer.id);
     }
     if (pointer.hold) {
-      game.physics.dragMove(pointer.getPosition());
+      game.physics.dragMove(pointer.getPosition(), pointer.id);
     }
     if (pointer.end) {
-      game.physics.dragEnd(pointer.getPosition());
+      game.physics.dragEnd(pointer.getPosition(), pointer.id);
     }
   });
 

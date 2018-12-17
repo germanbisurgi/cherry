@@ -1,5 +1,4 @@
-var Pointer = function (number) {
-  this.number = number;
+var Pointer = function () {
   this.active = false;
   this.hold = false;
   this.start = false;
