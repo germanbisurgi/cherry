@@ -15,8 +15,8 @@ angryState.create = function (game) {
   game.physics.setGravity(0, 5);
   // game.loop.fps = 25;
 
-  game.camera.position = {x: 400, y: -200};
-  game.camera.zoom = 0.5;
+  game.camera.position = {x: -200, y: -200};
+  game.camera.zoom = 0.8;
 
   // ground
   var ground = game.physics.addBody(150, 250, 'static');
@@ -94,6 +94,25 @@ angryState.update = function (game, $) {
 
   if ($.pointer1.hold && !dragging) {
     game.camera.position.x += ($.pointer1.x - $.pointer1.startX) / 5;
+    game.camera.position.y += ($.pointer1.y - $.pointer1.startY) / 5;
+  }
+
+  if ($.pointer1.hold && $.pointer2.hold && !dragging) {
+    var startDistance = game.calc.distance(
+      {x: $.pointer1.startX, y: $.pointer1.startY},
+      {x: $.pointer2.startX, y: $.pointer2.startY},
+    );
+    var currentDistance = game.calc.distance(
+      {x: $.pointer1.x, y: $.pointer1.x},
+      {x: $.pointer2.x, y: $.pointer2.x},
+    );
+    if (currentDistance > startDistance ) {
+      game.camera.zoom -= 0.05;
+    }
+
+    if (currentDistance < startDistance ) {
+      game.camera.zoom += 0.05;
+    }
     game.camera.position.y += ($.pointer1.y - $.pointer1.startY) / 5;
   }
 
