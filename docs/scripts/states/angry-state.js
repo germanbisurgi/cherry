@@ -106,11 +106,11 @@ angryState.update = function (game, $) {
       {x: $.pointer1.x, y: $.pointer1.x},
       {x: $.pointer2.x, y: $.pointer2.x},
     );
-    if (currentDistance > startDistance ) {
+    if (currentDistance > startDistance) {
       game.camera.zoom -= 0.05;
     }
 
-    if (currentDistance < startDistance ) {
+    if (currentDistance < startDistance) {
       game.camera.zoom += 0.05;
     }
     game.camera.position.y += ($.pointer1.y - $.pointer1.startY) / 5;
