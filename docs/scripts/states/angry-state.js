@@ -8,6 +8,7 @@ var angle;
 var canLaunch;
 var oldPosition;
 var newPosition;
+var dragging = false;
 
 angryState.create = function (game) {
 
@@ -59,11 +60,13 @@ angryState.create = function (game) {
   game.physics.addBody(1460, 110, 'dynamic').addRectangle(260, 40);
 
   player.onDragStart = function () {
+    dragging = true;
     canLaunch = true;
     distanceJoint = game.physics.createDistanceJoint(slingshot, player, 0, 0, 0, 0, 0, 3, 0.25, false);
   };
 
   player.onDragMove = function () {
+    dragging = true;
     distance = game.calc.distance(player.getPosition(), slingshot.getPosition());
     if (distance > 150) {
       canLaunch = false;
@@ -72,6 +75,7 @@ angryState.create = function (game) {
   };
 
   player.onDragEnd = function () {
+    dragging = false;
     game.physics.destroyJoint(distanceJoint);
     angle = game.calc.angleBetweenPoints(player.getPosition(), slingshot.getPosition());
     distance = game.calc.distance(player.getPosition(), slingshot.getPosition());
@@ -88,9 +92,7 @@ angryState.create = function (game) {
 
 angryState.update = function (game, $) {
 
-
-  if ($.pointer1.hold && $.pointer2.hold) {
-    console.log($.pointer1.startX, $.pointer1.x, $.pointer1.x - $.pointer1.startX);
+  if ($.pointer1.hold && !dragging) {
     game.camera.position.x += ($.pointer1.x - $.pointer1.startX) / 5;
     game.camera.position.y += ($.pointer1.y - $.pointer1.startY) / 5;
   }
@@ -158,8 +160,6 @@ angryState.update = function (game, $) {
   } else {
     // game.camera.zoom = game.calc.lerp(0.05, game.camera.zoom, 1);
   }
-
-
 
   // game.camera.zoom /= velocity;
   // game.camera.follow(player.getPosition());
