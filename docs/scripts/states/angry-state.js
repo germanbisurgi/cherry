@@ -93,8 +93,8 @@ angryState.create = function (game) {
 angryState.update = function (game, $) {
 
   if ($.pointer1.hold && !$.pointer2.hold && !dragging) {
-    game.camera.position.x += ($.pointer1.x - $.pointer1.startX) / 5;
-    game.camera.position.y += ($.pointer1.y - $.pointer1.startY) / 5;
+    game.camera.position.x -= ($.pointer1.x - $.pointer1.startX) / 5;
+    game.camera.position.y -= ($.pointer1.y - $.pointer1.startY) / 5;
   }
 
   if ($.pointer1.hold && $.pointer2.hold && !dragging) {
@@ -107,11 +107,11 @@ angryState.update = function (game, $) {
       {x: $.pointer2.x, y: $.pointer2.y},
     );
     if (currentDistance > startDistance) {
-      game.camera.zoom -= 0.01;
+      game.camera.zoom += 0.01;
     }
 
     if (currentDistance < startDistance) {
-      game.camera.zoom += 0.01;
+      game.camera.zoom -= 0.01;
     }
   }
 
