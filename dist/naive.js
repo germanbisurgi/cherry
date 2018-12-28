@@ -11204,9 +11204,23 @@ Canvas.prototype.rect = function (x, y, w, h) {
 };
 
 Canvas.prototype.text = function (x, y, text) {
-  this.context.font = '16px monospace';
+  this.context.font = '14px monospace';
   this.context.fillStyle = 'white';
   this.context.fillText(text, x, y);
+};
+
+Canvas.prototype.grid = function (x, y, width, height, cols, rows) {
+  this.context.save();
+  this.context.strokeStyle = 'white';
+  this.context.textAlign = 'center';
+  this.context.textBaseline = 'middle';
+  for (var ry = 0; ry < rows; ry++) {
+    for (var rx = 0; rx < cols; rx++) {
+      this.rect(rx * width, ry * height, width, height);
+      this.text(rx * width + width / 2, ry * height + height / 2, rx + ',' + ry);
+    }
+  }
+  this.context.restore();
 };
 
 var Game = function () {
@@ -11246,7 +11260,7 @@ var Game = function () {
   }.bind(this);
 };
 
-var Key = function (key) {
+var Key = function (key, preventDefault) {
   this.key = key;
   this.start = false;
   this.end = false;
@@ -11254,6 +11268,7 @@ var Key = function (key) {
   this.holdTime = 0;
   this.startFrame = 0;
   this.endFrame = 0;
+  this.preventDefault = preventDefault || false;
 };
 
 var KeysSystem = function () {
@@ -11262,22 +11277,26 @@ var KeysSystem = function () {
   document.addEventListener('keyup', this.handleKeyUp.bind(this), false);
 };
 
-KeysSystem.prototype.add = function (key) {
-  this.keys[key] = new naive.Key(key);
+KeysSystem.prototype.add = function (key, preventDefault) {
+  this.keys[key] = new naive.Key(key, preventDefault);
   return this.keys[key];
 };
 
 KeysSystem.prototype.handleKeyDown = function (event) {
-  event.preventDefault();
   if (typeof this.keys[event.key] !== 'undefined') {
     this.keys[event.key].hold = true;
+    if (this.keys[event.key].preventDefault) {
+      event.preventDefault();
+    }
   }
 };
 
 KeysSystem.prototype.handleKeyUp = function (event) {
-  event.preventDefault();
   if (typeof this.keys[event.key] !== 'undefined') {
     this.keys[event.key].hold = false;
+    if (this.keys[event.key].preventDefault) {
+      event.preventDefault();
+    }
   }
 };
 
@@ -11467,7 +11486,7 @@ var PhysicsSystem = function (game) {
     );
   };
 
-  // ---------------------------------------------------------------------- body
+  // ----------------------------------------------------------- body definition
 
   self.addBody = function (x, y, type, bodyDefinition) {
     bodyDefinition = bodyDefinition || {};
@@ -11603,14 +11622,6 @@ var PhysicsSystem = function (game) {
       };
     };
 
-    body.onContactBegin = function (myfixture, otherFixture) {};
-    body.onContactEnd = function (myfixture, otherFixture) {};
-    body.onContactPreSolve = function (myfixture, otherFixture) {};
-    body.onContactPostSolve = function (myfixture, otherFixture) {};
-    body.onDragStart = function () {};
-    body.onDragMove = function () {};
-    body.onDragEnd = function () {};
-
     body.setAngularVelocity = function (angularVelocity) {
       body.SetAwake(true);
       body.SetAngularVelocity(angularVelocity / self.scale);
@@ -11623,8 +11634,19 @@ var PhysicsSystem = function (game) {
         y: y / self.scale
       });
     };
+
+    body.onContactBegin = function (myfixture, otherFixture) {};
+    body.onContactEnd = function (myfixture, otherFixture) {};
+    body.onContactPreSolve = function (myfixture, otherFixture) {};
+    body.onContactPostSolve = function (myfixture, otherFixture) {};
+    body.onDragStart = function () {};
+    body.onDragMove = function () {};
+    body.onDragEnd = function () {};
+
     return body;
   };
+
+  // -------------------------------------------------------- fixture definition
 
   self.getFixtureDef = function (fixtureDefinition) {
     fixtureDefinition = fixtureDefinition || {};
@@ -11639,7 +11661,7 @@ var PhysicsSystem = function (game) {
 
   // ------------------------------------------------------------- drag and drop
 
-  self.dragStart = function (point, number) {
+  self.dragStart = function (point, id) {
     self.queryPoint(
       self.parseVector(point),
       function (fixture) {
@@ -11648,7 +11670,7 @@ var PhysicsSystem = function (game) {
           body.onDragStart();
           self.mouseJoints.push(
             {
-              number: number,
+              id: id,
               body: body,
               joint: null
             }
@@ -11658,11 +11680,9 @@ var PhysicsSystem = function (game) {
     );
   };
 
-  self.dragMove = function (point, number) {
-    console.log(point, number);
-
+  self.dragMove = function (point, id) {
     self.fasterEach(self.mouseJoints, function (mouseJoint) {
-      if (mouseJoint.number === number) {
+      if (mouseJoint.id === id) {
         if (!mouseJoint.body) {
           return;
         }
@@ -11680,10 +11700,10 @@ var PhysicsSystem = function (game) {
     });
   };
 
-  self.dragEnd = function (point, number) {
+  self.dragEnd = function (point, id) {
     self.fasterEach(self.mouseJoints, function (mouseJoint) {
       mouseJoint.body.onDragEnd();
-      if (mouseJoint.number === number) {
+      if (mouseJoint.id === id) {
         mouseJoint.body = null;
         self.destroyJoint(mouseJoint.joint);
         mouseJoint.joint = null;
@@ -11695,7 +11715,7 @@ var PhysicsSystem = function (game) {
     });
   };
 
-  // -------------------------------------------------------------------- joints
+  // --------------------------------------------------------------- mouse joint
 
   self.createMouseJoint = function (point, body, fps) {
     var jointDefinition = new Box2D.Dynamics.Joints.b2MouseJointDef();
@@ -11706,6 +11726,8 @@ var PhysicsSystem = function (game) {
     jointDefinition.timeStep = 1 / fps;
     return self.world.CreateJoint(jointDefinition);
   };
+
+  // ------------------------------------------------------------ distance joint
 
   self.createDistanceJoint = function (bodyA, bodyB, length, ax, ay, bx, by, frequencyHz, damping, collideConnected) {
     ax = ax || ax === 0 ? ax / self.scale : 0;
@@ -11725,6 +11747,8 @@ var PhysicsSystem = function (game) {
     jointDefinition.collideConnected = collideConnected ? collideConnected : jointDefinition.collideConnected;
     return self.world.CreateJoint(jointDefinition);
   };
+
+  // ------------------------------------------------------------ revolute joint
 
   self.createRevoluteJoint = function (bodyA, bodyB, ax, ay, bx, by, motorSpeed, maxMotorTorque, enableMotor, lowerAngle, upperAngle, enableLimit, collideConnected) {
     var jointDefinition = new Box2D.Dynamics.Joints.b2RevoluteJointDef();
@@ -11748,6 +11772,8 @@ var PhysicsSystem = function (game) {
     jointDefinition.collideConnected = collideConnected ? collideConnected : false;
     return self.world.CreateJoint(jointDefinition);
   };
+
+  // ----------------------------------------------------------- prosmatic joint
 
   self.createPrismaticJoint = function (bodyA, bodyB, axisX, axisY, ax, ay, bx, by, lowerTranslation, upperTranslation, enableLimit, motorSpeed, maxMotorForce, enableMotor, collideConnected) {
     axisX = axisX || axisX === 0 ? axisX : 0;
@@ -11775,6 +11801,8 @@ var PhysicsSystem = function (game) {
     return self.world.CreateJoint(jointDefinition);
   };
 
+  // -------------------------------------------------------------- pulley joint
+
   self.createPulleyJoint = function (bodyA, bodyB, groundAnchorAX, groundAnchorAY, groundAnchorBX, groundAnchorBY, offsetAX, offsetAY, offsetBX, offsetBY, ratio, lengthA, lengthB) {
     var jointDefinition = new Box2D.Dynamics.Joints.b2PulleyJointDef();
     jointDefinition.Initialize(
@@ -11796,16 +11824,23 @@ var PhysicsSystem = function (game) {
     return pulleyJoint;
   };
 
+  // TODO gear joint
+  // TODO weld joint
+
+  // ------------------------------------------------------------- destroy joint
+
   self.destroyJoint = function (joint) {
     self.world.DestroyJoint(joint);
   };
+
+  // -------------------------------------------------------------------- update
 
   self.update = function (fps) {
     self.world.Step(1 / fps, 8, 3);
     self.world.ClearForces();
   };
 
-  self.point = {x: 0, y: 0};
+  // ---------------------------------------------------------------------- draw
 
   self.draw = function () {
     if (!self.debugDraw) {
@@ -11853,6 +11888,8 @@ var PhysicsSystem = function (game) {
     self.world.DrawDebugData();
     self.game.canvas.context.restore();
   };
+
+  // -------------------------------------------------------------- parse vector
 
   self.parseVector = function (point) {
 
