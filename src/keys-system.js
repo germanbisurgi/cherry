@@ -4,22 +4,26 @@ var KeysSystem = function () {
   document.addEventListener('keyup', this.handleKeyUp.bind(this), false);
 };
 
-KeysSystem.prototype.add = function (key) {
-  this.keys[key] = new naive.Key(key);
+KeysSystem.prototype.add = function (key, preventDefault) {
+  this.keys[key] = new naive.Key(key, preventDefault);
   return this.keys[key];
 };
 
 KeysSystem.prototype.handleKeyDown = function (event) {
-  event.preventDefault();
   if (typeof this.keys[event.key] !== 'undefined') {
     this.keys[event.key].hold = true;
+    if (this.keys[event.key].preventDefault) {
+      event.preventDefault();
+    }
   }
 };
 
 KeysSystem.prototype.handleKeyUp = function (event) {
-  event.preventDefault();
   if (typeof this.keys[event.key] !== 'undefined') {
     this.keys[event.key].hold = false;
+    if (this.keys[event.key].preventDefault) {
+      event.preventDefault();
+    }
   }
 };
 
