@@ -7,7 +7,7 @@ setupState.preload = function (game) {
 };
 
 setupState.create = function (game, $) {
-  // keys
+  // keys: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values
   $.arrowUp = game.keys.add('ArrowUp');
   $.arrorRight = game.keys.add('ArrowRight');
   $.arrowDown = game.keys.add('ArrowDown');

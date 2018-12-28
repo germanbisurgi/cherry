@@ -119,7 +119,7 @@ var PhysicsSystem = function (game) {
     );
   };
 
-  // ---------------------------------------------------------------------- body
+  // ----------------------------------------------------------- body definition
 
   self.addBody = function (x, y, type, bodyDefinition) {
     bodyDefinition = bodyDefinition || {};
@@ -255,14 +255,6 @@ var PhysicsSystem = function (game) {
       };
     };
 
-    body.onContactBegin = function (myfixture, otherFixture) {};
-    body.onContactEnd = function (myfixture, otherFixture) {};
-    body.onContactPreSolve = function (myfixture, otherFixture) {};
-    body.onContactPostSolve = function (myfixture, otherFixture) {};
-    body.onDragStart = function () {};
-    body.onDragMove = function () {};
-    body.onDragEnd = function () {};
-
     body.setAngularVelocity = function (angularVelocity) {
       body.SetAwake(true);
       body.SetAngularVelocity(angularVelocity / self.scale);
@@ -275,8 +267,19 @@ var PhysicsSystem = function (game) {
         y: y / self.scale
       });
     };
+
+    body.onContactBegin = function (myfixture, otherFixture) {};
+    body.onContactEnd = function (myfixture, otherFixture) {};
+    body.onContactPreSolve = function (myfixture, otherFixture) {};
+    body.onContactPostSolve = function (myfixture, otherFixture) {};
+    body.onDragStart = function () {};
+    body.onDragMove = function () {};
+    body.onDragEnd = function () {};
+
     return body;
   };
+
+  // -------------------------------------------------------- fixture definition
 
   self.getFixtureDef = function (fixtureDefinition) {
     fixtureDefinition = fixtureDefinition || {};
@@ -345,7 +348,7 @@ var PhysicsSystem = function (game) {
     });
   };
 
-  // -------------------------------------------------------------------- joints
+  // --------------------------------------------------------------- mouse joint
 
   self.createMouseJoint = function (point, body, fps) {
     var jointDefinition = new Box2D.Dynamics.Joints.b2MouseJointDef();
@@ -356,6 +359,8 @@ var PhysicsSystem = function (game) {
     jointDefinition.timeStep = 1 / fps;
     return self.world.CreateJoint(jointDefinition);
   };
+
+  // ------------------------------------------------------------ distance joint
 
   self.createDistanceJoint = function (bodyA, bodyB, length, ax, ay, bx, by, frequencyHz, damping, collideConnected) {
     ax = ax || ax === 0 ? ax / self.scale : 0;
@@ -375,6 +380,8 @@ var PhysicsSystem = function (game) {
     jointDefinition.collideConnected = collideConnected ? collideConnected : jointDefinition.collideConnected;
     return self.world.CreateJoint(jointDefinition);
   };
+
+  // ------------------------------------------------------------ revolute joint
 
   self.createRevoluteJoint = function (bodyA, bodyB, ax, ay, bx, by, motorSpeed, maxMotorTorque, enableMotor, lowerAngle, upperAngle, enableLimit, collideConnected) {
     var jointDefinition = new Box2D.Dynamics.Joints.b2RevoluteJointDef();
@@ -398,6 +405,8 @@ var PhysicsSystem = function (game) {
     jointDefinition.collideConnected = collideConnected ? collideConnected : false;
     return self.world.CreateJoint(jointDefinition);
   };
+
+  // ----------------------------------------------------------- prosmatic joint
 
   self.createPrismaticJoint = function (bodyA, bodyB, axisX, axisY, ax, ay, bx, by, lowerTranslation, upperTranslation, enableLimit, motorSpeed, maxMotorForce, enableMotor, collideConnected) {
     axisX = axisX || axisX === 0 ? axisX : 0;
@@ -425,6 +434,8 @@ var PhysicsSystem = function (game) {
     return self.world.CreateJoint(jointDefinition);
   };
 
+  // -------------------------------------------------------------- pulley joint
+
   self.createPulleyJoint = function (bodyA, bodyB, groundAnchorAX, groundAnchorAY, groundAnchorBX, groundAnchorBY, offsetAX, offsetAY, offsetBX, offsetBY, ratio, lengthA, lengthB) {
     var jointDefinition = new Box2D.Dynamics.Joints.b2PulleyJointDef();
     jointDefinition.Initialize(
@@ -446,16 +457,23 @@ var PhysicsSystem = function (game) {
     return pulleyJoint;
   };
 
+  // TODO gear joint
+  // TODO weld joint
+
+  // ------------------------------------------------------------- destroy joint
+
   self.destroyJoint = function (joint) {
     self.world.DestroyJoint(joint);
   };
+
+  // -------------------------------------------------------------------- update
 
   self.update = function (fps) {
     self.world.Step(1 / fps, 8, 3);
     self.world.ClearForces();
   };
 
-  self.point = {x: 0, y: 0};
+  // ---------------------------------------------------------------------- draw
 
   self.draw = function () {
     if (!self.debugDraw) {
@@ -503,6 +521,8 @@ var PhysicsSystem = function (game) {
     self.world.DrawDebugData();
     self.game.canvas.context.restore();
   };
+
+  // -------------------------------------------------------------- parse vector
 
   self.parseVector = function (point) {
 
