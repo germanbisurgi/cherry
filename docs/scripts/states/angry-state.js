@@ -13,7 +13,7 @@ var dragging = false;
 angryState.create = function (game) {
 
   game.physics.setGravity(0, 5);
-  // game.loop.fps = 25;
+  // game.loop.fps = 50;
 
   game.camera.position = {x: -200, y: -200};
   game.camera.zoom = 0.8;
@@ -166,29 +166,16 @@ angryState.update = function (game, $) {
     player.applyImpulse({x: -10, y: 0}, player.getWorldCenter());
   }
 
-  if (!oldPosition) {
-    oldPosition = player.getPosition();
-  }
-  newPosition = player.getPosition();
-  var velocity = game.calc.distance(oldPosition, newPosition);
-  oldPosition = newPosition;
-
-  if (velocity > 30) {
-    // game.camera.zoom = game.calc.lerp(0.05, game.camera.zoom, 0.9);
-  } else {
-    // game.camera.zoom = game.calc.lerp(0.05, game.camera.zoom, 1);
-  }
-
-  // game.camera.zoom /= velocity;
-  // game.camera.follow(player.getPosition());
 };
 
 angryState.render = function () {
   game.pointers.pointers.forEach(function (p) {
     if (p.active) {
-      game.canvas.text(p.x - 70, p.y - 50, 'n: ' + p.number + ' time: ' + Math.floor(p.holdTime));
+      game.canvas.text(p.x - 70, p.y - 50, 'n: ' + p.id + ' time: ' + Math.floor(p.holdTime));
       game.canvas.image(game.assets.getImage('circle'), p.x, p.y, 40, 40);
     }
   });
-  game.canvas.text(10, 30, 'fps: ' + 1 / game.loop.delta * 1000);
+  game.canvas.text(game.camera.width - 150, 30, 'fps: ' + Math.floor(1 / game.loop.delta * 1000));
+
+  // game.canvas.grid(0, 0, 50, 50, 10, 10);
 };
