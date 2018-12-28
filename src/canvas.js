@@ -43,7 +43,21 @@ Canvas.prototype.rect = function (x, y, w, h) {
 };
 
 Canvas.prototype.text = function (x, y, text) {
-  this.context.font = '16px monospace';
+  this.context.font = '14px monospace';
   this.context.fillStyle = 'white';
   this.context.fillText(text, x, y);
+};
+
+Canvas.prototype.grid = function (x, y, width, height, cols, rows) {
+  this.context.save();
+  this.context.strokeStyle = 'white';
+  this.context.textAlign = 'center';
+  this.context.textBaseline = 'middle';
+  for (var ry = 0; ry < rows; ry++) {
+    for (var rx = 0; rx < cols; rx++) {
+      this.rect(rx * width, ry * height, width, height);
+      this.text(rx * width + width / 2, ry * height + height / 2, rx + ',' + ry);
+    }
+  }
+  this.context.restore();
 };
