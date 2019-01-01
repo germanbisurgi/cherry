@@ -1,9 +1,9 @@
-var Canvas = function () {
-  this.container = document.querySelector('.container');
+var Canvas = function (container) {
   this.element = document.createElement('canvas');
   this.context = this.element.getContext('2d');
 
-  if (this.container) {
+  if (container) {
+    this.container = document.querySelector(container);
     this.container.appendChild(this.element);
   }
 

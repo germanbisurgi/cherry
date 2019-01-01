@@ -1,4 +1,5 @@
-Camera = function () {
+Camera = function (game) {
+  this.game = game;
   this.position = {x: 0, y: 0};
   this.width = 0;
   this.height = 0;
@@ -40,4 +41,3 @@ Camera.prototype.getViewCenter = function () {
     y: this.height / 2
   };
 };
-

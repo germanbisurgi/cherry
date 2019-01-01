@@ -22,6 +22,22 @@ var PhysicsSystem = function (game) {
   self.contacts = new b2ContactListener();
   self.world.SetContactListener(self.contacts);
 
+  // ---------------------------------------------------------- setup debug draw
+
+  if (!self.debugDraw) {
+    var debugDraw = new b2DebugDraw();
+    debugDraw.SetSprite(self.game.render.canvas.context);
+    debugDraw.SetDrawScale(self.scale);
+    debugDraw.SetFillAlpha(0.5);
+    debugDraw.SetFillAlpha(0.5);
+    debugDraw.SetFlags(b2DebugDraw.e_shapeBit);
+    debugDraw.AppendFlags(b2DebugDraw.e_jointBit);
+    self.world.SetDebugDraw(debugDraw);
+    self.world.m_debugDraw.m_sprite.graphics.clear = function () {
+      return false;
+    };
+  }
+
   // ------------------------------------------------------------------ contacts
 
   self.contacts.BeginContact = function (contact) {
@@ -469,74 +485,28 @@ var PhysicsSystem = function (game) {
   // -------------------------------------------------------------------- update
 
   self.update = function (fps) {
+    self.game.pointers.pointers.forEach(function (pointer) {
+      if (pointer.start) {
+        self.dragStart(pointer.getPosition(), pointer.id);
+      }
+      if (pointer.hold) {
+        self.dragMove(pointer.getPosition(), pointer.id);
+      }
+      if (pointer.end) {
+        self.dragEnd(pointer.getPosition(), pointer.id);
+      }
+    });
     self.world.Step(1 / fps, 8, 3);
     self.world.ClearForces();
-  };
-
-  // ---------------------------------------------------------------------- draw
-
-  self.draw = function () {
-    if (!self.debugDraw) {
-      var debugDraw = new b2DebugDraw();
-      debugDraw.SetSprite(self.game.canvas.context);
-      debugDraw.SetDrawScale(self.scale);
-      debugDraw.SetFillAlpha(0.5);
-      debugDraw.SetFillAlpha(0.5);
-      debugDraw.SetFlags(b2DebugDraw.e_shapeBit);
-      debugDraw.AppendFlags(b2DebugDraw.e_jointBit);
-      self.world.SetDebugDraw(debugDraw);
-      self.world.m_debugDraw.m_sprite.graphics.clear = function () {
-        return false;
-      };
-    }
-
-    self.game.canvas.clear();
-    self.game.canvas.context.save();
-
-    self.game.canvas.context.translate(
-      (self.game.camera.width / 2),
-      (self.game.camera.height / 2)
-    );
-
-    // rotate
-    self.game.canvas.context.rotate(self.game.camera.angle);
-
-    // translate
-    self.game.canvas.context.scale(self.game.camera.zoom, self.game.camera.zoom);
-
-    self.game.canvas.context.strokeStyle = 'red';
-    self.game.canvas.circle(0, 0, 10);
-
-    self.game.canvas.context.translate(
-      -(self.game.camera.width / 2),
-      -(self.game.camera.height / 2)
-    );
-
-    // translate
-    self.game.canvas.context.translate(
-      -self.game.camera.position.x,
-      -self.game.camera.position.y
-    );
-
-    self.world.DrawDebugData();
-    self.game.canvas.context.restore();
   };
 
   // -------------------------------------------------------------- parse vector
 
   self.parseVector = function (point) {
-
-    // fin angle between camera center and point
-    var angle = self.game.calc.angleBetweenPoints(self.game.camera.getViewCenter(), point);
-
-    // find radius between camera center and point
-    var radius = self.game.calc.distance(self.game.camera.getViewCenter(), point) / self.game.camera.zoom;
-
-    // find the new point width offseted angle
     var newPoint = self.game.calc.angleToPoint(
-      self.game.camera.getCenter(),
-      angle - self.game.camera.angle,
-      radius
+      self.game.render.camera.getCenter(),
+      self.game.calc.angleBetweenPoints(self.game.render.camera.getViewCenter(), point) - self.game.render.camera.angle, // angle between camera center and point
+      self.game.calc.distance(self.game.render.camera.getViewCenter(), point) / self.game.render.camera.zoom // radius between camera center and point
     );
 
     return {

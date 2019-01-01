@@ -1,8 +1,8 @@
-var Renderable = function (image, x, y, width, height, angle) {
+var Renderable = function (image, x, y, width, height) {
   this.image = image;
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
-  this.angle = angle;
+  this.angle = 0;
 };

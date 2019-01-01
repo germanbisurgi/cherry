@@ -6,17 +6,19 @@ var distanceJoint;
 var distance;
 var angle;
 var canLaunch;
-var oldPosition;
-var newPosition;
 var dragging = false;
+var face;
 
 angryState.create = function (game) {
 
-  game.physics.setGravity(0, 5);
-  // game.loop.fps = 50;
+  // --------------------------------------------------------------------- setup
 
-  game.camera.position = {x: -200, y: -200};
-  game.camera.zoom = 0.8;
+  game.physics.setGravity(0, 5);
+  game.loop.fps = 50;
+  // game.render.camera.position = {x: -200, y: -200};
+  // game.render.camera.zoom = 0.8;
+
+  // ------------------------------------------------------- bodies and fixtures
 
   // ground
   var ground = game.physics.addBody(150, 250, 'static');
@@ -59,6 +61,8 @@ angryState.create = function (game) {
   game.physics.addBody(1570, 150, 'dynamic').addRectangle(40, 40);
   game.physics.addBody(1460, 110, 'dynamic').addRectangle(260, 40);
 
+  // --------------------------------------------------------------- drag events
+
   player.onDragStart = function () {
     dragging = true;
     canLaunch = true;
@@ -88,13 +92,24 @@ angryState.create = function (game) {
         player.getWorldCenter());
     }
   };
+
+  // --------------------------------------------------------------- renderables
+
+  face = game.render.addRenderable(game.assets.getImage('angry-face'), 0, 0, 100, 100);
+
 };
 
 angryState.update = function (game, $) {
 
+  face.x = player.getPosition().x;
+  face.y = player.getPosition().y;
+  face.angle = player.getAngle();
+
+  // ------------------------------------------------------------------ pointers
+
   if ($.pointer1.hold && !$.pointer2.hold && !dragging) {
-    game.camera.position.x += ($.pointer1.x - $.pointer1.startX) / 5;
-    game.camera.position.y += ($.pointer1.y - $.pointer1.startY) / 5;
+    game.render.camera.position.x += ($.pointer1.x - $.pointer1.startX) / 5;
+    game.render.camera.position.y += ($.pointer1.y - $.pointer1.startY) / 5;
   }
 
   if ($.pointer1.hold && $.pointer2.hold && !dragging) {
@@ -107,50 +122,40 @@ angryState.update = function (game, $) {
       {x: $.pointer2.x, y: $.pointer2.y},
     );
     if (currentDistance > startDistance) {
-      game.camera.zoom += 0.01;
+      game.render.camera.zoom += 0.01;
     }
 
     if (currentDistance < startDistance) {
-      game.camera.zoom -= 0.01;
+      game.render.camera.zoom -= 0.01;
     }
   }
 
-  game.pointers.pointers.forEach(function (pointer) {
-    if (pointer.start) {
-      game.physics.dragStart(pointer.getPosition(), pointer.id);
-    }
-    if (pointer.hold) {
-      game.physics.dragMove(pointer.getPosition(), pointer.id);
-    }
-    if (pointer.end) {
-      game.physics.dragEnd(pointer.getPosition(), pointer.id);
-    }
-  });
+  // ---------------------------------------------------------------------- keys
 
   if ($.arrowUp.hold) {
-    game.camera.position.y -= 15;
+    game.render.camera.position.y -= 15;
   }
   if ($.arrorRight.hold) {
-    game.camera.position.x += 15;
+    game.render.camera.position.x += 15;
   }
   if ($.arrowDown.hold) {
-    game.camera.position.y += 15;
+    game.render.camera.position.y += 15;
   }
   if ($.arrowLeft.hold) {
-    game.camera.position.x -= 15;
+    game.render.camera.position.x -= 15;
   }
 
   if ($.w.hold) {
-    game.camera.zoom += 0.01;
+    game.render.camera.zoom += 0.01;
   }
   if ($.d.hold) {
-    game.camera.angle -= 0.1;
+    game.render.camera.angle -= 0.1;
   }
   if ($.s.hold) {
-    game.camera.zoom -= 0.01;
+    game.render.camera.zoom -= 0.01;
   }
   if ($.a.hold) {
-    game.camera.angle += 0.1;
+    game.render.camera.angle += 0.1;
   }
 
   if ($.u.hold) {
@@ -171,11 +176,11 @@ angryState.update = function (game, $) {
 angryState.render = function () {
   game.pointers.pointers.forEach(function (p) {
     if (p.active) {
-      game.canvas.text(p.x - 70, p.y - 50, 'n: ' + p.id + ' time: ' + Math.floor(p.holdTime));
-      game.canvas.image(game.assets.getImage('circle'), p.x, p.y, 40, 40);
+      game.render.canvas.text(p.x - 70, p.y - 50, 'n: ' + p.id + ' time: ' + Math.floor(p.holdTime));
+      game.render.canvas.image(game.assets.getImage('circle'), p.x, p.y, 40, 40);
     }
   });
-  game.canvas.text(game.camera.width - 150, 30, 'fps: ' + Math.floor(1 / game.loop.delta * 1000));
+  game.render.canvas.text(game.render.camera.width - 150, 30, 'fps: ' + Math.floor(1 / game.loop.delta * 1000));
 
-  // game.canvas.grid(0, 0, 50, 50, 10, 10);
+  // game.render.canvas.grid(0, 0, 50, 50, 10, 10);
 };

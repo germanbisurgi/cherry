@@ -1,12 +1,11 @@
 var Game = function () {
-  this.assets = new naive.AssetsSystem();
+  this.assets = new naive.AssetsSystem(this);
   this.loop = new naive.Loop(this);
   this.state = new naive.StateSystem(this);
+  this.render = new naive.Render(this);
   this.physics = new naive.PhysicsSystem(this);
-  this.calc = new naive.Calc();
+  this.calc = new naive.Calc(this);
   this.keys = new naive.KeysSystem(this);
-  this.camera = new naive.Camera(this);
-  this.canvas = new naive.Canvas(this);
   this.pointers = new naive.PointersSystem(this);
   this.globals = {};
 
@@ -22,14 +21,11 @@ var Game = function () {
       this.state.current.create(this, this.globals);
     }
     if (this.state.current.created) {
-      // update
       this.keys.update(this.loop.delta, this.loop.frame);
       this.pointers.update(this.loop.delta, this.loop.frame);
       this.physics.update(this.loop.fps);
       this.state.current.update(this, this.globals);
-      // draw
-      // this.render.draw();
-      this.physics.draw();
+      this.render.draw();
       this.state.current.render(this, this.globals);
     }
   }.bind(this);

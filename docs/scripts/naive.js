@@ -11115,7 +11115,8 @@ Calc.prototype.randomInt = function (min, max) {
   return Math.floor(min + Math.random() * (max - min + 1));
 };
 
-Camera = function () {
+Camera = function (game) {
+  this.game = game;
   this.position = {x: 0, y: 0};
   this.width = 0;
   this.height = 0;
@@ -11158,13 +11159,12 @@ Camera.prototype.getViewCenter = function () {
   };
 };
 
-
-var Canvas = function () {
-  this.container = document.querySelector('.container');
+var Canvas = function (container) {
   this.element = document.createElement('canvas');
   this.context = this.element.getContext('2d');
 
-  if (this.container) {
+  if (container) {
+    this.container = document.querySelector(container);
     this.container.appendChild(this.element);
   }
 
@@ -11224,14 +11224,13 @@ Canvas.prototype.grid = function (x, y, width, height, cols, rows) {
 };
 
 var Game = function () {
-  this.assets = new naive.AssetsSystem();
+  this.assets = new naive.AssetsSystem(this);
   this.loop = new naive.Loop(this);
   this.state = new naive.StateSystem(this);
+  this.render = new naive.Render(this);
   this.physics = new naive.PhysicsSystem(this);
-  this.calc = new naive.Calc();
+  this.calc = new naive.Calc(this);
   this.keys = new naive.KeysSystem(this);
-  this.camera = new naive.Camera(this);
-  this.canvas = new naive.Canvas(this);
   this.pointers = new naive.PointersSystem(this);
   this.globals = {};
 
@@ -11247,14 +11246,11 @@ var Game = function () {
       this.state.current.create(this, this.globals);
     }
     if (this.state.current.created) {
-      // update
       this.keys.update(this.loop.delta, this.loop.frame);
       this.pointers.update(this.loop.delta, this.loop.frame);
       this.physics.update(this.loop.fps);
       this.state.current.update(this, this.globals);
-      // draw
-      // this.render.draw();
-      this.physics.draw();
+      this.render.draw();
       this.state.current.render(this, this.globals);
     }
   }.bind(this);
@@ -11388,6 +11384,22 @@ var PhysicsSystem = function (game) {
   self.debugDraw = null;
   self.contacts = new b2ContactListener();
   self.world.SetContactListener(self.contacts);
+
+  // ---------------------------------------------------------- setup debug draw
+
+  if (!self.debugDraw) {
+    var debugDraw = new b2DebugDraw();
+    debugDraw.SetSprite(self.game.render.canvas.context);
+    debugDraw.SetDrawScale(self.scale);
+    debugDraw.SetFillAlpha(0.5);
+    debugDraw.SetFillAlpha(0.5);
+    debugDraw.SetFlags(b2DebugDraw.e_shapeBit);
+    debugDraw.AppendFlags(b2DebugDraw.e_jointBit);
+    self.world.SetDebugDraw(debugDraw);
+    self.world.m_debugDraw.m_sprite.graphics.clear = function () {
+      return false;
+    };
+  }
 
   // ------------------------------------------------------------------ contacts
 
@@ -11836,74 +11848,28 @@ var PhysicsSystem = function (game) {
   // -------------------------------------------------------------------- update
 
   self.update = function (fps) {
+    self.game.pointers.pointers.forEach(function (pointer) {
+      if (pointer.start) {
+        self.dragStart(pointer.getPosition(), pointer.id);
+      }
+      if (pointer.hold) {
+        self.dragMove(pointer.getPosition(), pointer.id);
+      }
+      if (pointer.end) {
+        self.dragEnd(pointer.getPosition(), pointer.id);
+      }
+    });
     self.world.Step(1 / fps, 8, 3);
     self.world.ClearForces();
-  };
-
-  // ---------------------------------------------------------------------- draw
-
-  self.draw = function () {
-    if (!self.debugDraw) {
-      var debugDraw = new b2DebugDraw();
-      debugDraw.SetSprite(self.game.canvas.context);
-      debugDraw.SetDrawScale(self.scale);
-      debugDraw.SetFillAlpha(0.5);
-      debugDraw.SetFillAlpha(0.5);
-      debugDraw.SetFlags(b2DebugDraw.e_shapeBit);
-      debugDraw.AppendFlags(b2DebugDraw.e_jointBit);
-      self.world.SetDebugDraw(debugDraw);
-      self.world.m_debugDraw.m_sprite.graphics.clear = function () {
-        return false;
-      };
-    }
-
-    self.game.canvas.clear();
-    self.game.canvas.context.save();
-
-    self.game.canvas.context.translate(
-      (self.game.camera.width / 2),
-      (self.game.camera.height / 2)
-    );
-
-    // rotate
-    self.game.canvas.context.rotate(self.game.camera.angle);
-
-    // translate
-    self.game.canvas.context.scale(self.game.camera.zoom, self.game.camera.zoom);
-
-    self.game.canvas.context.strokeStyle = 'red';
-    self.game.canvas.circle(0, 0, 10);
-
-    self.game.canvas.context.translate(
-      -(self.game.camera.width / 2),
-      -(self.game.camera.height / 2)
-    );
-
-    // translate
-    self.game.canvas.context.translate(
-      -self.game.camera.position.x,
-      -self.game.camera.position.y
-    );
-
-    self.world.DrawDebugData();
-    self.game.canvas.context.restore();
   };
 
   // -------------------------------------------------------------- parse vector
 
   self.parseVector = function (point) {
-
-    // fin angle between camera center and point
-    var angle = self.game.calc.angleBetweenPoints(self.game.camera.getViewCenter(), point);
-
-    // find radius between camera center and point
-    var radius = self.game.calc.distance(self.game.camera.getViewCenter(), point) / self.game.camera.zoom;
-
-    // find the new point width offseted angle
     var newPoint = self.game.calc.angleToPoint(
-      self.game.camera.getCenter(),
-      angle - self.game.camera.angle,
-      radius
+      self.game.render.camera.getCenter(),
+      self.game.calc.angleBetweenPoints(self.game.render.camera.getViewCenter(), point) - self.game.render.camera.angle, // angle between camera center and point
+      self.game.calc.distance(self.game.render.camera.getViewCenter(), point) / self.game.render.camera.zoom // radius between camera center and point
     );
 
     return {
@@ -11949,12 +11915,12 @@ PointersSystem.prototype.add = function () {
 };
 
 PointersSystem.prototype.enablePointers = function () {
-  this.game.canvas.element.style.touchAction = 'none';
-  this.game.canvas.element.addEventListener('pointerdown', this.handlePointerDown.bind(this), false);
-  this.game.canvas.element.addEventListener('pointermove', this.handlePointerMove.bind(this), false);
-  this.game.canvas.element.addEventListener('pointerup', this.handlePointerUpAndCancel.bind(this), false);
-  this.game.canvas.element.addEventListener('pointercancel', this.handlePointerUpAndCancel.bind(this), false);
-  this.game.canvas.element.addEventListener('pointerleave', this.handlePointerUpAndCancel.bind(this), false);
+  this.game.render.canvas.element.style.touchAction = 'none';
+  this.game.render.canvas.element.addEventListener('pointerdown', this.handlePointerDown.bind(this), false);
+  this.game.render.canvas.element.addEventListener('pointermove', this.handlePointerMove.bind(this), false);
+  this.game.render.canvas.element.addEventListener('pointerup', this.handlePointerUpAndCancel.bind(this), false);
+  this.game.render.canvas.element.addEventListener('pointercancel', this.handlePointerUpAndCancel.bind(this), false);
+  this.game.render.canvas.element.addEventListener('pointerleave', this.handlePointerUpAndCancel.bind(this), false);
 };
 
 PointersSystem.prototype.getPointerByID = function (id) {
@@ -12090,18 +12056,73 @@ Pool.prototype.use = function () {
   return item.object;
 };
 
-var Renderable = function (image, x, y, width, height, angle) {
+var Renderable = function (image, x, y, width, height) {
   this.image = image;
   this.x = x;
   this.y = y;
   this.width = width;
   this.height = height;
-  this.angle = angle;
+  this.angle = 0;
 };
 
-var Render = function () {
-  this.camera = new naive.Camera();
-  this.canvas = new naive.Canvas();
+var Render = function (game) {
+  this.game = game;
+  this.camera = new naive.Camera(game);
+  this.canvas = new naive.Canvas('.container');
+  this.renderables = [];
+};
+
+Render.prototype.draw = function () {
+  this.canvas.clear();
+  this.canvas.context.save();
+
+  // translate to camera center
+  this.canvas.context.translate(
+    (this.camera.width / 2),
+    (this.camera.height / 2)
+  );
+
+  // rotate
+  this.canvas.context.rotate(this.camera.angle);
+
+  // scale
+  this.canvas.context.scale(this.camera.zoom, this.camera.zoom);
+
+  this.canvas.context.strokeStyle = 'red';
+  this.canvas.circle(0, 0, 10);
+
+  this.canvas.context.translate(
+    -(this.camera.width / 2),
+    -(this.camera.height / 2)
+  );
+
+  // translate
+  this.canvas.context.translate(
+    -this.camera.position.x,
+    -this.camera.position.y
+  );
+
+  this.renderables.forEach(function (renderable) {
+    this.canvas.context.save();
+    this.canvas.context.translate(renderable.x, renderable.y);
+    this.canvas.context.rotate(renderable.angle);
+    this.canvas.context.drawImage(
+      renderable.image,
+      renderable.width / -2,
+      renderable.height / -2,
+      renderable.width,
+      renderable.height
+    );
+    this.canvas.context.restore();
+  }.bind(this));
+  this.game.physics.world.DrawDebugData();
+  this.canvas.context.restore();
+};
+
+Render.prototype.addRenderable = function (image, x, y, width, height, angle) {
+  var renderable = new naive.Renderable(image, x, y, width, height, angle);
+  this.renderables.push(renderable);
+  return renderable;
 };
 
 var Signal = function () {

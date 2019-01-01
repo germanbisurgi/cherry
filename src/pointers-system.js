@@ -11,12 +11,12 @@ PointersSystem.prototype.add = function () {
 };
 
 PointersSystem.prototype.enablePointers = function () {
-  this.game.canvas.element.style.touchAction = 'none';
-  this.game.canvas.element.addEventListener('pointerdown', this.handlePointerDown.bind(this), false);
-  this.game.canvas.element.addEventListener('pointermove', this.handlePointerMove.bind(this), false);
-  this.game.canvas.element.addEventListener('pointerup', this.handlePointerUpAndCancel.bind(this), false);
-  this.game.canvas.element.addEventListener('pointercancel', this.handlePointerUpAndCancel.bind(this), false);
-  this.game.canvas.element.addEventListener('pointerleave', this.handlePointerUpAndCancel.bind(this), false);
+  this.game.render.canvas.element.style.touchAction = 'none';
+  this.game.render.canvas.element.addEventListener('pointerdown', this.handlePointerDown.bind(this), false);
+  this.game.render.canvas.element.addEventListener('pointermove', this.handlePointerMove.bind(this), false);
+  this.game.render.canvas.element.addEventListener('pointerup', this.handlePointerUpAndCancel.bind(this), false);
+  this.game.render.canvas.element.addEventListener('pointercancel', this.handlePointerUpAndCancel.bind(this), false);
+  this.game.render.canvas.element.addEventListener('pointerleave', this.handlePointerUpAndCancel.bind(this), false);
 };
 
 PointersSystem.prototype.getPointerByID = function (id) {
