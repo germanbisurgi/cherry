@@ -2,8 +2,11 @@ var setupState = new naive.State('setup-state');
 
 setupState.preload = function (game) {
   game.assets.addImage('angry-face', './assets/images/angry-face.png');
+  game.assets.addImage('block', './assets/images/block.png');
   game.assets.addImage('circle', './assets/images/circle.png');
-  game.assets.addImage('brick', './assets/images/brick.png');
+  game.assets.addImage('ground', './assets/images/ground.png');
+  game.assets.addImage('slingshot', './assets/images/slingshot.png');
+  game.assets.addImage('yellow-face', './assets/images/yellow-face.png');
 };
 
 setupState.create = function (game, $) {

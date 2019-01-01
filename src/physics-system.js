@@ -164,7 +164,16 @@ var PhysicsSystem = function (game) {
     }
 
     var body = self.world.CreateBody(bodyDef);
+
+    body.renderables = [];
+
     body.draggable = false;
+
+    body.addRenderable = function (image, widht, height, offsetX, offsetY) {
+      var renderable = self.game.render.addRenderable(image, widht, height, offsetX, offsetY);
+      body.renderables.push(renderable);
+      return renderable;
+    };
 
     body.addCircle = function (radius, offsetX, offsetY, fixtureDefinition) {
       var fixtureDef = self.getFixtureDef(fixtureDefinition);
@@ -496,6 +505,17 @@ var PhysicsSystem = function (game) {
         self.dragEnd(pointer.getPosition(), pointer.id);
       }
     });
+
+    for (var body = game.physics.world.GetBodyList(); body; body = body.GetNext()) {
+      if (body.renderables) {
+        body.renderables.forEach(function (renderable) {
+          renderable.x = body.getPosition().x + renderable.offsetX;
+          renderable.y = body.getPosition().y + renderable.offsetY;
+          renderable.angle = body.getAngle();
+        });
+      }
+    }
+
     self.world.Step(1 / fps, 8, 3);
     self.world.ClearForces();
   };

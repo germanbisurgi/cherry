@@ -7,7 +7,6 @@ var distance;
 var angle;
 var canLaunch;
 var dragging = false;
-var face;
 
 angryState.create = function (game) {
 
@@ -15,25 +14,29 @@ angryState.create = function (game) {
 
   game.physics.setGravity(0, 5);
   game.loop.fps = 50;
-  // game.render.camera.position = {x: -200, y: -200};
-  // game.render.camera.zoom = 0.8;
+  game.render.camera.position = {x: 0, y: -200};
+  game.render.camera.zoom = 0.8;
 
   // ------------------------------------------------------- bodies and fixtures
 
   // ground
   var ground = game.physics.addBody(150, 250, 'static');
   ground.addEdge(-10000, 0, 10000, 0);
+  ground.addRenderable(game.assets.getImage('ground'), 10000, 50, 0, 25);
 
   // slingshot
   slingshot = game.physics.addBody(150, 100, 'static');
   slingshot.addCircle(150, 0, 0, {isSensor: true});
+  slingshot.addRenderable(game.assets.getImage('circle'), 300, 300);
+  slingshot.addRenderable(game.assets.getImage('slingshot'), 100, 200, -10, 50);
 
   // player
   player = game.physics.addBody(100, 150, 'dynamic', {bullet: true});
   player.addCircle(25);
+  player.addRenderable(game.assets.getImage('angry-face'), 51, 51);
   player.draggable = true;
 
-  var torso = game.physics.addBody(100, 150, 'dynamic');
+  /* var torso = game.physics.addBody(100, 150, 'dynamic');
   torso.addRectangle(20, 50);
   torso.draggable = true;
   game.physics.createRevoluteJoint(player, torso, 0, 0, 0, -50, 0, 0, false, -30, 30, true, false);
@@ -46,20 +49,36 @@ angryState.create = function (game) {
   var leg = game.physics.addBody(100, 150, 'dynamic');
   leg.addRectangle(15, 40);
   leg.draggable = true;
-  game.physics.createRevoluteJoint(torso, leg, 0, 20, 0, -10, 0, 0, false, 0, 0, false, false);
+  game.physics.createRevoluteJoint(torso, leg, 0, 20, 0, -10, 0, 0, false, 0, 0, false, false); */
 
   // enemy
   enemy = game.physics.addBody(1450, 220, 'dynamic');
   enemy.addCircle(30);
+  enemy.addRenderable(game.assets.getImage('yellow-face'), 60, 60);
 
   // boxes
-  game.physics.addBody(1350, 230, 'dynamic').addRectangle(40, 40);
-  game.physics.addBody(1350, 190, 'dynamic').addRectangle(40, 40);
-  game.physics.addBody(1350, 150, 'dynamic').addRectangle(40, 40);
-  game.physics.addBody(1570, 230, 'dynamic').addRectangle(40, 40);
-  game.physics.addBody(1570, 190, 'dynamic').addRectangle(40, 40);
-  game.physics.addBody(1570, 150, 'dynamic').addRectangle(40, 40);
-  game.physics.addBody(1460, 110, 'dynamic').addRectangle(260, 40);
+  var box;
+  box = game.physics.addBody(1350, 230, 'dynamic');
+  box.addRectangle(40, 40);
+  box.addRenderable(game.assets.getImage('block'), 40, 40);
+  box = game.physics.addBody(1350, 190, 'dynamic');
+  box.addRectangle(40, 40);
+  box.addRenderable(game.assets.getImage('block'), 40, 40);
+  box = game.physics.addBody(1350, 150, 'dynamic');
+  box.addRectangle(40, 40);
+  box.addRenderable(game.assets.getImage('block'), 40, 40);
+  box = game.physics.addBody(1570, 230, 'dynamic');
+  box.addRectangle(40, 40);
+  box.addRenderable(game.assets.getImage('block'), 40, 40);
+  box = game.physics.addBody(1570, 190, 'dynamic');
+  box.addRectangle(40, 40);
+  box.addRenderable(game.assets.getImage('block'), 40, 40);
+  box = game.physics.addBody(1570, 150, 'dynamic');
+  box.addRectangle(40, 40);
+  box.addRenderable(game.assets.getImage('block'), 40, 40);
+  box = game.physics.addBody(1460, 110, 'dynamic');
+  box.addRectangle(260, 40);
+  box.addRenderable(game.assets.getImage('block'), 260, 40);
 
   // --------------------------------------------------------------- drag events
 
@@ -86,24 +105,17 @@ angryState.create = function (game) {
     if (canLaunch) {
       player.applyImpulse(
         {
-          x: Math.cos(angle) * distance * 5,
-          y: Math.sin(angle) * distance * 5
+          x: Math.cos(angle) * distance * 3,
+          y: Math.sin(angle) * distance * 3
         },
-        player.getWorldCenter());
+        player.getWorldCenter()
+      );
     }
   };
-
-  // --------------------------------------------------------------- renderables
-
-  face = game.render.addRenderable(game.assets.getImage('angry-face'), 0, 0, 100, 100);
 
 };
 
 angryState.update = function (game, $) {
-
-  face.x = player.getPosition().x;
-  face.y = player.getPosition().y;
-  face.angle = player.getAngle();
 
   // ------------------------------------------------------------------ pointers
 

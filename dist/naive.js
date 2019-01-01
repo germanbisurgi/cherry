@@ -11527,7 +11527,16 @@ var PhysicsSystem = function (game) {
     }
 
     var body = self.world.CreateBody(bodyDef);
+
+    body.renderables = [];
+
     body.draggable = false;
+
+    body.addRenderable = function (image, widht, height, offsetX, offsetY) {
+      var renderable = self.game.render.addRenderable(image, widht, height, offsetX, offsetY);
+      body.renderables.push(renderable);
+      return renderable;
+    };
 
     body.addCircle = function (radius, offsetX, offsetY, fixtureDefinition) {
       var fixtureDef = self.getFixtureDef(fixtureDefinition);
@@ -11859,6 +11868,17 @@ var PhysicsSystem = function (game) {
         self.dragEnd(pointer.getPosition(), pointer.id);
       }
     });
+
+    for (var body = game.physics.world.GetBodyList(); body; body = body.GetNext()) {
+      if (body.renderables) {
+        body.renderables.forEach(function (renderable) {
+          renderable.x = body.getPosition().x + renderable.offsetX;
+          renderable.y = body.getPosition().y + renderable.offsetY;
+          renderable.angle = body.getAngle();
+        });
+      }
+    }
+
     self.world.Step(1 / fps, 8, 3);
     self.world.ClearForces();
   };
@@ -12056,12 +12076,14 @@ Pool.prototype.use = function () {
   return item.object;
 };
 
-var Renderable = function (image, x, y, width, height) {
+var Renderable = function (image, width, height, offsetX, offsetY) {
   this.image = image;
-  this.x = x;
-  this.y = y;
   this.width = width;
   this.height = height;
+  this.offsetX = offsetX || 0;
+  this.offsetY = offsetY || 0;
+  this.x = 0;
+  this.y = 0;
   this.angle = 0;
 };
 
@@ -12115,7 +12137,7 @@ Render.prototype.draw = function () {
     );
     this.canvas.context.restore();
   }.bind(this));
-  this.game.physics.world.DrawDebugData();
+  // this.game.physics.world.DrawDebugData();
   this.canvas.context.restore();
 };
 

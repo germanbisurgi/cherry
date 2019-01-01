@@ -48,7 +48,7 @@ Render.prototype.draw = function () {
     );
     this.canvas.context.restore();
   }.bind(this));
-  this.game.physics.world.DrawDebugData();
+  // this.game.physics.world.DrawDebugData();
   this.canvas.context.restore();
 };
 
